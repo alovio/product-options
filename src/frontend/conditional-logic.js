@@ -32,6 +32,35 @@ export function evaluate( condition, values ) {
 }
 
 /**
+ * Read current submitted values from a product form, keyed by field id.
+ *
+ * @param {HTMLElement} formEl
+ * @param {Array} fields
+ * @return {Object} values map
+ */
+export function readValues( formEl, fields ) {
+	const values = {};
+	fields.forEach( ( f ) => {
+		if ( f.type === 'radio' ) {
+			const checked = formEl.querySelector( `[name="apo[${ f.id }]"]:checked` );
+			values[ f.id ] = checked ? checked.value : '';
+			return;
+		}
+		const input = formEl.querySelector( `[name="apo[${ f.id }]"]` );
+		if ( ! input ) {
+			values[ f.id ] = '';
+			return;
+		}
+		if ( input.type === 'checkbox' ) {
+			values[ f.id ] = input.checked ? input.value || 'yes' : '';
+		} else {
+			values[ f.id ] = input.value;
+		}
+	} );
+	return values;
+}
+
+/**
  * Wire a product form: re-evaluate rules on input/change and toggle
  * visibility + the `required` attribute on dependent fields.
  *
@@ -43,24 +72,8 @@ export function wire( formEl, fields ) {
 		return;
 	}
 
-	const readValues = () => {
-		const values = {};
-		fields.forEach( ( f ) => {
-			const input = formEl.querySelector( `[name="apo[${ f.id }]"]` );
-			if ( ! input ) {
-				return;
-			}
-			if ( input.type === 'checkbox' ) {
-				values[ f.id ] = input.checked ? input.value || 'yes' : '';
-			} else {
-				values[ f.id ] = input.value;
-			}
-		} );
-		return values;
-	};
-
 	const apply = () => {
-		const values = readValues();
+		const values = readValues( formEl, fields );
 		fields.forEach( ( f ) => {
 			if ( ! f.condition ) {
 				return;

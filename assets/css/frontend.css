@@ -1,0 +1,30 @@
+.apo-options {
+	margin: 1em 0;
+}
+
+.apo-field {
+	margin-bottom: 12px;
+}
+
+.apo-field > label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.apo-field input[type="text"],
+.apo-field input[type="number"],
+.apo-field textarea,
+.apo-field select {
+	width: 100%;
+	max-width: 360px;
+}
+
+.apo-opt {
+	display: inline-block;
+	margin-right: 12px;
+}
+
+.apo-options-total {
+	font-weight: 600;
+}
