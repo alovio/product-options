@@ -79,6 +79,11 @@ final class ProductFormRenderer {
 			case 'number':
 				printf( '<input type="number" id="%s" name="%s"%s />', esc_attr( $fid ), esc_attr( $name ), $req ); // phpcs:ignore WordPress.Security.EscapeOutput
 				break;
+			case 'date':
+				$min = ! empty( $f['min'] ) ? sprintf( ' min="%s"', esc_attr( (string) $f['min'] ) ) : '';
+				$max = ! empty( $f['max'] ) ? sprintf( ' max="%s"', esc_attr( (string) $f['max'] ) ) : '';
+				printf( '<input type="date" id="%s" name="%s"%s%s%s />', esc_attr( $fid ), esc_attr( $name ), $req, $min, $max ); // phpcs:ignore WordPress.Security.EscapeOutput
+				break;
 			case 'checkbox':
 				printf( '<input type="checkbox" id="%s" name="%s" value="yes"%s />', esc_attr( $fid ), esc_attr( $name ), $req ); // phpcs:ignore WordPress.Security.EscapeOutput
 				break;

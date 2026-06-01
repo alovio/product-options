@@ -56,6 +56,20 @@ final class Validator {
 					$errors[] = sprintf( '“%s” has an invalid selection.', $label );
 				}
 			}
+
+			if ( 'date' === $type ) {
+				$ts = strtotime( (string) $value );
+				if ( false === $ts ) {
+					$errors[] = sprintf( '“%s” is not a valid date.', $label );
+				} else {
+					if ( ! empty( $f['min'] ) && $ts < (int) strtotime( (string) $f['min'] ) ) {
+						$errors[] = sprintf( '“%s” is before the earliest allowed date.', $label );
+					}
+					if ( ! empty( $f['max'] ) && $ts > (int) strtotime( (string) $f['max'] ) ) {
+						$errors[] = sprintf( '“%s” is after the latest allowed date.', $label );
+					}
+				}
+			}
 		}
 
 		return $errors;

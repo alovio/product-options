@@ -38,6 +38,11 @@ final class OptionSanitizer {
 						$out[ $id ] = sanitize_textarea_field( (string) $val );
 					}
 					break;
+				case 'date':
+					if ( null !== $val && '' !== $val ) {
+						$out[ $id ] = sanitize_text_field( (string) $val );
+					}
+					break;
 				case 'number':
 					if ( null !== $val && '' !== $val ) {
 						$out[ $id ] = (float) $val;

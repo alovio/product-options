@@ -47,6 +47,12 @@ class OptionSanitizerTest extends TestCase {
 		$this->assertSame( array( 's' => 'M' ), OptionSanitizer::sanitize( $g, array( 's' => 'M' ) ) );
 	}
 
+	public function test_date_value_kept(): void {
+		$g = $this->group( array( array( 'id' => 'd', 'type' => 'date' ) ) );
+		$this->assertSame( array( 'd' => '2026-06-20' ), OptionSanitizer::sanitize( $g, array( 'd' => '2026-06-20' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'd' => '' ) ) );
+	}
+
 	public function test_swatch_value_validated_against_labels(): void {
 		$g = $this->group( array( array( 'id' => 'sw', 'type' => 'swatch', 'options' => array( array( 'label' => 'Red', 'color' => '#f00' ), array( 'label' => 'Blue', 'color' => '#00f' ) ) ) ) );
 		$this->assertSame( array( 'sw' => 'Blue' ), OptionSanitizer::sanitize( $g, array( 'sw' => 'Blue' ) ) );

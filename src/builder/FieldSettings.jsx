@@ -60,6 +60,22 @@ export default function FieldSettings() {
 			{ field.type === 'swatch' && (
 				<SwatchOptions value={ field.options } onChange={ ( opts ) => set( { options: opts } ) } />
 			) }
+			{ field.type === 'date' && (
+				<>
+					<TextControl
+						type="date"
+						label={ __( 'Earliest date (optional)', 'conditional-product-options' ) }
+						value={ field.min || '' }
+						onChange={ ( v ) => set( { min: v } ) }
+					/>
+					<TextControl
+						type="date"
+						label={ __( 'Latest date (optional)', 'conditional-product-options' ) }
+						value={ field.max || '' }
+						onChange={ ( v ) => set( { max: v } ) }
+					/>
+				</>
+			) }
 			<ConditionEditor field={ field } />
 		</div>
 	);

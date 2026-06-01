@@ -157,6 +157,25 @@ class ProConditionalTest extends TestCase {
 		$this->assertSame( '#ff0000', $pro['fields'][0]['options'][0]['color'] );
 	}
 
+	public function test_date_type_gated_with_constraints(): void {
+		// Free: date is not a valid type -> dropped.
+		$free = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'd', 'type' => 'date', 'min' => '2026-01-01' ) ) ) );
+		$this->assertCount( 0, $free['fields'] );
+
+		// Pro: date valid; min/max normalized.
+		Monkey\Functions\when( 'apply_filters' )->alias(
+			function ( $tag, $value ) {
+				return 'apo_field_types' === $tag
+					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'swatch', 'date' )
+					: $value;
+			}
+		);
+		$pro = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'd', 'type' => 'date', 'min' => '2026-01-01', 'max' => '2026-12-31' ) ) ) );
+		$this->assertCount( 1, $pro['fields'] );
+		$this->assertSame( '2026-01-01', $pro['fields'][0]['min'] );
+		$this->assertSame( '2026-12-31', $pro['fields'][0]['max'] );
+	}
+
 	public function test_schema_gates_price_mode(): void {
 		// Free default: per_unit is not allowed -> coerced to fixed.
 		$free = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );

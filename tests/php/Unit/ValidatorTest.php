@@ -61,6 +61,13 @@ class ValidatorTest extends TestCase {
 		$this->assertSame( array(), Validator::validate( $g, array( 's' => 'M' ) ) );
 	}
 
+	public function test_date_range_validation(): void {
+		$g = $this->group( array( array( 'id' => 'd', 'type' => 'date', 'label' => 'Date', 'min' => '2026-06-01', 'max' => '2026-06-30', 'condition' => null ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 'd' => '2026-06-15' ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 'd' => '2026-07-15' ) ) ); // after max
+		$this->assertCount( 1, Validator::validate( $g, array( 'd' => 'not-a-date' ) ) );
+	}
+
 	public function test_happy_path_no_errors(): void {
 		$g = $this->group( array( array( 'id' => 'a', 'type' => 'text', 'label' => 'Name', 'required' => true, 'condition' => null ) ) );
 		$this->assertSame( array(), Validator::validate( $g, array( 'a' => 'Tahir' ) ) );

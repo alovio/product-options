@@ -34,7 +34,7 @@ final class ProModule {
 	 * @return string[]
 	 */
 	public function field_types( $types ): array {
-		return array_merge( (array) $types, array( 'swatch' ) );
+		return array_merge( (array) $types, array( 'swatch', 'date' ) );
 	}
 
 	/**

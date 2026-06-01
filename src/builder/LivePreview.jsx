@@ -10,6 +10,16 @@ function renderInput( f, value, onChange ) {
 			return <textarea value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } />;
 		case 'number':
 			return <input type="number" value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } />;
+		case 'date':
+			return (
+				<input
+					type="date"
+					value={ value || '' }
+					min={ f.min || undefined }
+					max={ f.max || undefined }
+					onChange={ ( e ) => onChange( e.target.value ) }
+				/>
+			);
 		case 'checkbox':
 			return <input type="checkbox" checked={ value === 'yes' } onChange={ ( e ) => onChange( e.target.checked ? 'yes' : '' ) } />;
 		case 'radio':

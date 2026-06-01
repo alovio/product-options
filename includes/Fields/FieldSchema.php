@@ -54,7 +54,11 @@ final class FieldSchema {
 				'priceMode' => in_array( $pm, $modes, true ) ? $pm : 'fixed',
 				'options'   => self::normalize_options( $f ),
 			);
-			$out[] = array_merge( $entry, self::normalize_conditional( $f, $ids, (string) $f['id'], $ops, $actions, $multi ) );
+			$out[] = array_merge(
+				$entry,
+				self::normalize_conditional( $f, $ids, (string) $f['id'], $ops, $actions, $multi ),
+				self::normalize_constraints( $f )
+			);
 		}
 
 		return array(
@@ -145,6 +149,22 @@ final class FieldSchema {
 	 * @param array<string,mixed> $f
 	 * @return array<int,mixed>
 	 */
+	/**
+	 * Type-specific constraints. Date fields get optional min/max bounds.
+	 *
+	 * @param array<string,mixed> $f
+	 * @return array<string,mixed>
+	 */
+	private static function normalize_constraints( array $f ): array {
+		if ( 'date' !== ( $f['type'] ?? '' ) ) {
+			return array();
+		}
+		return array(
+			'min' => sanitize_text_field( (string) ( $f['min'] ?? '' ) ),
+			'max' => sanitize_text_field( (string) ( $f['max'] ?? '' ) ),
+		);
+	}
+
 	private static function normalize_options( array $f ): array {
 		$raw = ( isset( $f['options'] ) && is_array( $f['options'] ) ) ? $f['options'] : array();
 

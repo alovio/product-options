@@ -22,6 +22,7 @@ export const DEFAULTS = {
 		],
 		condition: null,
 	},
+	date: { label: 'Pick a date', required: false, price: 0, options: [], min: '', max: '', condition: null },
 };
 
 let counter = 0;
