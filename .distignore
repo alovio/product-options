@@ -18,3 +18,5 @@
 /webpack.config.js
 /.phpunit.result.cache
 /.wordpress-org
+/bin
+/conditional-product-options-pro

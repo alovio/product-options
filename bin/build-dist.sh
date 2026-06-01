@@ -18,6 +18,7 @@ rsync -a \
 	--exclude='.git' --exclude='.github' --exclude='.gitignore' --exclude='.distignore' \
 	--exclude='.wp-env.json' --exclude='.playwright-mcp' --exclude='node_modules' \
 	--exclude='src' --exclude='assets' --exclude='tests' --exclude='docs' --exclude='bin' \
+	--exclude='conditional-product-options-pro' \
 	--exclude='package.json' --exclude='package-lock.json' --exclude='webpack.config.js' \
 	--exclude='phpunit.xml.dist' --exclude='.phpunit.result.cache' --exclude='dist' \
 	--exclude='vendor' \
@@ -27,6 +28,12 @@ rsync -a \
 cp "$ROOT/composer.json" "$ROOT/composer.lock" "$DEST/" 2>/dev/null || cp "$ROOT/composer.json" "$DEST/"
 ( cd "$DEST" && composer install --no-dev --optimize-autoloader --quiet && rm -f composer.json composer.lock )
 
-# Zip it.
+# Zip the free plugin.
 ( cd "$OUT" && zip -rqX "$SLUG.zip" "$SLUG" )
 echo "Built: $OUT/$SLUG.zip"
+
+# Zip the Pro add-on (sold separately), if present.
+if [ -d "$ROOT/$SLUG-pro" ]; then
+	( cd "$ROOT" && zip -rqX "$OUT/$SLUG-pro.zip" "$SLUG-pro" )
+	echo "Built: $OUT/$SLUG-pro.zip"
+fi
