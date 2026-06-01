@@ -43,7 +43,7 @@ final class ProductFormRenderer {
 		foreach ( $fields as $f ) {
 			$this->render_field( $f, ! empty( $active[ $f['id'] ?? '' ] ) );
 		}
-		echo '<p class="apo-options-total">' . esc_html__( 'Options total:', 'advanced-product-options' )
+		echo '<p class="apo-options-total">' . esc_html__( 'Options total:', 'conditional-product-options' )
 			. ' <span class="apo-options-total__value">+0.00</span></p>';
 		echo '<script type="application/json" class="apo-rules">'
 			. wp_json_encode( $group, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )

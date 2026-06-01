@@ -191,7 +191,7 @@ final class CartIntegration {
 		}
 		$type = $field['type'] ?? '';
 		if ( 'checkbox' === $type ) {
-			return _x( 'Yes', 'checked option in cart/order', 'advanced-product-options' );
+			return _x( 'Yes', 'checked option in cart/order', 'conditional-product-options' );
 		}
 		if ( 'number' === $type && is_numeric( $val ) ) {
 			$num = (float) $val;

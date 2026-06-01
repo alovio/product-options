@@ -1,4 +1,4 @@
-=== Advanced Product Options for WooCommerce ===
+=== Conditional Product Options for WooCommerce ===
 Contributors: corelabs
 Tags: woocommerce, product addons, product options, conditional logic, extra product options
 Requires at least: 6.4

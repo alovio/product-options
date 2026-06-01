@@ -10,8 +10,8 @@ export default function FieldPalette() {
 	const types = ( window.APO_BUILDER && window.APO_BUILDER.fieldTypes ) || FALLBACK;
 
 	return (
-		<div className="apo-palette" aria-label={ __( 'Field types', 'advanced-product-options' ) }>
-			<h3>{ __( 'Add field', 'advanced-product-options' ) }</h3>
+		<div className="apo-palette" aria-label={ __( 'Field types', 'conditional-product-options' ) }>
+			<h3>{ __( 'Add field', 'conditional-product-options' ) }</h3>
 			{ types.map( ( type ) => (
 				<Button
 					key={ type }

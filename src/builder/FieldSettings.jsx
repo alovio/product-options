@@ -11,7 +11,7 @@ export default function FieldSettings() {
 	const { updateField } = useDispatch( STORE );
 
 	if ( ! field ) {
-		return <div className="apo-settings apo-settings--empty">{ __( 'Select a field to edit its settings.', 'advanced-product-options' ) }</div>;
+		return <div className="apo-settings apo-settings--empty">{ __( 'Select a field to edit its settings.', 'conditional-product-options' ) }</div>;
 	}
 
 	const set = ( patch ) => updateField( field.id, patch );
@@ -19,24 +19,24 @@ export default function FieldSettings() {
 	return (
 		<div className="apo-settings">
 			<TextControl
-				label={ __( 'Label', 'advanced-product-options' ) }
+				label={ __( 'Label', 'conditional-product-options' ) }
 				value={ field.label }
 				onChange={ ( label ) => set( { label } ) }
 			/>
 			<ToggleControl
-				label={ __( 'Required', 'advanced-product-options' ) }
+				label={ __( 'Required', 'conditional-product-options' ) }
 				checked={ !! field.required }
 				onChange={ ( required ) => set( { required } ) }
 			/>
 			<TextControl
 				type="number"
-				label={ __( 'Add-on price', 'advanced-product-options' ) }
+				label={ __( 'Add-on price', 'conditional-product-options' ) }
 				value={ field.price }
 				onChange={ ( v ) => set( { price: parseFloat( v ) || 0 } ) }
 			/>
 			{ HAS_OPTIONS.includes( field.type ) && (
 				<TextareaControl
-					label={ __( 'Options (one per line)', 'advanced-product-options' ) }
+					label={ __( 'Options (one per line)', 'conditional-product-options' ) }
 					value={ ( field.options || [] ).join( '\n' ) }
 					onChange={ ( v ) => set( { options: v.split( '\n' ).map( ( s ) => s.trim() ).filter( Boolean ) } ) }
 				/>

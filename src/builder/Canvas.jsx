@@ -9,7 +9,7 @@ export default function Canvas() {
 	const { selectField, removeField, reorder } = useDispatch( STORE );
 
 	if ( ! fields.length ) {
-		return <div className="apo-canvas apo-canvas--empty">{ __( 'Add a field from the left to get started.', 'advanced-product-options' ) }</div>;
+		return <div className="apo-canvas apo-canvas--empty">{ __( 'Add a field from the left to get started.', 'conditional-product-options' ) }</div>;
 	}
 
 	return (
@@ -24,9 +24,9 @@ export default function Canvas() {
 						{ f.label || f.type } <em>({ f.type })</em>
 					</span>
 					<span className="apo-canvas__ops">
-						<Button size="small" disabled={ i === 0 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i - 1 ); } } aria-label={ __( 'Move up', 'advanced-product-options' ) }>↑</Button>
-						<Button size="small" disabled={ i === fields.length - 1 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i + 1 ); } } aria-label={ __( 'Move down', 'advanced-product-options' ) }>↓</Button>
-						<Button size="small" isDestructive onClick={ ( e ) => { e.stopPropagation(); removeField( f.id ); } } aria-label={ __( 'Delete', 'advanced-product-options' ) }>✕</Button>
+						<Button size="small" disabled={ i === 0 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i - 1 ); } } aria-label={ __( 'Move up', 'conditional-product-options' ) }>↑</Button>
+						<Button size="small" disabled={ i === fields.length - 1 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i + 1 ); } } aria-label={ __( 'Move down', 'conditional-product-options' ) }>↓</Button>
+						<Button size="small" isDestructive onClick={ ( e ) => { e.stopPropagation(); removeField( f.id ); } } aria-label={ __( 'Delete', 'conditional-product-options' ) }>✕</Button>
 					</span>
 				</li>
 			) ) }

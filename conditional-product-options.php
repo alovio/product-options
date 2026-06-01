@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Advanced Product Options for WooCommerce
+ * Plugin Name: Conditional Product Options for WooCommerce
  * Description: Add custom product fields with a drag-drop builder and conditional logic.
  * Version: 0.1.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
- * Text Domain: advanced-product-options
+ * Text Domain: conditional-product-options
  * License: GPL-2.0-or-later
  */
 defined( 'ABSPATH' ) || exit;

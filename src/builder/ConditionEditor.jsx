@@ -22,7 +22,7 @@ export default function ConditionEditor( { field } ) {
 	return (
 		<div className="apo-condition">
 			<ToggleControl
-				label={ __( 'Show / require based on another field', 'advanced-product-options' ) }
+				label={ __( 'Show / require based on another field', 'conditional-product-options' ) }
 				checked={ enabled }
 				disabled={ ! others.length }
 				onChange={ toggle }
@@ -30,29 +30,29 @@ export default function ConditionEditor( { field } ) {
 			{ enabled && (
 				<>
 					<SelectControl
-						label={ __( 'When field', 'advanced-product-options' ) }
+						label={ __( 'When field', 'conditional-product-options' ) }
 						value={ c.field }
 						options={ others.map( ( o ) => ( { label: o.label || o.type, value: o.id } ) ) }
 						onChange={ ( v ) => setCond( { field: v } ) }
 					/>
 					<SelectControl
-						label={ __( 'Operator', 'advanced-product-options' ) }
+						label={ __( 'Operator', 'conditional-product-options' ) }
 						value={ c.operator }
-						options={ [ { label: __( 'is', 'advanced-product-options' ), value: 'is' }, { label: __( 'is not', 'advanced-product-options' ), value: 'is_not' } ] }
+						options={ [ { label: __( 'is', 'conditional-product-options' ), value: 'is' }, { label: __( 'is not', 'conditional-product-options' ), value: 'is_not' } ] }
 						onChange={ ( v ) => setCond( { operator: v } ) }
 					/>
 					<TextControl
-						label={ __( 'Value', 'advanced-product-options' ) }
+						label={ __( 'Value', 'conditional-product-options' ) }
 						value={ c.value }
 						onChange={ ( v ) => setCond( { value: v } ) }
 					/>
 					<SelectControl
-						label={ __( 'Then', 'advanced-product-options' ) }
+						label={ __( 'Then', 'conditional-product-options' ) }
 						value={ c.action }
 						options={ [
-							{ label: __( 'Show this field', 'advanced-product-options' ), value: 'show' },
-							{ label: __( 'Hide this field', 'advanced-product-options' ), value: 'hide' },
-							{ label: __( 'Require this field', 'advanced-product-options' ), value: 'require' },
+							{ label: __( 'Show this field', 'conditional-product-options' ), value: 'show' },
+							{ label: __( 'Hide this field', 'conditional-product-options' ), value: 'hide' },
+							{ label: __( 'Require this field', 'conditional-product-options' ), value: 'require' },
 						] }
 						onChange={ ( v ) => setCond( { action: v } ) }
 					/>

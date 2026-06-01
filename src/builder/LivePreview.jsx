@@ -38,7 +38,7 @@ export default function LivePreview() {
 	const set = ( id, v ) => setValues( ( prev ) => ( { ...prev, [ id ]: v } ) );
 
 	if ( ! fields.length ) {
-		return <p className="apo-preview apo-preview--empty">{ __( 'No fields yet.', 'advanced-product-options' ) }</p>;
+		return <p className="apo-preview apo-preview--empty">{ __( 'No fields yet.', 'conditional-product-options' ) }</p>;
 	}
 
 	const map = activeMap( fields, values );

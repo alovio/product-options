@@ -22,9 +22,9 @@ export default function App( { productId } ) {
 				method: 'POST',
 				data: { fields },
 			} );
-			setNotice( __( 'Options saved.', 'advanced-product-options' ) );
+			setNotice( __( 'Options saved.', 'conditional-product-options' ) );
 		} catch ( e ) {
-			setNotice( __( 'Save failed. Please try again.', 'advanced-product-options' ) );
+			setNotice( __( 'Save failed. Please try again.', 'conditional-product-options' ) );
 		}
 		setSaving( false );
 	};
@@ -34,8 +34,8 @@ export default function App( { productId } ) {
 			<TabPanel
 				className="apo-tabs"
 				tabs={ [
-					{ name: 'build', title: __( 'Build', 'advanced-product-options' ) },
-					{ name: 'preview', title: __( 'Preview', 'advanced-product-options' ) },
+					{ name: 'build', title: __( 'Build', 'conditional-product-options' ) },
+					{ name: 'preview', title: __( 'Preview', 'conditional-product-options' ) },
 				] }
 			>
 				{ ( tab ) =>
@@ -52,7 +52,7 @@ export default function App( { productId } ) {
 			</TabPanel>
 			<div className="apo-actions">
 				<Button variant="primary" onClick={ save } isBusy={ saving } disabled={ saving }>
-					{ __( 'Save options', 'advanced-product-options' ) }
+					{ __( 'Save options', 'conditional-product-options' ) }
 				</Button>
 			</div>
 			{ notice && <Snackbar onRemove={ () => setNotice( '' ) }>{ notice }</Snackbar> }
