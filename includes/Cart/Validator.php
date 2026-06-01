@@ -20,9 +20,10 @@ final class Validator {
 	 */
 	public static function validate( array $group, array $submitted ): array {
 		$errors = array();
+		$active = ConditionalLogic::active_map( $group, $submitted );
 
 		foreach ( (array) ( $group['fields'] ?? array() ) as $f ) {
-			if ( ! ConditionalLogic::is_active( $f, $submitted ) ) {
+			if ( empty( $active[ $f['id'] ?? '' ] ) ) {
 				continue; // hidden fields are not validated.
 			}
 

@@ -45,11 +45,11 @@ final class FieldSchema {
 			$out[] = array(
 				'id'        => (string) $f['id'],
 				'type'      => (string) $f['type'],
-				'label'     => isset( $f['label'] ) ? (string) $f['label'] : '',
+				'label'     => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
 				'required'  => ! empty( $f['required'] ),
 				'price'     => $price < 0 ? 0.0 : $price,
 				'options'   => ( isset( $f['options'] ) && is_array( $f['options'] ) )
-					? array_values( array_map( 'strval', $f['options'] ) )
+					? array_values( array_map( static fn( $o ) => sanitize_text_field( (string) $o ), $f['options'] ) )
 					: array(),
 				'condition' => self::normalize_condition( $f['condition'] ?? null, $ids, (string) $f['id'], $ops, $actions ),
 			);
@@ -88,7 +88,7 @@ final class FieldSchema {
 		return array(
 			'field'    => $field,
 			'operator' => $op,
-			'value'    => isset( $cond['value'] ) ? (string) $cond['value'] : '',
+			'value'    => isset( $cond['value'] ) ? sanitize_text_field( (string) $cond['value'] ) : '',
 			'action'   => $action,
 		);
 	}

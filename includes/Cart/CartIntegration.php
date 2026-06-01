@@ -21,7 +21,7 @@ final class CartIntegration {
 
 	public function register(): void {
 		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'validate' ), 10, 3 );
-		add_filter( 'woocommerce_add_cart_item_data', array( $this, 'add_cart_item_data' ), 10, 2 );
+		add_filter( 'woocommerce_add_cart_item_data', array( $this, 'add_cart_item_data' ), 10, 3 );
 		add_filter( 'woocommerce_get_cart_item_from_session', array( $this, 'get_from_session' ), 10, 2 );
 		add_action( 'woocommerce_before_calculate_totals', array( $this, 'recalculate' ), 20, 1 );
 		add_filter( 'woocommerce_get_item_data', array( $this, 'display_in_cart' ), 10, 2 );
@@ -67,15 +67,19 @@ final class CartIntegration {
 	/**
 	 * @param array<string,mixed> $cart_item_data
 	 * @param int                 $product_id
+	 * @param int                 $variation_id
 	 * @return array<string,mixed>
 	 */
-	public function add_cart_item_data( $cart_item_data, $product_id ) {
+	public function add_cart_item_data( $cart_item_data, $product_id, $variation_id = 0 ) {
+		// Field groups are configured on the parent product; price comes from the
+		// purchased entity (the variation when one is chosen).
 		$group = $this->repo->get( (int) $product_id );
 		if ( empty( $group['fields'] ) ) {
 			return $cart_item_data;
 		}
 		$opts    = OptionSanitizer::sanitize( $group, $this->posted() );
-		$product = wc_get_product( (int) $product_id );
+		$priced  = (int) $variation_id > 0 ? (int) $variation_id : (int) $product_id;
+		$product = wc_get_product( $priced );
 		$base    = $product ? (float) $product->get_price() : 0.0;
 
 		$cart_item_data['apo'] = array(
@@ -111,14 +115,15 @@ final class CartIntegration {
 			return;
 		}
 		foreach ( $cart->get_cart() as $item ) {
-			if ( empty( $item['apo'] ) || ! isset( $item['data'] ) ) {
+			// Require a stored base price; otherwise recomputing from the
+			// already-mutated product price would stack the add-on on repeat fires.
+			if ( empty( $item['apo'] ) || ! isset( $item['data'], $item['apo']['base_price'] ) ) {
 				continue;
 			}
 			$product_id = isset( $item['product_id'] ) ? (int) $item['product_id'] : (int) $item['data']->get_id();
 			$group      = $this->repo->get( $product_id );
 			$addon      = PriceCalculator::addon_total( $group, $item['apo']['options'] ?? array(), wc_get_price_decimals() );
-			$base       = isset( $item['apo']['base_price'] ) ? (float) $item['apo']['base_price'] : (float) $item['data']->get_price();
-			$item['data']->set_price( $base + $addon );
+			$item['data']->set_price( (float) $item['apo']['base_price'] + $addon );
 		}
 	}
 

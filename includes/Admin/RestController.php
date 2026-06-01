@@ -44,7 +44,8 @@ final class RestController {
 
 	/** @param \WP_REST_Request $request */
 	public function can_edit( $request ): bool {
-		return current_user_can( 'edit_product', (int) $request['id'] );
+		$id = (int) $request['id'];
+		return 'product' === get_post_type( $id ) && current_user_can( 'edit_product', $id );
 	}
 
 	/** @param \WP_REST_Request $request */

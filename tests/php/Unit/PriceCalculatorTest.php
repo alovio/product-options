@@ -58,4 +58,33 @@ class PriceCalculatorTest extends TestCase {
 		$g = $this->group( array( array( 'id' => 'a', 'type' => 'text', 'price' => 5.0, 'condition' => null ) ) );
 		$this->assertSame( 99.0, PriceCalculator::addon_total( $g, array( 'a' => 'x' ), 2 ) );
 	}
+
+	public function test_number_zero_does_not_engage_fee(): void {
+		$g = $this->group( array( array( 'id' => 'n', 'type' => 'number', 'price' => 4.0, 'condition' => null ) ) );
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 'n' => '0' ), 2 ) );
+		$this->assertSame( 4.0, PriceCalculator::addon_total( $g, array( 'n' => '3' ), 2 ) );
+	}
+
+	public function test_fee_excluded_when_controller_is_transitively_hidden(): void {
+		$g = $this->group(
+			array(
+				array( 'id' => 'gate', 'type' => 'checkbox', 'condition' => null ),
+				array(
+					'id'        => 'a',
+					'type'      => 'checkbox',
+					'condition' => array( 'field' => 'gate', 'operator' => 'is', 'value' => 'yes', 'action' => 'show' ),
+				),
+				array(
+					'id'        => 'b',
+					'type'      => 'text',
+					'price'     => 7.0,
+					'condition' => array( 'field' => 'a', 'operator' => 'is', 'value' => 'yes', 'action' => 'show' ),
+				),
+			)
+		);
+		// gate=no hides a, so b is transitively inactive even though a's stale value is 'yes'.
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 'gate' => 'no', 'a' => 'yes', 'b' => 'hi' ), 2 ) );
+		// gate=yes + a=yes -> b active and engaged.
+		$this->assertSame( 7.0, PriceCalculator::addon_total( $g, array( 'gate' => 'yes', 'a' => 'yes', 'b' => 'hi' ), 2 ) );
+	}
 }

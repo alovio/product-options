@@ -19,10 +19,11 @@ final class PriceCalculator {
 	 * @param array<string,mixed> $submitted
 	 */
 	public static function addon_total( array $group, array $submitted, int $decimals = 2 ): float {
-		$total = 0.0;
+		$total  = 0.0;
+		$active = ConditionalLogic::active_map( $group, $submitted );
 
 		foreach ( (array) ( $group['fields'] ?? array() ) as $f ) {
-			if ( ! ConditionalLogic::is_active( $f, $submitted ) ) {
+			if ( empty( $active[ $f['id'] ?? '' ] ) ) {
 				continue;
 			}
 			$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
@@ -47,6 +48,10 @@ final class PriceCalculator {
 		}
 		if ( 'checkbox' === $type ) {
 			return ! empty( $value ) && '0' !== $value;
+		}
+		if ( 'number' === $type ) {
+			// A literal 0 (or empty) does not engage the fee.
+			return is_numeric( $value ) && 0.0 !== (float) $value;
 		}
 		return null !== $value && '' !== $value;
 	}

@@ -38,13 +38,16 @@ final class ProductFormRenderer {
 			return;
 		}
 
+		$active = ConditionalLogic::active_map( $group, array() );
 		echo '<div class="apo-options">';
 		foreach ( $fields as $f ) {
-			$this->render_field( $f, ConditionalLogic::is_active( $f, array() ) );
+			$this->render_field( $f, ! empty( $active[ $f['id'] ?? '' ] ) );
 		}
 		echo '<p class="apo-options-total">' . esc_html__( 'Options total:', 'advanced-product-options' )
 			. ' <span class="apo-options-total__value">+0.00</span></p>';
-		echo '<script type="application/json" class="apo-rules">' . wp_json_encode( $group ) . '</script>';
+		echo '<script type="application/json" class="apo-rules">'
+			. wp_json_encode( $group, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
+			. '</script>';
 		echo '</div>';
 	}
 
