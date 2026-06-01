@@ -29,7 +29,10 @@ final class Plugin {
 		}
 		$this->booted = true;
 
-		( new \APO\Pro\ProModule() )->register();
+		// The Pro module is shipped separately (excluded from the free build); load it only when present.
+		if ( class_exists( \APO\Pro\ProModule::class ) ) {
+			( new \APO\Pro\ProModule() )->register();
+		}
 		( new \APO\Admin\RestController() )->register();
 		( new \APO\Admin\BuilderAssets() )->register();
 		( new \APO\Frontend\ProductFormRenderer() )->register();

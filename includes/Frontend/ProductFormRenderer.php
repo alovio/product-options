@@ -202,14 +202,16 @@ final class ProductFormRenderer {
 					$opt_label = is_array( $opt ) ? (string) ( $opt['label'] ?? '' ) : (string) $opt;
 					$opt_color = is_array( $opt ) ? (string) ( $opt['color'] ?? '#cccccc' ) : '#cccccc';
 					$chk       = ( $opt_label === $default ) ? ' checked' : '';
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- label/name/color escaped via esc_attr; $rreq/$chk are internal constant attribute fragments.
 					printf(
 						'<label class="apo-swatch" title="%1$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%1$s" /><span class="apo-swatch__dot" style="background-color:%4$s"></span><span class="apo-swatch__label">%1$s</span></label>',
 						esc_attr( $opt_label ),
 						esc_attr( $name ),
 						$rreq,
 						esc_attr( $opt_color ),
-						$chk // phpcs:ignore WordPress.Security.EscapeOutput
+						$chk
 					);
+					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				echo '</div>';
 				break;

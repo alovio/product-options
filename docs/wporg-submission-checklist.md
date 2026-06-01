@@ -1,0 +1,56 @@
+# wp.org submission checklist (agent-generated, annotated 2026-06-01)
+
+- **[needs-action]** Plugin header: Requires at least ✅ ADDRESSED
+  - Add 'Requires at least: 6.4' to conditional-product-options.php header (present in readme.txt but missing from the main file).
+- **[likely-ok]** Plugin header: Requires PHP
+  - 'Requires PHP: 7.4' present and matches readme; keep consistent.
+- **[likely-ok]** Plugin header: Requires Plugins
+  - 'Requires Plugins: woocommerce' is correct (lowercase official slug); verifies WooCommerce dependency natively.
+- **[likely-ok]** Plugin header: Stable tag / Version
+  - Header Version 0.1.0, APO_VERSION 0.1.0, and readme Stable tag 0.1.0 all agree; keep all three in lockstep on each release.
+- **[likely-ok]** Plugin header: License
+  - Header 'GPL-2.0-or-later' and readme 'GPLv2 or later' both GPL-compatible; optionally add a 'License URI' line to the main file header to match readme.
+- **[likely-ok]** Plugin header: Text Domain
+  - 'conditional-product-options' matches the slug and all __()/esc_html__() calls; correct.
+- **[needs-action]** readme.txt: 'Tested up to' value
+  - 'Tested up to: 7.0' is invalid (no WP 7.0 exists) and will fail validation/look untested — set to a real shipped version (e.g. 6.8).
+- **[needs-action]** readme.txt: name consistency ✅ ADDRESSED
+  - Description calls it 'Advanced Product Options' while the title/slug/header say 'Conditional Product Options' — rename the bold lead-in to the real plugin name to avoid reviewer confusion/rejection.
+- **[likely-ok]** readme.txt: header title vs slug
+  - Title 'Conditional Product Options for WooCommerce' is fine; the derived slug will be 'conditional-product-options-for-woocommerce' unless you reserve 'conditional-product-options' — confirm the desired slug at submission.
+- **[likely-ok]** readme.txt: Contributors / Tags / structure
+  - Contributors 'corelabs', valid tag count (5), and all required sections present; just confirm the corelabs wp.org account exists and owns the submission.
+- **[decision-needed]** No locked/paid features in free plugin (Pro code shipped behind apo_is_pro) ✅ ADDRESSED
+  - CRITICAL: the free build's dist/ still ships includes/Pro/ProModule.php plus Pro field types ('swatch','date') and operators referenced in free Logic/Frontend code — reviewers treat shipped-but-gated paid code as a locked-feature violation; strip includes/Pro and all Pro-only branches from the free build (add to .distignore + build-dist.sh rsync excludes and guard references) so the free zip contains zero Pro code.
+- **[likely-ok]** Pro unlocker plugin separation
+  - conditional-product-options-pro/ is correctly excluded from the free zip via .distignore and build-dist.sh; keep it a separate distribution (do not upload it to wp.org).
+- **[needs-action]** Trademark: 'WooCommerce'/'Woo' in slug
+  - Display name may say 'for WooCommerce' but the slug must NOT contain 'woocommerce'/'woo' — register the slug as 'conditional-product-options' (current slug guess is OK; never submit 'conditional-product-options-for-woocommerce' as the permalink).
+- **[likely-ok]** Security: output escaping
+  - ProductFormRenderer escapes via esc_attr/esc_html/esc_textarea and uses wp_json_encode with HEX flags; phpcs:ignore lines cover pre-escaped concatenations — spot-confirm $rreq/$chk/$hidden are constant literals (they are) so the ignores are safe.
+- **[likely-ok]** Security: input sanitization
+  - CartIntegration::posted() runs wp_unslash + map_deep(sanitize_text_field) and OptionSanitizer adds per-type sanitize_text_field/sanitize_textarea_field; adequate for the field types shipped.
+- **[needs-action]** Security: nonces / capability checks
+  - REST routes are capability-gated (current_user_can edit_product) — good; but save_fields() stores the raw JSON body via repo->save without validating field shape/whitelisting types/operators server-side — add schema validation/sanitization in FieldRepository::save before storing untrusted admin input.
+- **[likely-ok]** i18n: text domain matches slug
+  - Text domain 'conditional-product-options' equals the slug throughout; compliant.
+- **[likely-ok]** i18n: translations loaded
+  - No load_plugin_textdomain call, which is correct for WP 4.6+ when domain==slug (wp.org auto-loads); ensure the header 'Requires at least' is >= 4.6 (it is).
+- **[likely-ok]** i18n: .pot file
+  - languages/conditional-product-options.pot present and shipped in dist; regenerate it on each release so new strings are translatable.
+- **[needs-action]** Assets: icon dimensions ✅ ADDRESSED
+  - icon.png is 256x256 (good content) but SVN expects assets/icon-256x256.png (and optionally icon-128x128.png); rename/duplicate — current icon32/icon64 are not used by wp.org and the root .png files won't be picked up.
+- **[needs-action]** Assets: banner dimensions ✅ ADDRESSED
+  - banner.png is 1544x500 (the 2x/retina banner) — rename to assets/banner-1544x500.png and add a 772x250 banner-772x250.png (1x) for full coverage.
+- **[needs-action]** Assets: screenshots ✅ ADDRESSED
+  - screenshot-1/2.png exist and match the two readme Screenshots entries, but they live in .wordpress-org/ — move them into the SVN /assets directory (not the plugin /trunk) with the screenshot-N.png naming.
+- **[needs-action]** Assets: location (SVN assets dir vs plugin zip)
+  - Icon/banner/screenshots must go in the repo's top-level /assets SVN folder, NOT in the plugin code; ensure build-dist.sh keeps them out of the trunk zip (it already excludes /assets and /.wordpress-org from the code zip).
+- **[needs-action]** Versioning / tagging ✅ ADDRESSED
+  - No git tags yet and no SVN tag; on release, set Stable tag to the version, copy trunk into /tags/0.1.0, and keep header Version == Stable tag == APO_VERSION.
+- **[decision-needed]** SVN submission flow
+  - After plugin approval: svn checkout the assigned repo, commit code to /trunk, set readme Stable tag and copy to /tags/0.1.0, put images in /assets, then svn commit — first submit the reviewed zip via the wp.org 'Add Your Plugin' form and wait for manual approval before any SVN access exists.
+- **[needs-action]** build-dist.sh produces a clean free zip ✅ ADDRESSED
+  - Script correctly strips dev/test/Pro-unlocker and builds a no-dev composer autoloader, BUT it does NOT strip includes/Pro from the free zip — add that exclusion (ties to the locked-feature item) before generating the submission build.
+- **[likely-ok]** uninstall.php data handling
+  - Guarded by WP_UNINSTALL_PLUGIN and only deletes data on explicit opt-in option; compliant and safe to ship.

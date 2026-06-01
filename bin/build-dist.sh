@@ -16,9 +16,10 @@ mkdir -p "$DEST"
 # Copy only shippable files (keep build/, includes/, languages/, readme, main file, uninstall).
 rsync -a \
 	--exclude='.git' --exclude='.github' --exclude='.gitignore' --exclude='.distignore' \
-	--exclude='.wp-env.json' --exclude='.playwright-mcp' --exclude='node_modules' \
+	--exclude='.wp-env.json' --exclude='.playwright-mcp' --exclude='.wordpress-org' --exclude='node_modules' \
 	--exclude='src' --exclude='assets' --exclude='tests' --exclude='docs' --exclude='bin' \
 	--exclude='conditional-product-options-pro' \
+	--exclude='includes/Pro' \
 	--exclude='package.json' --exclude='package-lock.json' --exclude='webpack.config.js' \
 	--exclude='phpunit.xml.dist' --exclude='.phpunit.result.cache' --exclude='dist' \
 	--exclude='vendor' \
