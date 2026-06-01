@@ -41,11 +41,32 @@ export function computeAddonTotal( fields, values, base = 0 ) {
 	return total;
 }
 
+export function formatMoney( amount ) {
+	const c = ( typeof window !== 'undefined' && window.APO_FE ) || {};
+	const decimals = typeof c.decimals === 'number' ? c.decimals : 2;
+	const sym = c.symbol || '';
+	const dsep = c.decimalSep || '.';
+	const tsep = c.thousandSep || ',';
+	const parts = Math.abs( amount ).toFixed( decimals ).split( '.' );
+	parts[ 0 ] = parts[ 0 ].replace( /\B(?=(\d{3})+(?!\d))/g, tsep );
+	const num = parts.length > 1 ? parts[ 0 ] + dsep + parts[ 1 ] : parts[ 0 ];
+	switch ( c.position ) {
+		case 'left_space':
+			return sym + ' ' + num;
+		case 'right':
+			return num + sym;
+		case 'right_space':
+			return num + ' ' + sym;
+		default:
+			return sym + num;
+	}
+}
+
 export function wirePrices( formEl, fields, displayEl, base = 0 ) {
 	const update = () => {
 		const total = computeAddonTotal( fields, readValues( formEl, fields ), base );
 		if ( displayEl ) {
-			displayEl.textContent = '+' + total.toFixed( 2 );
+			displayEl.textContent = '+' + formatMoney( total );
 		}
 	};
 	formEl.addEventListener( 'change', update );

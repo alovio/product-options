@@ -49,7 +49,9 @@ final class BuilderAssets {
 		$asset = require $asset_file;
 
 		wp_enqueue_script( 'apo-builder', APO_URL . 'build/index.js', $asset['dependencies'], $asset['version'], true );
+		wp_set_script_translations( 'apo-builder', 'conditional-product-options', APO_PATH . 'languages' );
 		wp_enqueue_style( 'apo-builder', APO_URL . 'build/index.css', array(), $asset['version'] );
+		wp_style_add_data( 'apo-builder', 'rtl', 'replace' );
 		wp_localize_script(
 			'apo-builder',
 			'APO_BUILDER',

@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 final class FieldTypes {
 
 	/** @var string[] Free-tier field types. */
-	public const FREE = array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price' );
+	public const FREE = array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading' );
 
 	/** @return string[] */
 	public static function all(): array {

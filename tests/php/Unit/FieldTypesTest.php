@@ -10,7 +10,7 @@ class FieldTypesTest extends TestCase {
 
 	public function test_all_returns_free_types(): void {
 		$this->assertSame(
-			array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price' ),
+			array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading' ),
 			FieldTypes::all()
 		);
 	}

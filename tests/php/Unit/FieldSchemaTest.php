@@ -86,6 +86,30 @@ class FieldSchemaTest extends TestCase {
 		$this->assertCount( 1, $out['fields'] );
 	}
 
+	public function test_normalizes_free_extras(): void {
+		$out = FieldSchema::normalize(
+			array(
+				'fields' => array(
+					array( 'id' => 't', 'type' => 'text', 'placeholder' => 'Type here', 'description' => 'help', 'default' => 'hi', 'maxLength' => 10 ),
+					array( 'id' => 'n', 'type' => 'number', 'min' => 1, 'max' => 5, 'step' => 0.5 ),
+					array( 'id' => 'h', 'type' => 'heading', 'label' => 'Section' ),
+				),
+			)
+		);
+		$t = $out['fields'][0];
+		$this->assertSame( 'Type here', $t['placeholder'] );
+		$this->assertSame( 'help', $t['description'] );
+		$this->assertSame( 'hi', $t['default'] );
+		$this->assertSame( 10, $t['maxLength'] );
+
+		$n = $out['fields'][1];
+		$this->assertSame( '1', $n['min'] );
+		$this->assertSame( '5', $n['max'] );
+		$this->assertSame( '0.5', $n['step'] );
+
+		$this->assertSame( 'heading', $out['fields'][2]['type'] );
+	}
+
 	public function test_invalid_operator_and_action_defaulted(): void {
 		$out = FieldSchema::normalize(
 			array(

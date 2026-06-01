@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-01T11:50:05+00:00\n"
+"POT-Creation-Date: 2026-06-01T17:34:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: conditional-product-options\n"
@@ -29,113 +29,116 @@ msgstr ""
 msgid "Product Options"
 msgstr ""
 
-#: dist/conditional-product-options/includes/Cart/CartIntegration.php:194
+#: dist/conditional-product-options/includes/Cart/CartIntegration.php:195
 #: includes/Cart/CartIntegration.php:195
 msgctxt "checked option in cart/order"
 msgid "Yes"
 msgstr ""
 
-#: dist/conditional-product-options/includes/Frontend/ProductFormRenderer.php:46
-#: includes/Frontend/ProductFormRenderer.php:47
+#: dist/conditional-product-options/includes/Frontend/ProductFormRenderer.php:47
+#: includes/Frontend/ProductFormRenderer.php:57
+#: src/builder/LivePreview.jsx:90
 msgid "Options total:"
 msgstr ""
 
-#: src/builder/App.jsx:25
-msgid "Options saved."
+#. translators: %s: field label
+#: includes/Cart/Validator.php:44
+#, php-format
+msgid "“%s” is required."
 msgstr ""
 
-#: src/builder/App.jsx:27
-msgid "Save failed. Please try again."
+#. translators: %s: field label
+#: includes/Cart/Validator.php:53
+#, php-format
+msgid "“%s” must be a number."
 msgstr ""
 
-#: src/builder/App.jsx:37
-msgid "Build"
+#. translators: %s: field label
+#: includes/Cart/Validator.php:62
+#, php-format
+msgid "“%s” has an invalid selection."
 msgstr ""
 
-#: src/builder/App.jsx:38
-msgid "Preview"
+#. translators: %s: field label
+#: includes/Cart/Validator.php:70
+#, php-format
+msgid "“%s” is not a valid date."
 msgstr ""
 
-#: src/builder/App.jsx:55
-msgid "Save options"
+#. translators: %s: field label
+#: includes/Cart/Validator.php:74
+#, php-format
+msgid "“%s” is before the earliest allowed date."
 msgstr ""
 
-#: src/builder/Canvas.jsx:12
+#. translators: %s: field label
+#: includes/Cart/Validator.php:78
+#, php-format
+msgid "“%s” is after the latest allowed date."
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:74
+msgid "Text area"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:76
+msgid "Number"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:78
+msgid "Checkbox"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:82
+#: includes/Frontend/ProductFormRenderer.php:192
+#: src/builder/LivePreview.jsx:27
+msgid "Choose an option"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:84
+msgid "Surcharge"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:86
+msgid "Date"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:88
+msgid "Text"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:90
+msgid "Option"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:99
+msgid "(required)"
+msgstr ""
+
+#: src/builder/Canvas.jsx:15
 msgid "Add a field from the left to get started."
 msgstr ""
 
-#: src/builder/Canvas.jsx:27
+#: src/builder/Canvas.jsx:51
+msgid "Drag to reorder"
+msgstr ""
+
+#: src/builder/Canvas.jsx:56
 msgid "Move up"
 msgstr ""
 
-#: src/builder/Canvas.jsx:28
+#: src/builder/Canvas.jsx:57
 msgid "Move down"
 msgstr ""
 
-#: src/builder/Canvas.jsx:29
+#: src/builder/Canvas.jsx:58
+msgid "Duplicate"
+msgstr ""
+
+#: src/builder/Canvas.jsx:59
 msgid "Delete"
 msgstr ""
 
-#: src/builder/FieldPalette.jsx:13
-msgid "Field types"
-msgstr ""
-
-#: src/builder/FieldPalette.jsx:14
-msgid "Add field"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:15
-msgid "Select a field to edit its settings."
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:23
-msgid "Label"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:28
-msgid "Required"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:36
-msgid "Unit price"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:38
-msgid "Percentage (%)"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:39
-msgid "Add-on price"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:46
-msgid "Pricing"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:49
-msgid "Fixed fee"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:51
-msgid "Per unit (× quantity entered)"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:53
-msgid "Percentage of product price"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:60
-msgid "Options (one per line)"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:72
-msgid "Earliest date (optional)"
-msgstr ""
-
-#: src/builder/FieldSettings.jsx:78
-msgid "Latest date (optional)"
-msgstr ""
-
-#: src/builder/LivePreview.jsx:66
+#: src/builder/LivePreview.jsx:59
 msgid "No fields yet."
 msgstr ""

@@ -46,13 +46,16 @@ final class FieldSchema {
 			$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
 			$pm    = (string) ( $f['priceMode'] ?? 'fixed' );
 			$entry = array(
-				'id'       => (string) $f['id'],
-				'type'     => (string) $f['type'],
-				'label'    => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
-				'required'  => ! empty( $f['required'] ),
-				'price'     => $price < 0 ? 0.0 : $price,
-				'priceMode' => in_array( $pm, $modes, true ) ? $pm : 'fixed',
-				'options'   => self::normalize_options( $f ),
+				'id'          => (string) $f['id'],
+				'type'        => (string) $f['type'],
+				'label'       => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
+				'required'    => ! empty( $f['required'] ),
+				'price'       => $price < 0 ? 0.0 : $price,
+				'priceMode'   => in_array( $pm, $modes, true ) ? $pm : 'fixed',
+				'placeholder' => isset( $f['placeholder'] ) ? sanitize_text_field( (string) $f['placeholder'] ) : '',
+				'description' => isset( $f['description'] ) ? sanitize_text_field( (string) $f['description'] ) : '',
+				'default'     => isset( $f['default'] ) ? sanitize_text_field( (string) $f['default'] ) : '',
+				'options'     => self::normalize_options( $f ),
 			);
 			$out[] = array_merge(
 				$entry,
@@ -156,13 +159,30 @@ final class FieldSchema {
 	 * @return array<string,mixed>
 	 */
 	private static function normalize_constraints( array $f ): array {
-		if ( 'date' !== ( $f['type'] ?? '' ) ) {
-			return array();
+		$type = (string) ( $f['type'] ?? '' );
+
+		if ( 'date' === $type ) {
+			return array(
+				'min' => sanitize_text_field( (string) ( $f['min'] ?? '' ) ),
+				'max' => sanitize_text_field( (string) ( $f['max'] ?? '' ) ),
+			);
 		}
-		return array(
-			'min' => sanitize_text_field( (string) ( $f['min'] ?? '' ) ),
-			'max' => sanitize_text_field( (string) ( $f['max'] ?? '' ) ),
-		);
+
+		if ( 'number' === $type ) {
+			$num = static fn( $k ) => ( isset( $f[ $k ] ) && '' !== $f[ $k ] && is_numeric( $f[ $k ] ) ) ? (string) ( $f[ $k ] + 0 ) : '';
+			return array(
+				'min'  => $num( 'min' ),
+				'max'  => $num( 'max' ),
+				'step' => $num( 'step' ),
+			);
+		}
+
+		if ( in_array( $type, array( 'text', 'textarea' ), true ) ) {
+			$maxlen = ( isset( $f['maxLength'] ) && is_numeric( $f['maxLength'] ) ) ? (int) $f['maxLength'] : 0;
+			return $maxlen > 0 ? array( 'maxLength' => $maxlen ) : array();
+		}
+
+		return array();
 	}
 
 	private static function normalize_options( array $f ): array {

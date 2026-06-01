@@ -25,8 +25,21 @@ final class FrontendAssets {
 		$asset = require $asset_file;
 
 		wp_enqueue_script( 'apo-frontend', APO_URL . 'build/frontend.js', $asset['dependencies'], $asset['version'], true );
+		wp_localize_script(
+			'apo-frontend',
+			'APO_FE',
+			array(
+				'symbol'      => html_entity_decode( get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8' ),
+				'decimals'    => wc_get_price_decimals(),
+				'decimalSep'  => wc_get_price_decimal_separator(),
+				'thousandSep' => wc_get_price_thousand_separator(),
+				'position'    => get_option( 'woocommerce_currency_pos', 'left' ),
+			)
+		);
+		wp_set_script_translations( 'apo-frontend', 'conditional-product-options', APO_PATH . 'languages' );
 		if ( file_exists( APO_PATH . 'build/frontend.css' ) ) {
 			wp_enqueue_style( 'apo-frontend', APO_URL . 'build/frontend.css', array(), $asset['version'] );
+			wp_style_add_data( 'apo-frontend', 'rtl', 'replace' );
 		}
 	}
 }

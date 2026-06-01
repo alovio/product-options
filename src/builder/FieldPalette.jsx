@@ -3,24 +3,32 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 
-const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price' ];
+const T = 'conditional-product-options';
+const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading' ];
+
+const LABELS = {
+	text: __( 'Text', T ),
+	textarea: __( 'Text area', T ),
+	number: __( 'Number', T ),
+	checkbox: __( 'Checkbox', T ),
+	radio: __( 'Multiple choice', T ),
+	select: __( 'Dropdown', T ),
+	price: __( 'Surcharge / fee', T ),
+	heading: __( 'Heading', T ),
+	swatch: __( 'Colour swatch', T ),
+	date: __( 'Date', T ),
+};
 
 export default function FieldPalette() {
 	const { addField } = useDispatch( STORE );
 	const types = ( window.APO_BUILDER && window.APO_BUILDER.fieldTypes ) || FALLBACK;
 
 	return (
-		<div className="apo-palette" aria-label={ __( 'Field types', 'conditional-product-options' ) }>
-			<h3>{ __( 'Add field', 'conditional-product-options' ) }</h3>
+		<div className="apo-palette" aria-label={ __( 'Field types', T ) }>
+			<h3>{ __( 'Add field', T ) }</h3>
 			{ types.map( ( type ) => (
-				<Button
-					key={ type }
-					variant="secondary"
-					className="apo-palette__btn"
-					draggable
-					onClick={ () => addField( type ) }
-				>
-					{ type }
+				<Button key={ type } variant="secondary" className="apo-palette__btn" onClick={ () => addField( type ) }>
+					{ LABELS[ type ] || type }
 				</Button>
 			) ) }
 		</div>

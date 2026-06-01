@@ -7,7 +7,7 @@ import { STORE } from './store';
 export default function Canvas() {
 	const fields = useSelect( ( select ) => select( STORE ).getFields(), [] );
 	const selectedId = useSelect( ( select ) => select( STORE ).getSelectedId(), [] );
-	const { selectField, removeField, reorder } = useDispatch( STORE );
+	const { selectField, removeField, reorder, duplicateField } = useDispatch( STORE );
 	const [ dragIndex, setDragIndex ] = useState( null );
 	const [ overIndex, setOverIndex ] = useState( null );
 
@@ -38,19 +38,24 @@ export default function Canvas() {
 						key={ f.id }
 						className={ cls.trim() }
 						draggable
+						role="button"
+						tabIndex={ 0 }
+						aria-current={ f.id === selectedId }
 						onClick={ () => selectField( f.id ) }
+						onKeyDown={ ( e ) => { if ( e.key === 'Enter' || e.key === ' ' ) { e.preventDefault(); selectField( f.id ); } } }
 						onDragStart={ () => setDragIndex( i ) }
 						onDragOver={ ( e ) => { e.preventDefault(); setOverIndex( i ); } }
 						onDrop={ () => onDrop( i ) }
 						onDragEnd={ () => { setDragIndex( null ); setOverIndex( null ); } }
 					>
-						<span className="apo-canvas__grip" aria-hidden="true">⠿</span>
+						<span className="apo-canvas__grip" aria-hidden="true" title={ __( 'Drag to reorder', 'conditional-product-options' ) }>⠿</span>
 						<span className="apo-canvas__label">
 							{ f.label || f.type } <em>({ f.type })</em>
 						</span>
 						<span className="apo-canvas__ops">
 							<Button size="small" disabled={ i === 0 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i - 1 ); } } aria-label={ __( 'Move up', 'conditional-product-options' ) }>↑</Button>
 							<Button size="small" disabled={ i === fields.length - 1 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i + 1 ); } } aria-label={ __( 'Move down', 'conditional-product-options' ) }>↓</Button>
+							<Button size="small" onClick={ ( e ) => { e.stopPropagation(); duplicateField( f.id ); } } aria-label={ __( 'Duplicate', 'conditional-product-options' ) }>⧉</Button>
 							<Button size="small" isDestructive onClick={ ( e ) => { e.stopPropagation(); removeField( f.id ); } } aria-label={ __( 'Delete', 'conditional-product-options' ) }>✕</Button>
 						</span>
 					</li>

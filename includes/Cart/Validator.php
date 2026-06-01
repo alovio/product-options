@@ -27,8 +27,11 @@ final class Validator {
 				continue; // hidden fields are not validated.
 			}
 
-			$id    = (string) ( $f['id'] ?? '' );
-			$type  = (string) ( $f['type'] ?? '' );
+			$id   = (string) ( $f['id'] ?? '' );
+			$type = (string) ( $f['type'] ?? '' );
+			if ( 'heading' === $type ) {
+				continue; // display-only, no value to validate.
+			}
 			$label = ( '' !== ( $f['label'] ?? '' ) ) ? (string) $f['label'] : $id;
 			$value = $submitted[ $id ] ?? null;
 
@@ -37,7 +40,8 @@ final class Validator {
 			$is_empty = ( null === $value || '' === $value || array() === $value || false === $value );
 
 			if ( $required && $is_empty ) {
-				$errors[] = sprintf( '“%s” is required.', $label );
+				/* translators: %s: field label */
+				$errors[] = sprintf( __( '“%s” is required.', 'conditional-product-options' ), $label );
 				continue;
 			}
 			if ( $is_empty ) {
@@ -45,7 +49,8 @@ final class Validator {
 			}
 
 			if ( 'number' === $type && ! is_numeric( $value ) ) {
-				$errors[] = sprintf( '“%s” must be a number.', $label );
+				/* translators: %s: field label */
+				$errors[] = sprintf( __( '“%s” must be a number.', 'conditional-product-options' ), $label );
 			}
 
 			if ( in_array( $type, array( 'select', 'radio', 'swatch' ), true ) && ! empty( $f['options'] ) ) {
@@ -53,20 +58,24 @@ final class Validator {
 					? array_map( static fn( $o ) => (string) ( $o['label'] ?? '' ), (array) $f['options'] )
 					: array_map( 'strval', (array) $f['options'] );
 				if ( ! in_array( (string) $value, $valid, true ) ) {
-					$errors[] = sprintf( '“%s” has an invalid selection.', $label );
+					/* translators: %s: field label */
+					$errors[] = sprintf( __( '“%s” has an invalid selection.', 'conditional-product-options' ), $label );
 				}
 			}
 
 			if ( 'date' === $type ) {
 				$ts = strtotime( (string) $value );
 				if ( false === $ts ) {
-					$errors[] = sprintf( '“%s” is not a valid date.', $label );
+					/* translators: %s: field label */
+					$errors[] = sprintf( __( '“%s” is not a valid date.', 'conditional-product-options' ), $label );
 				} else {
 					if ( ! empty( $f['min'] ) && $ts < (int) strtotime( (string) $f['min'] ) ) {
-						$errors[] = sprintf( '“%s” is before the earliest allowed date.', $label );
+						/* translators: %s: field label */
+						$errors[] = sprintf( __( '“%s” is before the earliest allowed date.', 'conditional-product-options' ), $label );
 					}
 					if ( ! empty( $f['max'] ) && $ts > (int) strtotime( (string) $f['max'] ) ) {
-						$errors[] = sprintf( '“%s” is after the latest allowed date.', $label );
+						/* translators: %s: field label */
+						$errors[] = sprintf( __( '“%s” is after the latest allowed date.', 'conditional-product-options' ), $label );
 					}
 				}
 			}

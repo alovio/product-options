@@ -12,6 +12,22 @@ const OP_LABELS = {
 	lt: __( 'less than', D ),
 };
 
+function ValueControl( { fields, controllerId, value, onChange } ) {
+	const ctrl = fields.find( ( f ) => f.id === controllerId );
+	const t = ctrl ? ctrl.type : 'text';
+	if ( t === 'checkbox' ) {
+		return <SelectControl label={ __( 'Value', D ) } value={ value } options={ [ { label: __( 'Checked', D ), value: 'yes' }, { label: __( 'Unchecked', D ), value: '' } ] } onChange={ onChange } />;
+	}
+	if ( t === 'select' || t === 'radio' || t === 'swatch' ) {
+		const opts = ( ctrl.options || [] ).map( ( o ) => {
+			const v = typeof o === 'object' ? o.label : o;
+			return { label: v, value: v };
+		} );
+		return <SelectControl label={ __( 'Value', D ) } value={ value } options={ opts.length ? opts : [ { label: '—', value: '' } ] } onChange={ onChange } />;
+	}
+	return <TextControl label={ __( 'Value', D ) } value={ value } onChange={ onChange } />;
+}
+
 export default function ConditionEditor( { field } ) {
 	const fields = useSelect( ( select ) => select( STORE ).getFields(), [] );
 	const { updateField } = useDispatch( STORE );
@@ -69,7 +85,7 @@ export default function ConditionEditor( { field } ) {
 							<div className="apo-rule" key={ i }>
 								<SelectControl label={ __( 'When field', D ) } value={ r.field } options={ fieldOptions } onChange={ ( v ) => updateRule( i, { field: v } ) } />
 								<SelectControl label={ __( 'Operator', D ) } value={ r.operator } options={ opOptions } onChange={ ( v ) => updateRule( i, { operator: v } ) } />
-								<TextControl label={ __( 'Value', D ) } value={ r.value } onChange={ ( v ) => updateRule( i, { value: v } ) } />
+								<ValueControl fields={ fields } controllerId={ r.field } value={ r.value } onChange={ ( v ) => updateRule( i, { value: v } ) } />
 								{ rules.length > 1 && (
 									<Button isDestructive variant="link" onClick={ () => removeRule( i ) }>{ __( 'Remove rule', D ) }</Button>
 								) }
@@ -109,7 +125,7 @@ export default function ConditionEditor( { field } ) {
 				<>
 					<SelectControl label={ __( 'When field', D ) } value={ c.field } options={ fieldOptions } onChange={ ( v ) => setCond( { field: v } ) } />
 					<SelectControl label={ __( 'Operator', D ) } value={ c.operator } options={ opOptions } onChange={ ( v ) => setCond( { operator: v } ) } />
-					<TextControl label={ __( 'Value', D ) } value={ c.value } onChange={ ( v ) => setCond( { value: v } ) } />
+					<ValueControl fields={ fields } controllerId={ c.field } value={ c.value } onChange={ ( v ) => setCond( { value: v } ) } />
 					<SelectControl label={ __( 'Then', D ) } value={ c.action } options={ actionOptions } onChange={ ( v ) => setCond( { action: v } ) } />
 				</>
 			) }

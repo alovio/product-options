@@ -23,6 +23,7 @@ export const DEFAULTS = {
 		condition: null,
 	},
 	date: { label: 'Pick a date', required: false, price: 0, options: [], min: '', max: '', condition: null },
+	heading: { label: 'Section heading', required: false, price: 0, options: [], description: '', condition: null },
 };
 
 let counter = 0;
@@ -60,6 +61,19 @@ export function reducer( state = initialState, action = {} ) {
 				} );
 			return { ...state, fields, selectedId: state.selectedId === action.id ? null : state.selectedId };
 		}
+		case 'DUPLICATE_FIELD': {
+			const idx = state.fields.findIndex( ( f ) => f.id === action.id );
+			if ( idx === -1 ) {
+				return state;
+			}
+			const copy = { ...JSON.parse( JSON.stringify( state.fields[ idx ] ) ), id: action.newId };
+			if ( copy.label ) {
+				copy.label += ' (copy)';
+			}
+			const fields = [ ...state.fields ];
+			fields.splice( idx + 1, 0, copy );
+			return { ...state, fields, selectedId: copy.id };
+		}
 		case 'REORDER': {
 			const fields = [ ...state.fields ];
 			if ( action.to < 0 || action.to >= fields.length ) {
@@ -84,6 +98,7 @@ export const actions = {
 	addField: ( fieldType ) => ( { type: 'ADD_FIELD', fieldType, id: makeId() } ),
 	updateField: ( id, patch ) => ( { type: 'UPDATE_FIELD', id, patch } ),
 	removeField: ( id ) => ( { type: 'REMOVE_FIELD', id } ),
+	duplicateField: ( id ) => ( { type: 'DUPLICATE_FIELD', id, newId: makeId() } ),
 	reorder: ( from, to ) => ( { type: 'REORDER', from, to } ),
 	selectField: ( id ) => ( { type: 'SELECT', id } ),
 	setTab: ( tab ) => ( { type: 'SET_TAB', tab } ),

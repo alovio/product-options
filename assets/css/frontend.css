@@ -63,3 +63,26 @@
 /* Separate the options block from the rest of the product summary */
 .apo-options { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(0,0,0,0.08); }
 .apo-options-total { margin-top: 14px; }
+
+/* Accessibility + new free-tier markup */
+.apo-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.apo-required { color: #dc2626; margin-left: 2px; }
+.apo-field__label { display: block; font-weight: 600; margin-bottom: 4px; }
+.apo-field__desc { display: block; color: #6b7280; font-size: 12px; margin: -2px 0 6px; }
+.apo-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.apo-fieldset legend { padding: 0; }
+.apo-heading { margin: 0 0 4px; font-size: 16px; }
+.apo-field--heading { margin-bottom: 8px; }
+.apo-fee { font-weight: 600; }
+.apo-field input:focus-visible,
+.apo-field textarea:focus-visible,
+.apo-field select:focus-visible,
+.apo-swatch input:focus-visible + .apo-swatch__dot { outline: 2px solid #4f46e5; outline-offset: 2px; }
+@media (max-width: 600px) {
+	.apo-field input[type="text"],
+	.apo-field input[type="number"],
+	.apo-field input[type="date"],
+	.apo-field textarea,
+	.apo-field select { max-width: 100%; width: 100%; }
+	.apo-opt { display: block; margin: 0 0 6px; }
+}

@@ -3,35 +3,28 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 import { activeMap } from '../frontend/conditional-logic';
+import { computeAddonTotal } from '../frontend/price-update';
 
 function renderInput( f, value, onChange ) {
 	switch ( f.type ) {
 		case 'textarea':
-			return <textarea value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } />;
+			return <textarea value={ value || '' } placeholder={ f.placeholder || undefined } onChange={ ( e ) => onChange( e.target.value ) } />;
 		case 'number':
-			return <input type="number" value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } />;
+			return <input type="number" value={ value || '' } placeholder={ f.placeholder || undefined } min={ f.min || undefined } max={ f.max || undefined } step={ f.step || undefined } onChange={ ( e ) => onChange( e.target.value ) } />;
 		case 'date':
-			return (
-				<input
-					type="date"
-					value={ value || '' }
-					min={ f.min || undefined }
-					max={ f.max || undefined }
-					onChange={ ( e ) => onChange( e.target.value ) }
-				/>
-			);
+			return <input type="date" value={ value || '' } min={ f.min || undefined } max={ f.max || undefined } onChange={ ( e ) => onChange( e.target.value ) } />;
 		case 'checkbox':
 			return <input type="checkbox" checked={ value === 'yes' } onChange={ ( e ) => onChange( e.target.checked ? 'yes' : '' ) } />;
 		case 'radio':
 			return ( f.options || [] ).map( ( o ) => (
-				<label key={ o } className="apo-preview__radio">
+				<label key={ o } className="apo-opt">
 					<input type="radio" name={ f.id } value={ o } checked={ value === o } onChange={ () => onChange( o ) } /> { o }
 				</label>
 			) );
 		case 'select':
 			return (
 				<select value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) }>
-					<option value="">—</option>
+					<option value="">{ __( 'Choose an option', 'conditional-product-options' ) }</option>
 					{ ( f.options || [] ).map( ( o ) => <option key={ o } value={ o }>{ o }</option> ) }
 				</select>
 			);
@@ -51,9 +44,9 @@ function renderInput( f, value, onChange ) {
 				</span>
 			);
 		case 'price':
-			return <em className="apo-preview__fee">+{ f.price }</em>;
+			return <em className="apo-fee">+{ f.price }</em>;
 		default:
-			return <input type="text" value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } />;
+			return <input type="text" value={ value || '' } placeholder={ f.placeholder || undefined } onChange={ ( e ) => onChange( e.target.value ) } />;
 	}
 }
 
@@ -67,6 +60,8 @@ export default function LivePreview() {
 	}
 
 	const map = activeMap( fields, values );
+	const hasPriced = fields.some( ( f ) => parseFloat( f.price ) > 0 || f.type === 'price' );
+	const total = computeAddonTotal( fields, values, 0 );
 
 	return (
 		<form className="apo-preview" onSubmit={ ( e ) => e.preventDefault() }>
@@ -74,13 +69,26 @@ export default function LivePreview() {
 				if ( ! map[ f.id ] ) {
 					return null;
 				}
+				if ( f.type === 'heading' ) {
+					return (
+						<div key={ f.id } className="apo-preview__field apo-field--heading">
+							<h4 className="apo-heading">{ f.label }</h4>
+							{ f.description && <small className="apo-field__desc">{ f.description }</small> }
+						</div>
+					);
+				}
+				const fee = parseFloat( f.price ) > 0 ? ` (+${ f.price })` : '';
 				return (
 					<div key={ f.id } className="apo-preview__field" data-apo-field={ f.id }>
-						<label>{ f.label || f.type }{ f.required ? ' *' : '' }</label>
+						<label className="apo-field__label">{ f.label || f.type }{ f.required ? ' *' : '' }{ fee }</label>
+						{ f.description && <small className="apo-field__desc">{ f.description }</small> }
 						{ renderInput( f, values[ f.id ], ( v ) => set( f.id, v ) ) }
 					</div>
 				);
 			} ) }
+			{ hasPriced && (
+				<p className="apo-options-total">{ __( 'Options total:', 'conditional-product-options' ) } +{ total.toFixed( 2 ) }</p>
+			) }
 		</form>
 	);
 }
