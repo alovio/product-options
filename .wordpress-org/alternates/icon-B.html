@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  .canvas {
+    width: 256px;
+    height: 256px;
+    overflow: hidden;
+    position: relative;
+    background: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* subtle inner tile frame to read as an app icon on a white listing bg */
+  .frame {
+    position: absolute;
+    inset: 12px;
+    border-radius: 58px;
+    background: #FFFFFF;
+    border: 1.5px solid #ECECF6;
+    box-shadow: 0 3px 0 #F3F3FB inset;
+  }
+  .mark { position: relative; z-index: 2; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="frame"></div>
+    <svg class="mark" width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Direction B: single-weight indigo line-art.
+           One trigger node branches into two option endpoints = conditional logic. -->
+
+      <!-- source / trigger node (left, filled for emphasis) -->
+      <circle cx="23" cy="75" r="9" fill="#4F46E5"/>
+
+      <!-- branch connectors -->
+      <path d="M32 75 H57 Q69 75 69 61 V41 Q69 29 81 29 H93"
+            stroke="#6366F1" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <path d="M32 75 H57 Q69 75 69 89 V109 Q69 121 81 121 H93"
+            stroke="#8B5CF6" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+      <!-- top endpoint: checked option (the "shown" branch) -->
+      <rect x="93" y="14" width="46" height="30" rx="9" stroke="#4F46E5" stroke-width="7"/>
+      <path d="M106 29 L113 36 L127 21" stroke="#4F46E5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+      <!-- bottom endpoint: toggle option (the conditional control) -->
+      <rect x="93" y="106" width="46" height="30" rx="15" stroke="#8B5CF6" stroke-width="7"/>
+      <circle cx="124" cy="121" r="7.5" fill="#8B5CF6"/>
+    </svg>
+  </div>
+</body>
+</html>

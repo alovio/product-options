@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; }
+  .canvas {
+    width: 1544px;
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #FBFBFE;
+    display: flex;
+  }
+  .wash {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 640px;
+    background: radial-gradient(120% 140% at 100% 0%, rgba(99,102,241,.10) 0%, rgba(99,102,241,0) 62%);
+    pointer-events: none;
+  }
+  .edge {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 8px;
+    background: linear-gradient(180deg, #8B5CF6 0%, #6366F1 50%, #4F46E5 100%);
+  }
+  .left {
+    position: relative;
+    z-index: 2;
+    padding: 0 0 0 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 880px;
+    box-sizing: border-box;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #4F46E5;
+    margin-bottom: 26px;
+  }
+  .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #8B5CF6; }
+  .eyebrow .woo { color: #8587A0; font-weight: 600; letter-spacing: .14em; }
+  .lockup {
+    font-weight: 800;
+    color: #14122B;
+    letter-spacing: -.03em;
+    line-height: .96;
+  }
+  .l1 { font-size: 80px; }
+  .l2 { font-size: 80px; }
+  .accent { color: #4F46E5; }
+  .l2 .options { position: relative; display: inline-block; }
+  .ul {
+    display: block;
+    height: 7px;
+    width: 100%;
+    margin-top: 12px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%);
+  }
+  .tagline {
+    margin-top: 36px;
+    font-size: 23px;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #45435F;
+    max-width: 660px;
+  }
+  .tagline b { font-weight: 800; color: #14122B; }
+  .free-pill {
+    display: inline-block;
+    background: #ECFDF5;
+    color: #047857;
+    font-weight: 800;
+    font-size: 21px;
+    padding: 1px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #A7F3D0;
+    letter-spacing: -.01em;
+  }
+  .right {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .builder { position: relative; width: 470px; height: 300px; }
+  .row {
+    position: absolute;
+    width: 330px;
+    height: 62px;
+    background: #FFFFFF;
+    border: 1.5px solid #E6E6F2;
+    border-radius: 14px;
+    box-shadow: 0 14px 30px -18px rgba(67,56,202,.40);
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    box-sizing: border-box;
+    gap: 14px;
+  }
+  .row .grip {
+    width: 11px; height: 18px;
+    display: grid;
+    grid-template-columns: 3px 3px;
+    grid-template-rows: 3px 3px 3px;
+    gap: 3px 4px;
+    flex: 0 0 auto;
+  }
+  .row .grip i { background: #C7C9E6; border-radius: 1px; display:block; width:3px; height:3px; }
+  .row .ico { width: 30px; height: 30px; border-radius: 8px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+  .row .label { font-size: 16px; font-weight: 700; color: #2A2745; flex: 1 1 auto; }
+  .row .sub { font-size: 12.5px; font-weight: 600; color: #9A9AB5; }
+  .r1 { top: 0;   left: 70px; }
+  .r2 { top: 96px; left: 70px; }
+  .r3 { top: 220px; left: 130px; width: 270px; border-color: #C7CCFB; background:#F7F8FF; }
+  .ico.a { background: #EEF0FF; }
+  .ico.b { background: #F3EEFF; }
+  .ico.c { background: #E7FBF3; }
+  .toggle { width: 44px; height: 26px; border-radius: 13px; background: #6366F1; position: relative; flex: 0 0 auto; }
+  .toggle::after {
+    content:""; position:absolute; top:3px; right:3px;
+    width:20px; height:20px; border-radius:50%; background:#fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+  .branch { position: absolute; left: 86px; top: 127px; width: 60px; height: 110px; }
+  .cond-tag {
+    position: absolute;
+    left: 2px;
+    top: 150px;
+    background: #4F46E5;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    padding: 4px 9px;
+    border-radius: 7px;
+    white-space: nowrap;
+    box-shadow: 0 6px 14px -6px rgba(79,70,229,.6);
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="edge"></div>
+    <div class="wash"></div>
+    <div class="left">
+      <div class="eyebrow">
+        <span class="dot"></span>
+        WordPress Plugin
+        <span class="woo">· for WooCommerce</span>
+      </div>
+      <div class="lockup">
+        <div class="l1">Conditional <span class="accent">Product</span></div>
+        <div class="l2"><span class="options">Options<span class="ul"></span></span></div>
+      </div>
+      <div class="tagline">
+        Custom product fields with real <b>conditional logic</b> —
+        show, hide &amp; require options on the fly. <span class="free-pill">Free</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="builder">
+        <div class="branch">
+          <svg width="60" height="110" viewBox="0 0 60 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 4 V 86 a 14 14 0 0 0 14 14 H 54" stroke="#A5B4FC" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="6" cy="4" r="5" fill="#6366F1"/>
+            <circle cx="54" cy="100" r="5" fill="#8B5CF6"/>
+          </svg>
+        </div>
+        <div class="cond-tag">IF = Yes → SHOW</div>
+        <div class="row r1">
+          <div class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="ico a">
+            <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="3.2" rx="1.6" fill="#6366F1"/><rect x="1" y="9" width="9" height="3.2" rx="1.6" fill="#A5B4FC"/></svg>
+          </div>
+          <div class="label">Text field</div>
+          <div class="sub">Required</div>
+        </div>
+        <div class="row r2">
+          <div class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="ico b">
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.4" fill="none" stroke="#8B5CF6" stroke-width="2.4"/><circle cx="8" cy="8" r="2.6" fill="#8B5CF6"/></svg>
+          </div>
+          <div class="label">Gift wrap?</div>
+          <div class="toggle"></div>
+        </div>
+        <div class="row r3">
+          <div class="ico c">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7.5" stroke="#10B981" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="label">Message <span class="sub" style="margin-left:6px;">+ $4.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

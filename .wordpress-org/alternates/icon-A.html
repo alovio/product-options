@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; }
+  .canvas {
+    width: 256px;
+    height: 256px;
+    overflow: hidden;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(145deg, #6D5DF6 0%, #5145E6 48%, #7C3AED 100%);
+  }
+  .sheen {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 95% at 26% 8%, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0) 54%);
+    pointer-events: none;
+  }
+  .ring {
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+    pointer-events: none;
+  }
+  svg { position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="sheen"></div>
+    <div class="ring"></div>
+    <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1E1065" flood-opacity="0.35"/>
+        </filter>
+      </defs>
+      <g filter="url(#ds)">
+        <path d="M68 128 L96 128" stroke="#ffffff" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+        <path d="M96 128 C 117 128, 117 84, 138 84" stroke="#ffffff" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.95"/>
+        <path d="M96 128 C 117 128, 117 172, 138 172" stroke="#ffffff" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.95"/>
+      </g>
+      <circle cx="64" cy="128" r="16" fill="#ffffff" filter="url(#ds)"/>
+      <circle cx="64" cy="128" r="6.4" fill="#5145E6"/>
+      <g filter="url(#ds)">
+        <rect x="138" y="62" width="78" height="42" rx="13" fill="#ffffff"/>
+      </g>
+      <rect x="152" y="77" width="30" height="6" rx="3" fill="#7C3AED" opacity="0.5"/>
+      <rect x="190" y="75" width="20" height="12" rx="6" fill="#7C3AED"/>
+      <circle cx="204" cy="81" r="4.4" fill="#ffffff"/>
+      <g filter="url(#ds)">
+        <rect x="138" y="152" width="78" height="42" rx="13" fill="#ffffff"/>
+      </g>
+      <rect x="152" y="167" width="22" height="6" rx="3" fill="#5145E6" opacity="0.45"/>
+      <rect x="189" y="162" width="20" height="20" rx="6" fill="#5145E6"/>
+      <path d="M193.5 172.5 l3.8 4 L203.5 168" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="138" cy="84" r="6.5" fill="#ffffff"/>
+      <circle cx="138" cy="84" r="2.8" fill="#7C3AED"/>
+      <circle cx="138" cy="172" r="6.5" fill="#ffffff"/>
+      <circle cx="138" cy="172" r="2.8" fill="#5145E6"/>
+    </svg>
+  </div>
+</body>
+</html>
