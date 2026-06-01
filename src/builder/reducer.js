@@ -37,7 +37,16 @@ export function reducer( state = initialState, action = {} ) {
 		case 'REMOVE_FIELD': {
 			const fields = state.fields
 				.filter( ( f ) => f.id !== action.id )
-				.map( ( f ) => ( f.condition && f.condition.field === action.id ? { ...f, condition: null } : f ) );
+				.map( ( f ) => {
+					let nf = f;
+					if ( f.condition && f.condition.field === action.id ) {
+						nf = { ...nf, condition: null };
+					}
+					if ( Array.isArray( f.conditions ) && f.conditions.some( ( r ) => r.field === action.id ) ) {
+						nf = { ...nf, conditions: f.conditions.filter( ( r ) => r.field !== action.id ) };
+					}
+					return nf;
+				} );
 			return { ...state, fields, selectedId: state.selectedId === action.id ? null : state.selectedId };
 		}
 		case 'REORDER': {

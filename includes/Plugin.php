@@ -29,6 +29,7 @@ final class Plugin {
 		}
 		$this->booted = true;
 
+		( new \APO\Pro\ProModule() )->register();
 		( new \APO\Admin\RestController() )->register();
 		( new \APO\Admin\BuilderAssets() )->register();
 		( new \APO\Frontend\ProductFormRenderer() )->register();

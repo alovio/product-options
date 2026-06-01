@@ -17,6 +17,7 @@ final class FieldSchema {
 
 		$ops     = (array) apply_filters( 'apo_allowed_operators', array( 'is', 'is_not' ) );
 		$actions = (array) apply_filters( 'apo_allowed_actions', array( 'show', 'hide', 'require' ) );
+		$multi   = (bool) apply_filters( 'apo_multi_conditions', false );
 
 		// First pass: keep valid-typed fields with unique, non-empty ids.
 		$kept = array();
@@ -42,17 +43,17 @@ final class FieldSchema {
 		$out = array();
 		foreach ( $kept as $f ) {
 			$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
-			$out[] = array(
-				'id'        => (string) $f['id'],
-				'type'      => (string) $f['type'],
-				'label'     => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
-				'required'  => ! empty( $f['required'] ),
-				'price'     => $price < 0 ? 0.0 : $price,
-				'options'   => ( isset( $f['options'] ) && is_array( $f['options'] ) )
+			$entry = array(
+				'id'       => (string) $f['id'],
+				'type'     => (string) $f['type'],
+				'label'    => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
+				'required' => ! empty( $f['required'] ),
+				'price'    => $price < 0 ? 0.0 : $price,
+				'options'  => ( isset( $f['options'] ) && is_array( $f['options'] ) )
 					? array_values( array_map( static fn( $o ) => sanitize_text_field( (string) $o ), $f['options'] ) )
 					: array(),
-				'condition' => self::normalize_condition( $f['condition'] ?? null, $ids, (string) $f['id'], $ops, $actions ),
 			);
+			$out[] = array_merge( $entry, self::normalize_conditional( $f, $ids, (string) $f['id'], $ops, $actions, $multi ) );
 		}
 
 		return array(
@@ -90,6 +91,65 @@ final class FieldSchema {
 			'operator' => $op,
 			'value'    => isset( $cond['value'] ) ? sanitize_text_field( (string) $cond['value'] ) : '',
 			'action'   => $action,
+		);
+	}
+
+	/**
+	 * Build the conditional keys for a field: a single `condition` (free) or a
+	 * `conditions` array with match/action (Pro, when `apo_multi_conditions` is on).
+	 *
+	 * @param array<string,mixed> $f
+	 * @param string[]            $ids
+	 * @param string[]            $ops
+	 * @param string[]            $actions
+	 * @return array<string,mixed>
+	 */
+	private static function normalize_conditional( array $f, array $ids, string $self_id, array $ops, array $actions, bool $multi ): array {
+		if ( $multi && ! empty( $f['conditions'] ) && is_array( $f['conditions'] ) ) {
+			$rules = array();
+			foreach ( $f['conditions'] as $rule ) {
+				$nr = self::normalize_rule( is_array( $rule ) ? $rule : array(), $ids, $self_id, $ops );
+				if ( null !== $nr ) {
+					$rules[] = $nr;
+				}
+			}
+			if ( ! empty( $rules ) ) {
+				$action = isset( $f['conditionAction'] ) ? (string) $f['conditionAction'] : 'show';
+				if ( ! in_array( $action, $actions, true ) ) {
+					$action = $actions[0] ?? 'show';
+				}
+				return array(
+					'condition'       => null,
+					'conditions'      => $rules,
+					'conditionMatch'  => ( 'any' === ( $f['conditionMatch'] ?? 'all' ) ) ? 'any' : 'all',
+					'conditionAction' => $action,
+				);
+			}
+		}
+		return array( 'condition' => self::normalize_condition( $f['condition'] ?? null, $ids, $self_id, $ops, $actions ) );
+	}
+
+	/**
+	 * Normalize one multi-condition rule ( {field, operator, value} ), or null if invalid.
+	 *
+	 * @param array<string,mixed> $rule
+	 * @param string[]            $ids
+	 * @param string[]            $ops
+	 * @return array<string,mixed>|null
+	 */
+	private static function normalize_rule( array $rule, array $ids, string $self_id, array $ops ): ?array {
+		$field = isset( $rule['field'] ) ? (string) $rule['field'] : '';
+		if ( '' === $field || $field === $self_id || ! in_array( $field, $ids, true ) ) {
+			return null;
+		}
+		$op = isset( $rule['operator'] ) ? (string) $rule['operator'] : '';
+		if ( ! in_array( $op, $ops, true ) ) {
+			$op = $ops[0] ?? 'is';
+		}
+		return array(
+			'field'    => $field,
+			'operator' => $op,
+			'value'    => isset( $rule['value'] ) ? sanitize_text_field( (string) $rule['value'] ) : '',
 		);
 	}
 

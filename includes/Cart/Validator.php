@@ -32,11 +32,7 @@ final class Validator {
 			$label = ( '' !== ( $f['label'] ?? '' ) ) ? (string) $f['label'] : $id;
 			$value = $submitted[ $id ] ?? null;
 
-			$required = ! empty( $f['required'] );
-			$cond     = $f['condition'] ?? null;
-			if ( is_array( $cond ) && 'require' === ( $cond['action'] ?? '' ) && ConditionalLogic::matches( $cond, $submitted ) ) {
-				$required = true;
-			}
+			$required = ! empty( $f['required'] ) || ConditionalLogic::requires( $f, $submitted );
 
 			$is_empty = ( null === $value || '' === $value || array() === $value || false === $value );
 

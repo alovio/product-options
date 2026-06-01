@@ -1,40 +1,96 @@
 /**
- * Front-end conditional logic. `evaluate` mirrors the PHP
- * APO\Logic\ConditionalLogic and is kept in lockstep via
- * tests/fixtures/conditional-cases.json.
+ * Front-end conditional logic. Mirrors PHP APO\Logic\ConditionalLogic and is
+ * kept in lockstep via tests/fixtures/conditional-cases.json.
+ *
+ * Free: a single `condition` {field, operator, value, action} (operators is/is_not).
+ * Pro:  `conditions` [{field, operator, value}] + conditionMatch (all|any) +
+ *       conditionAction (show|hide|require), and operators contains/gt/lt.
  */
 
+function isNum( v ) {
+	return v !== '' && ! isNaN( parseFloat( v ) ) && isFinite( v );
+}
+
+function matchRule( rule, values ) {
+	if ( ! rule || typeof rule !== 'object' ) {
+		return false;
+	}
+	const left = values[ rule.field ] !== undefined && values[ rule.field ] !== null ? String( values[ rule.field ] ) : '';
+	const right = rule.value !== undefined && rule.value !== null ? String( rule.value ) : '';
+	switch ( rule.operator ) {
+		case 'is_not':
+			return left !== right;
+		case 'contains':
+			return right !== '' && left.indexOf( right ) !== -1;
+		case 'gt':
+			return isNum( left ) && isNum( right ) && parseFloat( left ) > parseFloat( right );
+		case 'lt':
+			return isNum( left ) && isNum( right ) && parseFloat( left ) < parseFloat( right );
+		case 'is':
+		default:
+			return left === right;
+	}
+}
+
 /**
- * @param {Object|null} condition {field, operator, value, action}
- * @param {Object} values map of fieldId -> submitted value
- * @return {boolean} whether the field is active/shown
+ * Evaluate a single condition (free). Kept for fixture parity.
+ *
+ * @param {Object|null} condition
+ * @param {Object} values
+ * @return {boolean}
  */
 export function evaluate( condition, values ) {
 	if ( ! condition || typeof condition !== 'object' ) {
 		return true;
 	}
-	const left =
-		values[ condition.field ] !== undefined && values[ condition.field ] !== null
-			? String( values[ condition.field ] )
-			: '';
-	const right = condition.value !== undefined && condition.value !== null ? String( condition.value ) : '';
-	const op = condition.operator || 'is';
-	const match = op === 'is_not' ? left !== right : left === right;
 	const action = condition.action || 'show';
-
 	if ( action === 'require' ) {
 		return true;
 	}
+	const match = matchRule( condition, values );
 	if ( action === 'hide' ) {
 		return ! match;
 	}
-	return match; // show
+	return match;
 }
 
 /**
- * Resolve active state for all fields, transitively (mirrors PHP
- * ConditionalLogic::active_map): a field is active only if its own condition
- * passes AND its controller is also active. Cycle-safe.
+ * Whether a field is active given submitted values (single or multi rules).
+ *
+ * @param {Object} field
+ * @param {Object} values
+ * @return {boolean}
+ */
+export function fieldActive( field, values ) {
+	if ( Array.isArray( field.conditions ) && field.conditions.length ) {
+		const action = field.conditionAction || 'show';
+		if ( action === 'require' ) {
+			return true;
+		}
+		const results = field.conditions.map( ( r ) => matchRule( r, values ) );
+		const combined =
+			field.conditionMatch === 'any' ? results.indexOf( true ) !== -1 : results.indexOf( false ) === -1;
+		if ( action === 'hide' ) {
+			return ! combined;
+		}
+		return combined;
+	}
+	return evaluate( field.condition, values );
+}
+
+function controllers( field ) {
+	if ( Array.isArray( field.conditions ) && field.conditions.length ) {
+		return field.conditions.map( ( r ) => r.field ).filter( Boolean );
+	}
+	if ( field.condition && field.condition.field ) {
+		return [ field.condition.field ];
+	}
+	return [];
+}
+
+/**
+ * Transitive active map (mirrors PHP active_map): a field is active only if its
+ * own rules pass AND every referenced controller is active. Cycle-safe.
  *
  * @param {Array} fields
  * @param {Object} values
@@ -56,10 +112,10 @@ export function activeMap( fields, values ) {
 		}
 		inStack[ id ] = true;
 		const f = byId[ id ];
-		let active = evaluate( f.condition, values );
-		if ( f.condition && f.condition.field ) {
-			active = active && resolve( f.condition.field );
-		}
+		let active = fieldActive( f, values );
+		controllers( f ).forEach( ( cid ) => {
+			active = active && resolve( cid );
+		} );
 		delete inStack[ id ];
 		cache[ id ] = active;
 		return active;
@@ -76,7 +132,7 @@ export function activeMap( fields, values ) {
  *
  * @param {HTMLElement} formEl
  * @param {Array} fields
- * @return {Object} values map
+ * @return {Object}
  */
 export function readValues( formEl, fields ) {
 	const values = {};
@@ -101,22 +157,22 @@ export function readValues( formEl, fields ) {
 }
 
 /**
- * Wire a product form: re-evaluate rules on input/change and toggle
- * visibility + the `required` attribute on dependent fields.
+ * Wire a product form: re-evaluate rules on input/change and toggle visibility +
+ * the `required` attribute on dependent fields.
  *
  * @param {HTMLElement} formEl
- * @param {Array} fields normalized field definitions
+ * @param {Array} fields
  */
 export function wire( formEl, fields ) {
 	if ( ! formEl || ! Array.isArray( fields ) ) {
 		return;
 	}
-
+	const hasRule = ( f ) => ( Array.isArray( f.conditions ) && f.conditions.length ) || f.condition;
 	const apply = () => {
 		const values = readValues( formEl, fields );
 		const map = activeMap( fields, values );
 		fields.forEach( ( f ) => {
-			if ( ! f.condition ) {
+			if ( ! hasRule( f ) ) {
 				return;
 			}
 			const wrap = formEl.querySelector( `[data-apo-field="${ f.id }"]` );
@@ -131,7 +187,6 @@ export function wire( formEl, fields ) {
 			}
 		} );
 	};
-
 	formEl.addEventListener( 'change', apply );
 	formEl.addEventListener( 'input', apply );
 	apply();

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-01T07:59:02+00:00\n"
+"POT-Creation-Date: 2026-06-01T08:47:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: conditional-product-options\n"
@@ -24,15 +24,18 @@ msgstr ""
 msgid "Add custom product fields with a drag-drop builder and conditional logic."
 msgstr ""
 
+#: dist/conditional-product-options/includes/Admin/BuilderAssets.php:23
 #: includes/Admin/BuilderAssets.php:23
 msgid "Product Options"
 msgstr ""
 
+#: dist/conditional-product-options/includes/Cart/CartIntegration.php:194
 #: includes/Cart/CartIntegration.php:194
 msgctxt "checked option in cart/order"
 msgid "Yes"
 msgstr ""
 
+#: dist/conditional-product-options/includes/Frontend/ProductFormRenderer.php:46
 #: includes/Frontend/ProductFormRenderer.php:46
 msgid "Options total:"
 msgstr ""
@@ -71,46 +74,6 @@ msgstr ""
 
 #: src/builder/Canvas.jsx:29
 msgid "Delete"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:25
-msgid "Show / require based on another field"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:33
-msgid "When field"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:39
-msgid "Operator"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:41
-msgid "is"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:41
-msgid "is not"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:45
-msgid "Value"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:50
-msgid "Then"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:53
-msgid "Show this field"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:54
-msgid "Hide this field"
-msgstr ""
-
-#: src/builder/ConditionEditor.jsx:55
-msgid "Require this field"
 msgstr ""
 
 #: src/builder/FieldPalette.jsx:13

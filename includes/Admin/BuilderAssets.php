@@ -57,6 +57,8 @@ final class BuilderAssets {
 				'root'       => esc_url_raw( rest_url( '/' ) ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'fieldTypes' => FieldTypes::all(),
+				'isPro'      => \APO\Pro\ProModule::is_pro(),
+				'operators'  => (array) apply_filters( 'apo_allowed_operators', array( 'is', 'is_not' ) ),
 			)
 		);
 	}

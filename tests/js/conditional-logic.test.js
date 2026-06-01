@@ -2,7 +2,7 @@
  * JS/PHP parity: `evaluate` must match every case in the shared fixture
  * (the same file APO\Logic\ConditionalLogic is tested against).
  */
-import { evaluate, activeMap } from '../../src/frontend/conditional-logic';
+import { evaluate, activeMap, fieldActive } from '../../src/frontend/conditional-logic';
 import cases from '../fixtures/conditional-cases.json';
 
 describe( 'evaluate (parity with PHP ConditionalLogic)', () => {
@@ -30,5 +30,31 @@ describe( 'activeMap (transitive, parity with PHP active_map)', () => {
 		const map = activeMap( fields, { gate: 'yes', a: 'yes' } );
 		expect( map.a ).toBe( true );
 		expect( map.b ).toBe( true );
+	} );
+} );
+
+describe( 'Pro operators + multi-conditions (parity with PHP)', () => {
+	it( 'contains / gt / lt operators', () => {
+		expect( evaluate( { field: 't', operator: 'contains', value: 'abc', action: 'show' }, { t: 'x abc' } ) ).toBe( true );
+		expect( evaluate( { field: 't', operator: 'contains', value: 'abc', action: 'show' }, { t: 'no' } ) ).toBe( false );
+		expect( evaluate( { field: 'n', operator: 'gt', value: '5', action: 'show' }, { n: '7' } ) ).toBe( true );
+		expect( evaluate( { field: 'n', operator: 'lt', value: '5', action: 'show' }, { n: '7' } ) ).toBe( false );
+	} );
+
+	it( 'fieldActive combines multiple rules with all / any', () => {
+		const all = {
+			conditions: [
+				{ field: 'a', operator: 'is', value: 'x' },
+				{ field: 'b', operator: 'is', value: 'y' },
+			],
+			conditionMatch: 'all',
+			conditionAction: 'show',
+		};
+		expect( fieldActive( all, { a: 'x', b: 'y' } ) ).toBe( true );
+		expect( fieldActive( all, { a: 'x', b: 'z' } ) ).toBe( false );
+
+		const any = { ...all, conditionMatch: 'any' };
+		expect( fieldActive( any, { a: 'x', b: 'z' } ) ).toBe( true );
+		expect( fieldActive( any, { a: 'p', b: 'q' } ) ).toBe( false );
 	} );
 } );
