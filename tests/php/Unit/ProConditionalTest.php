@@ -122,6 +122,41 @@ class ProConditionalTest extends TestCase {
 		$this->assertSame( 2.0, PriceCalculator::addon_total( $g, array( 'n' => '5' ), 2 ) );
 	}
 
+	public function test_swatch_type_gated_and_options_normalized(): void {
+		// Free: swatch is not a valid type -> the field is dropped.
+		$free = FieldSchema::normalize(
+			array( 'fields' => array( array( 'id' => 's', 'type' => 'swatch', 'options' => array( array( 'label' => 'Red', 'color' => '#ff0000' ) ) ) ) )
+		);
+		$this->assertCount( 0, $free['fields'] );
+
+		// Pro: swatch valid; options become {label,color}; empty-label dropped.
+		Monkey\Functions\when( 'apply_filters' )->alias(
+			function ( $tag, $value ) {
+				return 'apo_field_types' === $tag
+					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'swatch' )
+					: $value;
+			}
+		);
+		$pro = FieldSchema::normalize(
+			array(
+				'fields' => array(
+					array(
+						'id'      => 's',
+						'type'    => 'swatch',
+						'options' => array(
+							array( 'label' => 'Red', 'color' => '#ff0000' ),
+							array( 'label' => '', 'color' => '#000000' ),
+						),
+					),
+				),
+			)
+		);
+		$this->assertCount( 1, $pro['fields'] );
+		$this->assertCount( 1, $pro['fields'][0]['options'] );
+		$this->assertSame( 'Red', $pro['fields'][0]['options'][0]['label'] );
+		$this->assertSame( '#ff0000', $pro['fields'][0]['options'][0]['color'] );
+	}
+
 	public function test_schema_gates_price_mode(): void {
 		// Free default: per_unit is not allowed -> coerced to fixed.
 		$free = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );

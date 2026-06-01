@@ -26,6 +26,15 @@ final class ProModule {
 		add_filter( 'apo_allowed_operators', array( $this, 'operators' ) );
 		add_filter( 'apo_multi_conditions', '__return_true' );
 		add_filter( 'apo_price_modes', array( $this, 'price_modes' ) );
+		add_filter( 'apo_field_types', array( $this, 'field_types' ) );
+	}
+
+	/**
+	 * @param string[] $types
+	 * @return string[]
+	 */
+	public function field_types( $types ): array {
+		return array_merge( (array) $types, array( 'swatch' ) );
 	}
 
 	/**

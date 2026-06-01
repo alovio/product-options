@@ -55,6 +55,15 @@ final class OptionSanitizer {
 						$out[ $id ] = (string) $val;
 					}
 					break;
+				case 'swatch':
+					$labels = array_map(
+						static fn( $o ) => (string) ( is_array( $o ) ? ( $o['label'] ?? '' ) : $o ),
+						(array) ( $f['options'] ?? array() )
+					);
+					if ( null !== $val && in_array( (string) $val, $labels, true ) ) {
+						$out[ $id ] = (string) $val;
+					}
+					break;
 				// 'price' = auto surcharge field; no user-submitted value.
 			}
 		}

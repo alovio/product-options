@@ -25,6 +25,21 @@ function renderInput( f, value, onChange ) {
 					{ ( f.options || [] ).map( ( o ) => <option key={ o } value={ o }>{ o }</option> ) }
 				</select>
 			);
+		case 'swatch':
+			return (
+				<span className="apo-swatches">
+					{ ( f.options || [] ).map( ( o ) => {
+						const lbl = typeof o === 'object' ? o.label : o;
+						const col = typeof o === 'object' ? o.color : '#cccccc';
+						return (
+							<label key={ lbl } className="apo-swatch" title={ lbl }>
+								<input type="radio" name={ f.id } value={ lbl } checked={ value === lbl } onChange={ () => onChange( lbl ) } />
+								<span className="apo-swatch__dot" style={ { backgroundColor: col } } />
+							</label>
+						);
+					} ) }
+				</span>
+			);
 		case 'price':
 			return <em className="apo-preview__fee">+{ f.price }</em>;
 		default:

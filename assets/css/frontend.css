@@ -28,3 +28,34 @@
 .apo-options-total {
 	font-weight: 600;
 }
+
+.apo-swatches {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+}
+.apo-swatch {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+}
+.apo-swatch input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+.apo-swatch__dot {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	border: 2px solid #e2e8f0;
+	box-sizing: border-box;
+	display: inline-block;
+}
+.apo-swatch input:checked + .apo-swatch__dot {
+	outline: 2px solid #4f46e5;
+	outline-offset: 2px;
+}

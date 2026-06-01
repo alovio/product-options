@@ -99,6 +99,21 @@ final class ProductFormRenderer {
 				}
 				echo '</select>';
 				break;
+			case 'swatch':
+				echo '<div class="apo-swatches">';
+				foreach ( (array) $f['options'] as $opt ) {
+					$opt_label = is_array( $opt ) ? (string) ( $opt['label'] ?? '' ) : (string) $opt;
+					$opt_color = is_array( $opt ) ? (string) ( $opt['color'] ?? '#cccccc' ) : '#cccccc';
+					printf(
+						'<label class="apo-swatch" title="%1$s"><input type="radio" name="%2$s" value="%1$s"%3$s /><span class="apo-swatch__dot" style="background-color:%4$s"></span><span class="apo-swatch__label">%1$s</span></label>',
+						esc_attr( $opt_label ),
+						esc_attr( $name ),
+						$req,
+						esc_attr( $opt_color )
+					);
+				}
+				echo '</div>';
+				break;
 			case 'price':
 				printf(
 					'<input type="hidden" name="%s" value="yes" /><span class="apo-fee">+%s</span>',

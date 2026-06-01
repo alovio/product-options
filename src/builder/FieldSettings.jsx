@@ -3,6 +3,7 @@ import { TextControl, ToggleControl, TextareaControl, SelectControl } from '@wor
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 import ConditionEditor from './ConditionEditor';
+import SwatchOptions from './SwatchOptions';
 
 const HAS_OPTIONS = [ 'radio', 'select' ];
 
@@ -55,6 +56,9 @@ export default function FieldSettings() {
 					value={ ( field.options || [] ).join( '\n' ) }
 					onChange={ ( v ) => set( { options: v.split( '\n' ).map( ( s ) => s.trim() ).filter( Boolean ) } ) }
 				/>
+			) }
+			{ field.type === 'swatch' && (
+				<SwatchOptions value={ field.options } onChange={ ( opts ) => set( { options: opts } ) } />
 			) }
 			<ConditionEditor field={ field } />
 		</div>

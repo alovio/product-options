@@ -89,3 +89,34 @@
 	font-weight: 600;
 	margin-bottom: 4px;
 }
+
+.apo-swatch-options__title {
+	display: block;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #6b7280;
+	margin-bottom: 6px;
+}
+.apo-swatch-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+.apo-swatch-row input[type="color"] {
+	width: 34px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	background: none;
+}
+.apo-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.apo-swatch { cursor: pointer; }
+.apo-swatch__dot {
+	width: 24px; height: 24px; border-radius: 50%;
+	border: 2px solid #e2e8f0; display: inline-block; box-sizing: border-box;
+}
+.apo-swatch input { position: absolute; opacity: 0; }
+.apo-swatch input:checked + .apo-swatch__dot { outline: 2px solid #4f46e5; outline-offset: 2px; }

@@ -22,6 +22,7 @@ abstract class TestCase extends PHPUnitTestCase {
 		Monkey\Functions\when( 'add_filter' )->justReturn( true );
 		Monkey\Functions\when( 'sanitize_text_field' )->returnArg( 1 );
 		Monkey\Functions\when( 'sanitize_textarea_field' )->returnArg( 1 );
+		Monkey\Functions\when( 'sanitize_hex_color' )->returnArg( 1 );
 	}
 
 	protected function tearDown(): void {

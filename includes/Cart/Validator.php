@@ -48,9 +48,11 @@ final class Validator {
 				$errors[] = sprintf( '“%s” must be a number.', $label );
 			}
 
-			if ( in_array( $type, array( 'select', 'radio' ), true ) && ! empty( $f['options'] ) ) {
-				$opts = array_map( 'strval', (array) $f['options'] );
-				if ( ! in_array( (string) $value, $opts, true ) ) {
+			if ( in_array( $type, array( 'select', 'radio', 'swatch' ), true ) && ! empty( $f['options'] ) ) {
+				$valid = ( 'swatch' === $type )
+					? array_map( static fn( $o ) => (string) ( $o['label'] ?? '' ), (array) $f['options'] )
+					: array_map( 'strval', (array) $f['options'] );
+				if ( ! in_array( (string) $value, $valid, true ) ) {
 					$errors[] = sprintf( '“%s” has an invalid selection.', $label );
 				}
 			}

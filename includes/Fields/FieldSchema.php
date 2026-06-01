@@ -52,9 +52,7 @@ final class FieldSchema {
 				'required'  => ! empty( $f['required'] ),
 				'price'     => $price < 0 ? 0.0 : $price,
 				'priceMode' => in_array( $pm, $modes, true ) ? $pm : 'fixed',
-				'options'   => ( isset( $f['options'] ) && is_array( $f['options'] ) )
-					? array_values( array_map( static fn( $o ) => sanitize_text_field( (string) $o ), $f['options'] ) )
-					: array(),
+				'options'   => self::normalize_options( $f ),
 			);
 			$out[] = array_merge( $entry, self::normalize_conditional( $f, $ids, (string) $f['id'], $ops, $actions, $multi ) );
 		}
@@ -140,6 +138,35 @@ final class FieldSchema {
 	 * @param string[]            $ops
 	 * @return array<string,mixed>|null
 	 */
+	/**
+	 * Normalize a field's options. Swatch options are objects {label, color};
+	 * all other option-bearing types are plain strings.
+	 *
+	 * @param array<string,mixed> $f
+	 * @return array<int,mixed>
+	 */
+	private static function normalize_options( array $f ): array {
+		$raw = ( isset( $f['options'] ) && is_array( $f['options'] ) ) ? $f['options'] : array();
+
+		if ( 'swatch' === ( $f['type'] ?? '' ) ) {
+			$out = array();
+			foreach ( $raw as $o ) {
+				$label = is_array( $o ) ? sanitize_text_field( (string) ( $o['label'] ?? '' ) ) : sanitize_text_field( (string) $o );
+				if ( '' === $label ) {
+					continue;
+				}
+				$color = is_array( $o ) ? sanitize_hex_color( (string) ( $o['color'] ?? '' ) ) : '';
+				$out[] = array(
+					'label' => $label,
+					'color' => $color ? $color : '#cccccc',
+				);
+			}
+			return $out;
+		}
+
+		return array_values( array_map( static fn( $o ) => sanitize_text_field( (string) $o ), $raw ) );
+	}
+
 	private static function normalize_rule( array $rule, array $ids, string $self_id, array $ops ): ?array {
 		$field = isset( $rule['field'] ) ? (string) $rule['field'] : '';
 		if ( '' === $field || $field === $self_id || ! in_array( $field, $ids, true ) ) {

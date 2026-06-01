@@ -12,6 +12,16 @@ export const DEFAULTS = {
 	radio: { label: 'Choose one', required: false, price: 0, options: [ 'Option 1' ], condition: null },
 	select: { label: 'Select', required: false, price: 0, options: [ 'Option 1' ], condition: null },
 	price: { label: 'Surcharge', required: false, price: 0, options: [], condition: null },
+	swatch: {
+		label: 'Choose a colour',
+		required: false,
+		price: 0,
+		options: [
+			{ label: 'Red', color: '#ef4444' },
+			{ label: 'Blue', color: '#3b82f6' },
+		],
+		condition: null,
+	},
 };
 
 let counter = 0;

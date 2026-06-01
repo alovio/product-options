@@ -47,6 +47,12 @@ class OptionSanitizerTest extends TestCase {
 		$this->assertSame( array( 's' => 'M' ), OptionSanitizer::sanitize( $g, array( 's' => 'M' ) ) );
 	}
 
+	public function test_swatch_value_validated_against_labels(): void {
+		$g = $this->group( array( array( 'id' => 'sw', 'type' => 'swatch', 'options' => array( array( 'label' => 'Red', 'color' => '#f00' ), array( 'label' => 'Blue', 'color' => '#00f' ) ) ) ) );
+		$this->assertSame( array( 'sw' => 'Blue' ), OptionSanitizer::sanitize( $g, array( 'sw' => 'Blue' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'sw' => 'Purple' ) ) );
+	}
+
 	public function test_price_type_has_no_user_value(): void {
 		$g = $this->group( array( array( 'id' => 'p', 'type' => 'price', 'price' => 5.0 ) ) );
 		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'p' => 'whatever' ) ) );
