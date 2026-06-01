@@ -38,8 +38,10 @@ final class CartIntegration {
 		if ( ! isset( $_POST['apo'] ) || ! is_array( $_POST['apo'] ) ) {
 			return array();
 		}
+		// Blanket text-sanitize here (the add-to-cart nonce is handled by WooCommerce);
+		// OptionSanitizer then applies per-field, type-aware sanitization.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		return (array) wp_unslash( $_POST['apo'] );
+		return map_deep( wp_unslash( $_POST['apo'] ), 'sanitize_text_field' );
 	}
 
 	/**

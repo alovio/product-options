@@ -1,0 +1,19 @@
+# Files excluded from the distributed wp.org plugin zip (dev-only).
+/.git
+/.github
+/.gitignore
+/.distignore
+/.wp-env.json
+/.playwright-mcp
+/node_modules
+/src
+/assets
+/tests
+/docs
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/phpunit.xml.dist
+/webpack.config.js
+/.phpunit.result.cache
