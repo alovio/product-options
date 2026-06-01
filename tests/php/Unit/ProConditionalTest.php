@@ -117,6 +117,12 @@ class ProConditionalTest extends TestCase {
 		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 'n' => '0' ), 2 ) ); // 0 not engaged
 	}
 
+	public function test_percent_pricing_uses_base(): void {
+		$g = array( 'version' => 1, 'fields' => array( array( 'id' => 'c', 'type' => 'checkbox', 'price' => 10, 'priceMode' => 'percent', 'condition' => null ) ) );
+		$this->assertSame( 20.0, PriceCalculator::addon_total( $g, array( 'c' => 'yes' ), 2, 200.0 ) ); // 10% of 200
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array(), 2, 200.0 ) ); // not engaged
+	}
+
 	public function test_fixed_mode_ignores_quantity(): void {
 		$g = array( 'version' => 1, 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 2.0, 'priceMode' => 'fixed', 'condition' => null ) ) );
 		$this->assertSame( 2.0, PriceCalculator::addon_total( $g, array( 'n' => '5' ), 2 ) );

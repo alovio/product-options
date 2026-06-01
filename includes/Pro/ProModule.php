@@ -50,6 +50,6 @@ final class ProModule {
 	 * @return string[]
 	 */
 	public function price_modes( $modes ): array {
-		return array( 'fixed', 'per_unit' );
+		return array( 'fixed', 'per_unit', 'percent' );
 	}
 }

@@ -18,7 +18,7 @@ final class PriceCalculator {
 	 * @param array<string,mixed> $group
 	 * @param array<string,mixed> $submitted
 	 */
-	public static function addon_total( array $group, array $submitted, int $decimals = 2 ): float {
+	public static function addon_total( array $group, array $submitted, int $decimals = 2, float $base = 0.0 ): float {
 		$total  = 0.0;
 		$active = ConditionalLogic::active_map( $group, $submitted );
 
@@ -35,9 +35,13 @@ final class PriceCalculator {
 			if ( ! self::is_engaged( $type, $value ) ) {
 				continue;
 			}
-			// Pro: per-unit pricing on number fields (fee = unit price x quantity).
-			if ( 'per_unit' === ( $f['priceMode'] ?? 'fixed' ) && 'number' === $type && is_numeric( $value ) ) {
+			// Pro pricing modes: per-unit (× quantity on number fields) and percent
+			// (% of the product base price). Default is a flat fixed fee.
+			$mode = (string) ( $f['priceMode'] ?? 'fixed' );
+			if ( 'per_unit' === $mode && 'number' === $type && is_numeric( $value ) ) {
 				$total += $price * (float) $value;
+			} elseif ( 'percent' === $mode ) {
+				$total += $base * $price / 100;
 			} else {
 				$total += $price;
 			}

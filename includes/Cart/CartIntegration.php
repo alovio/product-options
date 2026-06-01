@@ -124,8 +124,9 @@ final class CartIntegration {
 			}
 			$product_id = isset( $item['product_id'] ) ? (int) $item['product_id'] : (int) $item['data']->get_id();
 			$group      = $this->repo->get( $product_id );
-			$addon      = PriceCalculator::addon_total( $group, $item['apo']['options'] ?? array(), wc_get_price_decimals() );
-			$item['data']->set_price( (float) $item['apo']['base_price'] + $addon );
+			$base       = (float) $item['apo']['base_price'];
+			$addon      = PriceCalculator::addon_total( $group, $item['apo']['options'] ?? array(), wc_get_price_decimals(), $base );
+			$item['data']->set_price( $base + $addon );
 		}
 	}
 

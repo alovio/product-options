@@ -38,8 +38,9 @@ final class ProductFormRenderer {
 			return;
 		}
 
+		$base   = ( is_object( $product ) && method_exists( $product, 'get_price' ) ) ? (float) $product->get_price() : 0.0;
 		$active = ConditionalLogic::active_map( $group, array() );
-		echo '<div class="apo-options">';
+		printf( '<div class="apo-options" data-apo-base="%s">', esc_attr( (string) $base ) );
 		foreach ( $fields as $f ) {
 			$this->render_field( $f, ! empty( $active[ $f['id'] ?? '' ] ) );
 		}

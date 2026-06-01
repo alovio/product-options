@@ -4,7 +4,7 @@
  */
 import { activeMap, readValues } from './conditional-logic';
 
-export function computeAddonTotal( fields, values ) {
+export function computeAddonTotal( fields, values, base = 0 ) {
 	let total = 0;
 	const map = activeMap( fields, values );
 	fields.forEach( ( f ) => {
@@ -32,6 +32,8 @@ export function computeAddonTotal( fields, values ) {
 		}
 		if ( f.priceMode === 'per_unit' && f.type === 'number' && ! isNaN( num ) ) {
 			total += price * num;
+		} else if ( f.priceMode === 'percent' ) {
+			total += ( base * price ) / 100;
 		} else {
 			total += price;
 		}
@@ -39,9 +41,9 @@ export function computeAddonTotal( fields, values ) {
 	return total;
 }
 
-export function wirePrices( formEl, fields, displayEl ) {
+export function wirePrices( formEl, fields, displayEl, base = 0 ) {
 	const update = () => {
-		const total = computeAddonTotal( fields, readValues( formEl, fields ) );
+		const total = computeAddonTotal( fields, readValues( formEl, fields ), base );
 		if ( displayEl ) {
 			displayEl.textContent = '+' + total.toFixed( 2 );
 		}

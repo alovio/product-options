@@ -34,18 +34,23 @@ export default function FieldSettings() {
 				label={
 					field.priceMode === 'per_unit'
 						? __( 'Unit price', 'conditional-product-options' )
-						: __( 'Add-on price', 'conditional-product-options' )
+						: field.priceMode === 'percent'
+							? __( 'Percentage (%)', 'conditional-product-options' )
+							: __( 'Add-on price', 'conditional-product-options' )
 				}
 				value={ field.price }
 				onChange={ ( v ) => set( { price: parseFloat( v ) || 0 } ) }
 			/>
-			{ !! ( window.APO_BUILDER && window.APO_BUILDER.isPro ) && field.type === 'number' && (
+			{ !! ( window.APO_BUILDER && window.APO_BUILDER.isPro ) && (
 				<SelectControl
 					label={ __( 'Pricing', 'conditional-product-options' ) }
 					value={ field.priceMode || 'fixed' }
 					options={ [
 						{ label: __( 'Fixed fee', 'conditional-product-options' ), value: 'fixed' },
-						{ label: __( 'Per unit (× quantity entered)', 'conditional-product-options' ), value: 'per_unit' },
+						...( field.type === 'number'
+							? [ { label: __( 'Per unit (× quantity entered)', 'conditional-product-options' ), value: 'per_unit' } ]
+							: [] ),
+						{ label: __( 'Percentage of product price', 'conditional-product-options' ), value: 'percent' },
 					] }
 					onChange={ ( v ) => set( { priceMode: v } ) }
 				/>

@@ -20,8 +20,10 @@ function init() {
 			return;
 		}
 		wire( form, fields );
+		const optionsEl = node.closest( '.apo-options' );
+		const base = optionsEl ? parseFloat( optionsEl.dataset.apoBase ) || 0 : 0;
 		const totalEl = form.querySelector( '.apo-options-total__value' );
-		wirePrices( form, fields, totalEl );
+		wirePrices( form, fields, totalEl, base );
 	} );
 }
 

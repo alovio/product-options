@@ -12,6 +12,12 @@ describe( 'computeAddonTotal', () => {
 		expect( computeAddonTotal( fields, { n: '5' } ) ).toBe( 2 );
 	} );
 
+	it( 'percentage mode uses the product base price', () => {
+		const fields = [ { id: 'c', type: 'checkbox', price: 10, priceMode: 'percent', condition: null } ];
+		expect( computeAddonTotal( fields, { c: 'yes' }, 200 ) ).toBe( 20 ); // 10% of 200
+		expect( computeAddonTotal( fields, {}, 200 ) ).toBe( 0 );
+	} );
+
 	it( 'fixed fee added once for a non-number engaged field', () => {
 		const fields = [ { id: 'c', type: 'checkbox', price: 4, condition: null } ];
 		expect( computeAddonTotal( fields, { c: 'yes' } ) ).toBe( 4 );
