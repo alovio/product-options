@@ -2,12 +2,13 @@
  * Display-only add-on total on the product page. The authoritative price is
  * computed server-side (APO\Cart\PriceCalculator); this mirrors it for UX.
  */
-import { evaluate, readValues } from './conditional-logic';
+import { activeMap, readValues } from './conditional-logic';
 
 export function computeAddonTotal( fields, values ) {
 	let total = 0;
+	const map = activeMap( fields, values );
 	fields.forEach( ( f ) => {
-		if ( ! evaluate( f.condition, values ) ) {
+		if ( ! map[ f.id ] ) {
 			return;
 		}
 		const price = parseFloat( f.price ) || 0;

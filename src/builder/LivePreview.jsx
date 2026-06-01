@@ -2,7 +2,7 @@ import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
-import { evaluate } from '../frontend/conditional-logic';
+import { activeMap } from '../frontend/conditional-logic';
 
 function renderInput( f, value, onChange ) {
 	switch ( f.type ) {
@@ -41,10 +41,12 @@ export default function LivePreview() {
 		return <p className="apo-preview apo-preview--empty">{ __( 'No fields yet.', 'advanced-product-options' ) }</p>;
 	}
 
+	const map = activeMap( fields, values );
+
 	return (
 		<form className="apo-preview" onSubmit={ ( e ) => e.preventDefault() }>
 			{ fields.map( ( f ) => {
-				if ( ! evaluate( f.condition, values ) ) {
+				if ( ! map[ f.id ] ) {
 					return null;
 				}
 				return (

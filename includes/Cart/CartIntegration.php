@@ -136,11 +136,12 @@ final class CartIntegration {
 		if ( empty( $cart_item['apo']['options'] ) ) {
 			return $item_data;
 		}
-		$labels = $this->labels_map( (int) ( $cart_item['product_id'] ?? 0 ) );
+		$fields = $this->fields_by_id( (int) ( $cart_item['product_id'] ?? 0 ) );
 		foreach ( $cart_item['apo']['options'] as $fid => $val ) {
+			$f           = $fields[ $fid ] ?? null;
 			$item_data[] = array(
-				'key'   => $labels[ $fid ] ?? $fid,
-				'value' => wc_clean( is_array( $val ) ? implode( ', ', $val ) : (string) $val ),
+				'key'   => ( $f && '' !== $f['label'] ) ? $f['label'] : $fid,
+				'value' => wc_clean( self::format_value( $f, $val ) ),
 			);
 		}
 		return $item_data;
@@ -156,22 +157,44 @@ final class CartIntegration {
 		if ( empty( $values['apo']['options'] ) ) {
 			return;
 		}
-		$labels = $this->labels_map( (int) ( $values['product_id'] ?? 0 ) );
+		$fields = $this->fields_by_id( (int) ( $values['product_id'] ?? 0 ) );
 		foreach ( $values['apo']['options'] as $fid => $val ) {
+			$f = $fields[ $fid ] ?? null;
 			$item->add_meta_data(
-				$labels[ $fid ] ?? $fid,
-				is_array( $val ) ? implode( ', ', $val ) : (string) $val,
+				( $f && '' !== $f['label'] ) ? $f['label'] : $fid,
+				self::format_value( $f, $val ),
 				true
 			);
 		}
 	}
 
-	/** @return array<string,string> id => human label */
-	private function labels_map( int $product_id ): array {
+	/** @return array<string,array<string,mixed>> id => field definition */
+	private function fields_by_id( int $product_id ): array {
 		$map = array();
 		foreach ( $this->repo->get( $product_id )['fields'] ?? array() as $f ) {
-			$map[ $f['id'] ] = ( '' !== $f['label'] ) ? $f['label'] : $f['id'];
+			$map[ $f['id'] ] = $f;
 		}
 		return $map;
+	}
+
+	/**
+	 * Human-readable display value for cart/order/email.
+	 *
+	 * @param array<string,mixed>|null $field
+	 * @param mixed                    $val
+	 */
+	private static function format_value( $field, $val ): string {
+		if ( is_array( $val ) ) {
+			$val = implode( ', ', $val );
+		}
+		$type = $field['type'] ?? '';
+		if ( 'checkbox' === $type ) {
+			return _x( 'Yes', 'checked option in cart/order', 'advanced-product-options' );
+		}
+		if ( 'number' === $type && is_numeric( $val ) ) {
+			$num = (float) $val;
+			return ( floor( $num ) === $num ) ? (string) (int) $num : (string) $num;
+		}
+		return (string) $val;
 	}
 }

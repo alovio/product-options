@@ -32,6 +32,46 @@ export function evaluate( condition, values ) {
 }
 
 /**
+ * Resolve active state for all fields, transitively (mirrors PHP
+ * ConditionalLogic::active_map): a field is active only if its own condition
+ * passes AND its controller is also active. Cycle-safe.
+ *
+ * @param {Array} fields
+ * @param {Object} values
+ * @return {Object} id -> boolean
+ */
+export function activeMap( fields, values ) {
+	const byId = {};
+	fields.forEach( ( f ) => {
+		byId[ f.id ] = f;
+	} );
+	const cache = {};
+	const inStack = {};
+	const resolve = ( id ) => {
+		if ( id in cache ) {
+			return cache[ id ];
+		}
+		if ( ! byId[ id ] || inStack[ id ] ) {
+			return true;
+		}
+		inStack[ id ] = true;
+		const f = byId[ id ];
+		let active = evaluate( f.condition, values );
+		if ( f.condition && f.condition.field ) {
+			active = active && resolve( f.condition.field );
+		}
+		delete inStack[ id ];
+		cache[ id ] = active;
+		return active;
+	};
+	const map = {};
+	fields.forEach( ( f ) => {
+		map[ f.id ] = resolve( f.id );
+	} );
+	return map;
+}
+
+/**
  * Read current submitted values from a product form, keyed by field id.
  *
  * @param {HTMLElement} formEl
@@ -74,6 +114,7 @@ export function wire( formEl, fields ) {
 
 	const apply = () => {
 		const values = readValues( formEl, fields );
+		const map = activeMap( fields, values );
 		fields.forEach( ( f ) => {
 			if ( ! f.condition ) {
 				return;
@@ -82,7 +123,7 @@ export function wire( formEl, fields ) {
 			if ( ! wrap ) {
 				return;
 			}
-			const active = evaluate( f.condition, values );
+			const active = map[ f.id ];
 			wrap.hidden = ! active;
 			const input = wrap.querySelector( 'input, select, textarea' );
 			if ( input ) {

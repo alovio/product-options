@@ -37,8 +37,9 @@ final class PriceCalculator {
 		}
 
 		$total = round( $total, $decimals );
+		$total = (float) apply_filters( 'apo_addon_total', $total, $group, $submitted );
 
-		return (float) apply_filters( 'apo_addon_total', $total, $group, $submitted );
+		return round( $total, $decimals );
 	}
 
 	/** @param mixed $value */
