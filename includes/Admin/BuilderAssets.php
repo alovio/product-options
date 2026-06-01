@@ -19,7 +19,7 @@ final class BuilderAssets {
 
 	public function add_meta_box(): void {
 		add_meta_box(
-			'apo-builder',
+			'apo-builder-box',
 			__( 'Product Options', 'advanced-product-options' ),
 			array( $this, 'render_box' ),
 			'product',
