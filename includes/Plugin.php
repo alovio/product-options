@@ -31,6 +31,8 @@ final class Plugin {
 
 		( new \APO\Admin\RestController() )->register();
 		( new \APO\Admin\BuilderAssets() )->register();
-		// Wired in later tasks: Frontend\ProductFormRenderer, Frontend\FrontendAssets, Cart\CartIntegration.
+		( new \APO\Frontend\ProductFormRenderer() )->register();
+		( new \APO\Frontend\FrontendAssets() )->register();
+		( new \APO\Cart\CartIntegration() )->register();
 	}
 }
