@@ -16,15 +16,23 @@ export function computeAddonTotal( fields, values ) {
 			return;
 		}
 		const v = values[ f.id ];
+		const num = parseFloat( v );
 		let engaged;
 		if ( f.type === 'price' ) {
 			engaged = true;
 		} else if ( f.type === 'checkbox' ) {
 			engaged = !! v && v !== '0';
+		} else if ( f.type === 'number' ) {
+			engaged = v !== undefined && v !== '' && ! isNaN( num ) && num !== 0;
 		} else {
 			engaged = v !== undefined && v !== null && v !== '';
 		}
-		if ( engaged ) {
+		if ( ! engaged ) {
+			return;
+		}
+		if ( f.priceMode === 'per_unit' && f.type === 'number' && ! isNaN( num ) ) {
+			total += price * num;
+		} else {
 			total += price;
 		}
 	} );

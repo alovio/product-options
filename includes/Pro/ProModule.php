@@ -25,6 +25,7 @@ final class ProModule {
 		}
 		add_filter( 'apo_allowed_operators', array( $this, 'operators' ) );
 		add_filter( 'apo_multi_conditions', '__return_true' );
+		add_filter( 'apo_price_modes', array( $this, 'price_modes' ) );
 	}
 
 	/**
@@ -33,5 +34,13 @@ final class ProModule {
 	 */
 	public function operators( $operators ): array {
 		return array( 'is', 'is_not', 'contains', 'gt', 'lt' );
+	}
+
+	/**
+	 * @param string[] $modes
+	 * @return string[]
+	 */
+	public function price_modes( $modes ): array {
+		return array( 'fixed', 'per_unit' );
 	}
 }

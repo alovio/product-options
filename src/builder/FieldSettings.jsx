@@ -1,5 +1,5 @@
 import { useDispatch, useSelect } from '@wordpress/data';
-import { TextControl, ToggleControl, TextareaControl } from '@wordpress/components';
+import { TextControl, ToggleControl, TextareaControl, SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 import ConditionEditor from './ConditionEditor';
@@ -30,10 +30,25 @@ export default function FieldSettings() {
 			/>
 			<TextControl
 				type="number"
-				label={ __( 'Add-on price', 'conditional-product-options' ) }
+				label={
+					field.priceMode === 'per_unit'
+						? __( 'Unit price', 'conditional-product-options' )
+						: __( 'Add-on price', 'conditional-product-options' )
+				}
 				value={ field.price }
 				onChange={ ( v ) => set( { price: parseFloat( v ) || 0 } ) }
 			/>
+			{ !! ( window.APO_BUILDER && window.APO_BUILDER.isPro ) && field.type === 'number' && (
+				<SelectControl
+					label={ __( 'Pricing', 'conditional-product-options' ) }
+					value={ field.priceMode || 'fixed' }
+					options={ [
+						{ label: __( 'Fixed fee', 'conditional-product-options' ), value: 'fixed' },
+						{ label: __( 'Per unit (× quantity entered)', 'conditional-product-options' ), value: 'per_unit' },
+					] }
+					onChange={ ( v ) => set( { priceMode: v } ) }
+				/>
+			) }
 			{ HAS_OPTIONS.includes( field.type ) && (
 				<TextareaControl
 					label={ __( 'Options (one per line)', 'conditional-product-options' ) }

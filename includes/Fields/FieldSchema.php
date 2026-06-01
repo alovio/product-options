@@ -18,6 +18,7 @@ final class FieldSchema {
 		$ops     = (array) apply_filters( 'apo_allowed_operators', array( 'is', 'is_not' ) );
 		$actions = (array) apply_filters( 'apo_allowed_actions', array( 'show', 'hide', 'require' ) );
 		$multi   = (bool) apply_filters( 'apo_multi_conditions', false );
+		$modes   = (array) apply_filters( 'apo_price_modes', array( 'fixed' ) );
 
 		// First pass: keep valid-typed fields with unique, non-empty ids.
 		$kept = array();
@@ -43,13 +44,15 @@ final class FieldSchema {
 		$out = array();
 		foreach ( $kept as $f ) {
 			$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
+			$pm    = (string) ( $f['priceMode'] ?? 'fixed' );
 			$entry = array(
 				'id'       => (string) $f['id'],
 				'type'     => (string) $f['type'],
 				'label'    => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
-				'required' => ! empty( $f['required'] ),
-				'price'    => $price < 0 ? 0.0 : $price,
-				'options'  => ( isset( $f['options'] ) && is_array( $f['options'] ) )
+				'required'  => ! empty( $f['required'] ),
+				'price'     => $price < 0 ? 0.0 : $price,
+				'priceMode' => in_array( $pm, $modes, true ) ? $pm : 'fixed',
+				'options'   => ( isset( $f['options'] ) && is_array( $f['options'] ) )
 					? array_values( array_map( static fn( $o ) => sanitize_text_field( (string) $o ), $f['options'] ) )
 					: array(),
 			);

@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace APO\Tests\Unit;
 
+use APO\Cart\PriceCalculator;
 use APO\Fields\FieldSchema;
 use APO\Logic\ConditionalLogic;
 use Brain\Monkey;
@@ -108,5 +109,31 @@ class ProConditionalTest extends TestCase {
 		$c = $out['fields'][1];
 		$this->assertArrayNotHasKey( 'conditions', $c );
 		$this->assertNull( $c['condition'] );
+	}
+
+	public function test_per_unit_pricing_multiplies_by_quantity(): void {
+		$g = array( 'version' => 1, 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 0.5, 'priceMode' => 'per_unit', 'condition' => null ) ) );
+		$this->assertSame( 1.5, PriceCalculator::addon_total( $g, array( 'n' => '3' ), 2 ) );
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 'n' => '0' ), 2 ) ); // 0 not engaged
+	}
+
+	public function test_fixed_mode_ignores_quantity(): void {
+		$g = array( 'version' => 1, 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 2.0, 'priceMode' => 'fixed', 'condition' => null ) ) );
+		$this->assertSame( 2.0, PriceCalculator::addon_total( $g, array( 'n' => '5' ), 2 ) );
+	}
+
+	public function test_schema_gates_price_mode(): void {
+		// Free default: per_unit is not allowed -> coerced to fixed.
+		$free = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );
+		$this->assertSame( 'fixed', $free['fields'][0]['priceMode'] );
+
+		// Pro: per_unit allowed.
+		Monkey\Functions\when( 'apply_filters' )->alias(
+			function ( $tag, $value ) {
+				return 'apo_price_modes' === $tag ? array( 'fixed', 'per_unit' ) : $value;
+			}
+		);
+		$pro = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );
+		$this->assertSame( 'per_unit', $pro['fields'][0]['priceMode'] );
 	}
 }

@@ -30,8 +30,15 @@ final class PriceCalculator {
 			if ( $price <= 0 ) {
 				continue;
 			}
+			$type  = (string) ( $f['type'] ?? '' );
 			$value = $submitted[ $f['id'] ?? '' ] ?? null;
-			if ( self::is_engaged( (string) ( $f['type'] ?? '' ), $value ) ) {
+			if ( ! self::is_engaged( $type, $value ) ) {
+				continue;
+			}
+			// Pro: per-unit pricing on number fields (fee = unit price x quantity).
+			if ( 'per_unit' === ( $f['priceMode'] ?? 'fixed' ) && 'number' === $type && is_numeric( $value ) ) {
+				$total += $price * (float) $value;
+			} else {
 				$total += $price;
 			}
 		}
