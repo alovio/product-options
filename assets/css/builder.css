@@ -1,0 +1,91 @@
+.apo-app {
+	max-width: 100%;
+}
+
+.apo-build {
+	display: grid;
+	grid-template-columns: 180px 1fr 300px;
+	gap: 16px;
+	align-items: start;
+}
+
+.apo-palette h3 {
+	margin: 0 0 8px;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #6b7280;
+}
+
+.apo-palette__btn {
+	display: block !important;
+	width: 100%;
+	margin-bottom: 6px;
+	text-transform: capitalize;
+}
+
+.apo-canvas {
+	margin: 0;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	min-height: 120px;
+	padding: 6px;
+}
+
+.apo-canvas--empty,
+.apo-settings--empty,
+.apo-preview--empty {
+	color: #94a3b8;
+	padding: 24px;
+	text-align: center;
+	border: 1px dashed #e2e8f0;
+	border-radius: 8px;
+}
+
+.apo-canvas li {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	margin: 0;
+}
+
+.apo-canvas li.is-selected {
+	background: #eef0fe;
+	box-shadow: inset 0 0 0 1px #818cf8;
+}
+
+.apo-canvas__label em {
+	color: #94a3b8;
+	font-style: normal;
+	font-size: 12px;
+}
+
+.apo-settings,
+.apo-condition {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.apo-condition {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid #eef0f3;
+}
+
+.apo-actions {
+	margin-top: 16px;
+}
+
+.apo-preview__field {
+	margin-bottom: 12px;
+}
+
+.apo-preview__field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}

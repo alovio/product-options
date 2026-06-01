@@ -29,7 +29,8 @@ final class Plugin {
 		}
 		$this->booted = true;
 
-		// Subsystems are wired here in later tasks
-		// (Admin\RestController, Admin\BuilderAssets, Frontend\*, Cart\CartIntegration).
+		( new \APO\Admin\RestController() )->register();
+		( new \APO\Admin\BuilderAssets() )->register();
+		// Wired in later tasks: Frontend\ProductFormRenderer, Frontend\FrontendAssets, Cart\CartIntegration.
 	}
 }

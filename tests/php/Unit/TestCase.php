@@ -18,6 +18,8 @@ abstract class TestCase extends PHPUnitTestCase {
 		// `apply_filters( $tag, $value, ...$args )` -> returns $value (2nd arg).
 		Monkey\Functions\when( 'apply_filters' )->returnArg( 2 );
 		Monkey\Functions\when( '__' )->returnArg( 1 );
+		Monkey\Functions\when( 'add_action' )->justReturn( true );
+		Monkey\Functions\when( 'add_filter' )->justReturn( true );
 	}
 
 	protected function tearDown(): void {
