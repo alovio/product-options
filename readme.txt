@@ -45,6 +45,11 @@ Yes. Showing, hiding, and requiring fields based on another field's value is in 
 = Is it compatible with HPOS? =
 Yes — order data is written via WooCommerce CRUD APIs.
 
+== Screenshots ==
+
+1. The drag-and-drop builder with conditional logic — show, hide, or require a field based on another field's value.
+2. Options on the product page: a conditional gift message appears when gift wrapping is selected, with a live options total.
+
 == Changelog ==
 
 = 0.1.0 =

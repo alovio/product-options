@@ -17,3 +17,4 @@
 /phpunit.xml.dist
 /webpack.config.js
 /.phpunit.result.cache
+/.wordpress-org
