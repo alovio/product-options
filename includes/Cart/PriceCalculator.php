@@ -1,16 +1,16 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Cart;
+namespace CoreLabs\ProductOptions\Cart;
 
-use APO\Logic\ConditionalLogic;
+use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Sum fixed-fee add-ons for the engaged, active fields of a group.
  * Decimals are injected (not read from WC) to keep this unit-testable.
- * `apo_addon_total` is the Pro formula/percentage/quantity extension point.
+ * `clpo_addon_total` is the Pro formula/percentage/quantity extension point.
  */
 final class PriceCalculator {
 
@@ -48,7 +48,7 @@ final class PriceCalculator {
 		}
 
 		$total = round( $total, $decimals );
-		$total = (float) apply_filters( 'apo_addon_total', $total, $group, $submitted );
+		$total = (float) apply_filters( 'clpo_addon_total', $total, $group, $submitted );
 
 		return round( $total, $decimals );
 	}

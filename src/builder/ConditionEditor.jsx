@@ -3,7 +3,7 @@ import { ToggleControl, SelectControl, TextControl, Button } from '@wordpress/co
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 
-const D = 'conditional-product-options';
+const D = 'corelabs-product-options';
 const OP_LABELS = {
 	is: __( 'is', D ),
 	is_not: __( 'is not', D ),
@@ -33,8 +33,8 @@ export default function ConditionEditor( { field } ) {
 	const { updateField } = useDispatch( STORE );
 	const others = fields.filter( ( f ) => f.id !== field.id );
 
-	const isPro = !! ( window.APO_BUILDER && window.APO_BUILDER.isPro );
-	const operators = ( window.APO_BUILDER && window.APO_BUILDER.operators ) || [ 'is', 'is_not' ];
+	const isPro = !! ( window.CLPO_BUILDER && window.CLPO_BUILDER.isPro );
+	const operators = ( window.CLPO_BUILDER && window.CLPO_BUILDER.operators ) || [ 'is', 'is_not' ];
 	const opOptions = operators.map( ( o ) => ( { label: OP_LABELS[ o ] || o, value: o } ) );
 	const actionOptions = [
 		{ label: __( 'Show this field', D ), value: 'show' },

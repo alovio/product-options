@@ -1,5 +1,5 @@
 /**
- * Front-end conditional logic. Mirrors PHP APO\Logic\ConditionalLogic and is
+ * Front-end conditional logic. Mirrors PHP CoreLabs\ProductOptions\Logic\ConditionalLogic and is
  * kept in lockstep via tests/fixtures/conditional-cases.json.
  *
  * Free: a single `condition` {field, operator, value, action} (operators is/is_not).

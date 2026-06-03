@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Logic;
+namespace CoreLabs\ProductOptions\Logic;
 
 defined( 'ABSPATH' ) || exit;
 

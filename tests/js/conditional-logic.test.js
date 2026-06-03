@@ -1,6 +1,6 @@
 /**
  * JS/PHP parity: `evaluate` must match every case in the shared fixture
- * (the same file APO\Logic\ConditionalLogic is tested against).
+ * (the same file CoreLabs\ProductOptions\Logic\ConditionalLogic is tested against).
  */
 import { evaluate, activeMap, fieldActive } from '../../src/frontend/conditional-logic';
 import cases from '../fixtures/conditional-cases.json';

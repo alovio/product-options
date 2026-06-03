@@ -12,7 +12,7 @@ export default function Canvas() {
 	const [ overIndex, setOverIndex ] = useState( null );
 
 	if ( ! fields.length ) {
-		return <div className="apo-canvas apo-canvas--empty">{ __( 'Add a field from the left to get started.', 'conditional-product-options' ) }</div>;
+		return <div className="apo-canvas apo-canvas--empty">{ __( 'Add a field from the left to get started.', 'corelabs-product-options' ) }</div>;
 	}
 
 	const onDrop = ( to ) => {
@@ -48,15 +48,15 @@ export default function Canvas() {
 						onDrop={ () => onDrop( i ) }
 						onDragEnd={ () => { setDragIndex( null ); setOverIndex( null ); } }
 					>
-						<span className="apo-canvas__grip" aria-hidden="true" title={ __( 'Drag to reorder', 'conditional-product-options' ) }>⠿</span>
+						<span className="apo-canvas__grip" aria-hidden="true" title={ __( 'Drag to reorder', 'corelabs-product-options' ) }>⠿</span>
 						<span className="apo-canvas__label">
 							{ f.label || f.type } <em>({ f.type })</em>
 						</span>
 						<span className="apo-canvas__ops">
-							<Button size="small" disabled={ i === 0 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i - 1 ); } } aria-label={ __( 'Move up', 'conditional-product-options' ) }>↑</Button>
-							<Button size="small" disabled={ i === fields.length - 1 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i + 1 ); } } aria-label={ __( 'Move down', 'conditional-product-options' ) }>↓</Button>
-							<Button size="small" onClick={ ( e ) => { e.stopPropagation(); duplicateField( f.id ); } } aria-label={ __( 'Duplicate', 'conditional-product-options' ) }>⧉</Button>
-							<Button size="small" isDestructive onClick={ ( e ) => { e.stopPropagation(); removeField( f.id ); } } aria-label={ __( 'Delete', 'conditional-product-options' ) }>✕</Button>
+							<Button size="small" disabled={ i === 0 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i - 1 ); } } aria-label={ __( 'Move up', 'corelabs-product-options' ) }>↑</Button>
+							<Button size="small" disabled={ i === fields.length - 1 } onClick={ ( e ) => { e.stopPropagation(); reorder( i, i + 1 ); } } aria-label={ __( 'Move down', 'corelabs-product-options' ) }>↓</Button>
+							<Button size="small" onClick={ ( e ) => { e.stopPropagation(); duplicateField( f.id ); } } aria-label={ __( 'Duplicate', 'corelabs-product-options' ) }>⧉</Button>
+							<Button size="small" isDestructive onClick={ ( e ) => { e.stopPropagation(); removeField( f.id ); } } aria-label={ __( 'Delete', 'corelabs-product-options' ) }>✕</Button>
 						</span>
 					</li>
 				);

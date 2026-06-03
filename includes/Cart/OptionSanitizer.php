@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Cart;
+namespace CoreLabs\ProductOptions\Cart;
 
 defined( 'ABSPATH' ) || exit;
 

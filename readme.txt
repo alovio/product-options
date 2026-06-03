@@ -1,5 +1,5 @@
-=== Conditional Product Options for WooCommerce ===
-Contributors: corelabs
+=== CoreLabs Product Options for WooCommerce ===
+Contributors: 74h1r
 Tags: product options, extra fields, add-ons, conditional logic, product addons
 Requires at least: 6.4
 Tested up to: 7.0
@@ -12,7 +12,7 @@ Add custom product fields with conditional logic and add-on pricing to your stor
 
 == Description ==
 
-**Conditional Product Options for WooCommerce** lets you add extra fields and paid add-ons to your products, then show, hide, or require those fields based on what the customer chooses. Build forms visually with a drag-and-drop builder, preview them live, and let shoppers see a running, currency-formatted options total before they add to cart.
+**CoreLabs Product Options for WooCommerce** lets you add extra fields and paid add-ons to your products, then show, hide, or require those fields based on what the customer chooses. Build forms visually with a drag-and-drop builder, preview them live, and let shoppers see a running, currency-formatted options total before they add to cart.
 
 Whether you sell customizable products, gifts with engraving, made-to-order items, or services with optional extras, you can collect exactly the information you need and charge for it accurately.
 
@@ -62,7 +62,7 @@ The features listed under the free sections above are all included in this plugi
 == Installation ==
 
 1. Make sure WooCommerce is installed and active.
-2. In your WordPress admin, go to **Plugins > Add New** and search for "Conditional Product Options for WooCommerce", or upload the plugin ZIP under **Plugins > Add New > Upload Plugin**.
+2. In your WordPress admin, go to **Plugins > Add New** and search for "CoreLabs Product Options for WooCommerce", or upload the plugin ZIP under **Plugins > Add New > Upload Plugin**.
 3. Click **Install Now**, then **Activate**.
 4. Edit any product, open the **Product Options** tab, and use the drag-and-drop builder to add fields, set add-on prices, and configure conditional logic.
 5. Save the product and view it on the storefront to see your fields and the live options total.
@@ -105,6 +105,19 @@ No. The free plugin is fully functional on its own. Pro is an optional, separate
 
 1. The drag-and-drop builder with live preview, showing fields and single-condition conditional logic settings.
 2. The product page with custom options and the live, currency-formatted options total.
+
+== Development ==
+
+This plugin is not obfuscated. The compiled assets in `build/` are generated from the human-readable source shipped in this package:
+
+* `src/` — the admin builder (React, via `@wordpress/scripts`) and the product-page runtime (vanilla JS) that compile to `build/index.js` and `build/frontend.js`.
+* `assets/css/` — the stylesheet sources compiled to `build/index.css` and `build/frontend.css`.
+* `composer.json` — the PSR-4 autoload map for the `includes/` PHP classes.
+
+To rebuild from source:
+
+`npm install` then `npm run build` (uses `@wordpress/scripts` / webpack; see `webpack.config.js`).
+`composer install` regenerates the PHP autoloader.
 
 == Changelog ==
 

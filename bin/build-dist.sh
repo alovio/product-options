@@ -5,7 +5,7 @@
 #
 set -euo pipefail
 
-SLUG="conditional-product-options"
+SLUG="corelabs-product-options"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/dist"
 DEST="$OUT/$SLUG"
@@ -13,21 +13,24 @@ DEST="$OUT/$SLUG"
 rm -rf "$OUT"
 mkdir -p "$DEST"
 
-# Copy only shippable files (keep build/, includes/, languages/, readme, main file, uninstall).
+# Copy shippable files. Per wp.org Guideline 1/4 we ship the human-readable
+# source (src/, assets/) and build tools (package.json, webpack.config.js,
+# composer.json) alongside the compiled build/ so the bundle is not obfuscated.
 rsync -a \
-	--exclude='.git' --exclude='.github' --exclude='.gitignore' --exclude='.distignore' \
+	--exclude='.git' --exclude='.github' --exclude='.gitignore' --exclude='.distignore' --exclude='.DS_Store' \
 	--exclude='.wp-env.json' --exclude='.playwright-mcp' --exclude='.wordpress-org' --exclude='node_modules' \
-	--exclude='src' --exclude='assets' --exclude='tests' --exclude='docs' --exclude='bin' \
-	--exclude='conditional-product-options-pro' \
+	--exclude='tests' --exclude='docs' --exclude='bin' \
+	--exclude='corelabs-product-options-pro' \
 	--exclude='includes/Pro' \
-	--exclude='package.json' --exclude='package-lock.json' --exclude='webpack.config.js' \
+	--exclude='package-lock.json' \
 	--exclude='phpunit.xml.dist' --exclude='.phpunit.result.cache' --exclude='dist' \
 	--exclude='vendor' \
 	"$ROOT/" "$DEST/"
 
-# Production-only Composer autoloader (the plugin has no runtime deps; this is just the PSR-4 map).
+# Production Composer autoloader (no dev deps). composer.json is kept in the zip
+# (the review flagged its absence); autoload-dev/require-dev are simply ignored.
 cp "$ROOT/composer.json" "$ROOT/composer.lock" "$DEST/" 2>/dev/null || cp "$ROOT/composer.json" "$DEST/"
-( cd "$DEST" && composer install --no-dev --optimize-autoloader --quiet && rm -f composer.json composer.lock )
+( cd "$DEST" && composer install --no-dev --optimize-autoloader --quiet )
 
 # Zip the free plugin.
 ( cd "$OUT" && zip -rqX "$SLUG.zip" "$SLUG" )

@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Fields;
+namespace CoreLabs\ProductOptions\Fields;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class FieldRepository {
 
-	private const META_KEY = '_apo_field_group';
+	private const META_KEY = '_clpo_field_group';
 
 	/** @return array<string,mixed> */
 	public function get( int $product_id ): array {

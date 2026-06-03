@@ -1,7 +1,7 @@
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-const D = 'conditional-product-options';
+const D = 'corelabs-product-options';
 
 export default function SwatchOptions( { value, onChange } ) {
 	const options = Array.isArray( value ) ? value : [];

@@ -1,13 +1,13 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Fields;
+namespace CoreLabs\ProductOptions\Fields;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Registry of supported field types. Free set is fixed; Pro extends via the
- * `apo_field_types` filter.
+ * `clpo_field_types` filter.
  */
 final class FieldTypes {
 
@@ -16,7 +16,7 @@ final class FieldTypes {
 
 	/** @return string[] */
 	public static function all(): array {
-		return (array) apply_filters( 'apo_field_types', self::FREE );
+		return (array) apply_filters( 'clpo_field_types', self::FREE );
 	}
 
 	public static function is_valid( string $type ): bool {

@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Admin;
+namespace CoreLabs\ProductOptions\Admin;
 
-use APO\Fields\FieldRepository;
+use CoreLabs\ProductOptions\Fields\FieldRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ final class RestController {
 
 	public function register_routes(): void {
 		register_rest_route(
-			'apo/v1',
+			'clpo/v1',
 			'/product/(?P<id>\d+)/fields',
 			array(
 				array(

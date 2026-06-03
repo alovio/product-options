@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Cart;
+namespace CoreLabs\ProductOptions\Cart;
 
-use APO\Logic\ConditionalLogic;
+use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -41,7 +41,7 @@ final class Validator {
 
 			if ( $required && $is_empty ) {
 				/* translators: %s: field label */
-				$errors[] = sprintf( __( '“%s” is required.', 'conditional-product-options' ), $label );
+				$errors[] = sprintf( __( '“%s” is required.', 'corelabs-product-options' ), $label );
 				continue;
 			}
 			if ( $is_empty ) {
@@ -50,7 +50,7 @@ final class Validator {
 
 			if ( 'number' === $type && ! is_numeric( $value ) ) {
 				/* translators: %s: field label */
-				$errors[] = sprintf( __( '“%s” must be a number.', 'conditional-product-options' ), $label );
+				$errors[] = sprintf( __( '“%s” must be a number.', 'corelabs-product-options' ), $label );
 			}
 
 			if ( in_array( $type, array( 'select', 'radio', 'swatch' ), true ) && ! empty( $f['options'] ) ) {
@@ -59,7 +59,7 @@ final class Validator {
 					: array_map( 'strval', (array) $f['options'] );
 				if ( ! in_array( (string) $value, $valid, true ) ) {
 					/* translators: %s: field label */
-					$errors[] = sprintf( __( '“%s” has an invalid selection.', 'conditional-product-options' ), $label );
+					$errors[] = sprintf( __( '“%s” has an invalid selection.', 'corelabs-product-options' ), $label );
 				}
 			}
 
@@ -67,15 +67,15 @@ final class Validator {
 				$ts = strtotime( (string) $value );
 				if ( false === $ts ) {
 					/* translators: %s: field label */
-					$errors[] = sprintf( __( '“%s” is not a valid date.', 'conditional-product-options' ), $label );
+					$errors[] = sprintf( __( '“%s” is not a valid date.', 'corelabs-product-options' ), $label );
 				} else {
 					if ( ! empty( $f['min'] ) && $ts < (int) strtotime( (string) $f['min'] ) ) {
 						/* translators: %s: field label */
-						$errors[] = sprintf( __( '“%s” is before the earliest allowed date.', 'conditional-product-options' ), $label );
+						$errors[] = sprintf( __( '“%s” is before the earliest allowed date.', 'corelabs-product-options' ), $label );
 					}
 					if ( ! empty( $f['max'] ) && $ts > (int) strtotime( (string) $f['max'] ) ) {
 						/* translators: %s: field label */
-						$errors[] = sprintf( __( '“%s” is after the latest allowed date.', 'conditional-product-options' ), $label );
+						$errors[] = sprintf( __( '“%s” is after the latest allowed date.', 'corelabs-product-options' ), $label );
 					}
 				}
 			}

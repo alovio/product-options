@@ -1,5 +1,5 @@
 {
-  "name": "corelabs/advanced-product-options",
+  "name": "corelabs/product-options",
   "description": "Custom product fields with a drag-drop builder and conditional logic for WooCommerce.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
@@ -10,8 +10,8 @@
     "brain/monkey": "^2",
     "yoast/phpunit-polyfills": "^2"
   },
-  "autoload": { "psr-4": { "APO\\": "includes/" } },
-  "autoload-dev": { "psr-4": { "APO\\Tests\\": "tests/php/" } },
+  "autoload": { "psr-4": { "CoreLabs\\ProductOptions\\": "includes/" } },
+  "autoload-dev": { "psr-4": { "CoreLabs\\ProductOptions\\Tests\\": "tests/php/" } },
   "scripts": { "test": "phpunit -c phpunit.xml.dist" },
   "config": { "allow-plugins": { "*": true } }
 }

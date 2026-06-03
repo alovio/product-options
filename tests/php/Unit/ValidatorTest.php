@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Tests\Unit;
+namespace CoreLabs\ProductOptions\Tests\Unit;
 
-use APO\Cart\Validator;
+use CoreLabs\ProductOptions\Cart\Validator;
 
 class ValidatorTest extends TestCase {
 

@@ -5,7 +5,7 @@ import { STORE } from './store';
 import ConditionEditor from './ConditionEditor';
 import SwatchOptions from './SwatchOptions';
 
-const T = 'conditional-product-options';
+const T = 'corelabs-product-options';
 const HAS_OPTIONS = [ 'radio', 'select' ];
 const HAS_PLACEHOLDER = [ 'text', 'textarea', 'number' ];
 const HAS_MAXLEN = [ 'text', 'textarea' ];
@@ -34,7 +34,7 @@ export default function FieldSettings() {
 	}
 
 	const set = ( patch ) => updateField( field.id, patch );
-	const isPro = !! ( window.APO_BUILDER && window.APO_BUILDER.isPro );
+	const isPro = !! ( window.CLPO_BUILDER && window.CLPO_BUILDER.isPro );
 
 	// Heading is a display-only field: just a label, description, and optional condition.
 	if ( field.type === 'heading' ) {

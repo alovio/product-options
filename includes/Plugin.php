@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO;
+namespace CoreLabs\ProductOptions;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -30,13 +30,13 @@ final class Plugin {
 		$this->booted = true;
 
 		// The Pro module is shipped separately (excluded from the free build); load it only when present.
-		if ( class_exists( \APO\Pro\ProModule::class ) ) {
-			( new \APO\Pro\ProModule() )->register();
+		if ( class_exists( \CoreLabs\ProductOptions\Pro\ProModule::class ) ) {
+			( new \CoreLabs\ProductOptions\Pro\ProModule() )->register();
 		}
-		( new \APO\Admin\RestController() )->register();
-		( new \APO\Admin\BuilderAssets() )->register();
-		( new \APO\Frontend\ProductFormRenderer() )->register();
-		( new \APO\Frontend\FrontendAssets() )->register();
-		( new \APO\Cart\CartIntegration() )->register();
+		( new \CoreLabs\ProductOptions\Admin\RestController() )->register();
+		( new \CoreLabs\ProductOptions\Admin\BuilderAssets() )->register();
+		( new \CoreLabs\ProductOptions\Frontend\ProductFormRenderer() )->register();
+		( new \CoreLabs\ProductOptions\Frontend\FrontendAssets() )->register();
+		( new \CoreLabs\ProductOptions\Cart\CartIntegration() )->register();
 	}
 }

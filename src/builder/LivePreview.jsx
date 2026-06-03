@@ -24,7 +24,7 @@ function renderInput( f, value, onChange ) {
 		case 'select':
 			return (
 				<select value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) }>
-					<option value="">{ __( 'Choose an option', 'conditional-product-options' ) }</option>
+					<option value="">{ __( 'Choose an option', 'corelabs-product-options' ) }</option>
 					{ ( f.options || [] ).map( ( o ) => <option key={ o } value={ o }>{ o }</option> ) }
 				</select>
 			);
@@ -56,7 +56,7 @@ export default function LivePreview() {
 	const set = ( id, v ) => setValues( ( prev ) => ( { ...prev, [ id ]: v } ) );
 
 	if ( ! fields.length ) {
-		return <p className="apo-preview apo-preview--empty">{ __( 'No fields yet.', 'conditional-product-options' ) }</p>;
+		return <p className="apo-preview apo-preview--empty">{ __( 'No fields yet.', 'corelabs-product-options' ) }</p>;
 	}
 
 	const map = activeMap( fields, values );
@@ -87,7 +87,7 @@ export default function LivePreview() {
 				);
 			} ) }
 			{ hasPriced && (
-				<p className="apo-options-total">{ __( 'Options total:', 'conditional-product-options' ) } +{ total.toFixed( 2 ) }</p>
+				<p className="apo-options-total">{ __( 'Options total:', 'corelabs-product-options' ) } +{ total.toFixed( 2 ) }</p>
 			) }
 		</form>
 	);

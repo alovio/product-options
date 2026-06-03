@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 
-const T = 'conditional-product-options';
+const T = 'corelabs-product-options';
 const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading' ];
 
 const LABELS = {
@@ -21,7 +21,7 @@ const LABELS = {
 
 export default function FieldPalette() {
 	const { addField } = useDispatch( STORE );
-	const types = ( window.APO_BUILDER && window.APO_BUILDER.fieldTypes ) || FALLBACK;
+	const types = ( window.CLPO_BUILDER && window.CLPO_BUILDER.fieldTypes ) || FALLBACK;
 
 	return (
 		<div className="apo-palette" aria-label={ __( 'Field types', T ) }>

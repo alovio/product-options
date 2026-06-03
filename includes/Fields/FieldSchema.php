@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Fields;
+namespace CoreLabs\ProductOptions\Fields;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -15,10 +15,10 @@ final class FieldSchema {
 	public static function normalize( array $raw ): array {
 		$fields = ( isset( $raw['fields'] ) && is_array( $raw['fields'] ) ) ? $raw['fields'] : array();
 
-		$ops     = (array) apply_filters( 'apo_allowed_operators', array( 'is', 'is_not' ) );
-		$actions = (array) apply_filters( 'apo_allowed_actions', array( 'show', 'hide', 'require' ) );
-		$multi   = (bool) apply_filters( 'apo_multi_conditions', false );
-		$modes   = (array) apply_filters( 'apo_price_modes', array( 'fixed' ) );
+		$ops     = (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not' ) );
+		$actions = (array) apply_filters( 'clpo_allowed_actions', array( 'show', 'hide', 'require' ) );
+		$multi   = (bool) apply_filters( 'clpo_multi_conditions', false );
+		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed' ) );
 
 		// First pass: keep valid-typed fields with unique, non-empty ids.
 		$kept = array();
@@ -104,7 +104,7 @@ final class FieldSchema {
 
 	/**
 	 * Build the conditional keys for a field: a single `condition` (free) or a
-	 * `conditions` array with match/action (Pro, when `apo_multi_conditions` is on).
+	 * `conditions` array with match/action (Pro, when `clpo_multi_conditions` is on).
 	 *
 	 * @param array<string,mixed> $f
 	 * @param string[]            $ids

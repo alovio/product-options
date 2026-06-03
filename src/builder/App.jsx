@@ -9,7 +9,7 @@ import Canvas from './Canvas';
 import FieldSettings from './FieldSettings';
 import LivePreview from './LivePreview';
 
-const T = 'conditional-product-options';
+const T = 'corelabs-product-options';
 
 export default function App( { productId } ) {
 	const fields = useSelect( ( select ) => select( STORE ).getFields(), [] );
@@ -20,7 +20,7 @@ export default function App( { productId } ) {
 
 	// Load saved fields once, then record the clean snapshot.
 	useEffect( () => {
-		apiFetch( { path: `apo/v1/product/${ productId }/fields` } )
+		apiFetch( { path: `clpo/v1/product/${ productId }/fields` } )
 			.then( ( group ) => {
 				const f = ( group && group.fields ) || [];
 				hydrate( f );
@@ -49,7 +49,7 @@ export default function App( { productId } ) {
 	const save = async () => {
 		setSaving( true );
 		try {
-			await apiFetch( { path: `apo/v1/product/${ productId }/fields`, method: 'POST', data: { fields } } );
+			await apiFetch( { path: `clpo/v1/product/${ productId }/fields`, method: 'POST', data: { fields } } );
 			savedRef.current = JSON.stringify( fields );
 			setNotice( { type: 'success', text: __( 'Options saved.', T ) } );
 		} catch ( e ) {

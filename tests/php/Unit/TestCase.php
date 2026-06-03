@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Tests\Unit;
+namespace CoreLabs\ProductOptions\Tests\Unit;
 
 use Brain\Monkey;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;

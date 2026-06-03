@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Tests\Unit;
+namespace CoreLabs\ProductOptions\Tests\Unit;
 
-use APO\Cart\OptionSanitizer;
+use CoreLabs\ProductOptions\Cart\OptionSanitizer;
 use Brain\Monkey;
 
 class OptionSanitizerTest extends TestCase {

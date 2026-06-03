@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Tests\Unit;
+namespace CoreLabs\ProductOptions\Tests\Unit;
 
-use APO\Logic\ConditionalLogic;
+use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 class ConditionalLogicTest extends TestCase {
 

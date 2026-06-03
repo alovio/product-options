@@ -1,6 +1,6 @@
 /**
  * Display-only add-on total on the product page. The authoritative price is
- * computed server-side (APO\Cart\PriceCalculator); this mirrors it for UX.
+ * computed server-side (CoreLabs\ProductOptions\Cart\PriceCalculator); this mirrors it for UX.
  */
 import { activeMap, readValues } from './conditional-logic';
 
@@ -42,7 +42,7 @@ export function computeAddonTotal( fields, values, base = 0 ) {
 }
 
 export function formatMoney( amount ) {
-	const c = ( typeof window !== 'undefined' && window.APO_FE ) || {};
+	const c = ( typeof window !== 'undefined' && window.CLPO_FE ) || {};
 	const decimals = typeof c.decimals === 'number' ? c.decimals : 2;
 	const sym = c.symbol || '';
 	const dsep = c.decimalSep || '.';

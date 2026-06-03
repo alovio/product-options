@@ -1,11 +1,11 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Tests\Unit;
+namespace CoreLabs\ProductOptions\Tests\Unit;
 
-use APO\Cart\PriceCalculator;
-use APO\Fields\FieldSchema;
-use APO\Logic\ConditionalLogic;
+use CoreLabs\ProductOptions\Cart\PriceCalculator;
+use CoreLabs\ProductOptions\Fields\FieldSchema;
+use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 use Brain\Monkey;
 
 class ProConditionalTest extends TestCase {
@@ -59,10 +59,10 @@ class ProConditionalTest extends TestCase {
 	public function test_schema_keeps_multi_when_gate_on(): void {
 		Monkey\Functions\when( 'apply_filters' )->alias(
 			function ( $tag, $value ) {
-				if ( 'apo_multi_conditions' === $tag ) {
+				if ( 'clpo_multi_conditions' === $tag ) {
 					return true;
 				}
-				if ( 'apo_allowed_operators' === $tag ) {
+				if ( 'clpo_allowed_operators' === $tag ) {
 					return array( 'is', 'is_not', 'contains', 'gt', 'lt' );
 				}
 				return $value;
@@ -93,7 +93,7 @@ class ProConditionalTest extends TestCase {
 	}
 
 	public function test_schema_strips_multi_when_free(): void {
-		// Base stub returns defaults: apo_multi_conditions=false, operators=is/is_not.
+		// Base stub returns defaults: clpo_multi_conditions=false, operators=is/is_not.
 		$out = FieldSchema::normalize(
 			array(
 				'fields' => array(
@@ -138,7 +138,7 @@ class ProConditionalTest extends TestCase {
 		// Pro: swatch valid; options become {label,color}; empty-label dropped.
 		Monkey\Functions\when( 'apply_filters' )->alias(
 			function ( $tag, $value ) {
-				return 'apo_field_types' === $tag
+				return 'clpo_field_types' === $tag
 					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'swatch' )
 					: $value;
 			}
@@ -171,7 +171,7 @@ class ProConditionalTest extends TestCase {
 		// Pro: date valid; min/max normalized.
 		Monkey\Functions\when( 'apply_filters' )->alias(
 			function ( $tag, $value ) {
-				return 'apo_field_types' === $tag
+				return 'clpo_field_types' === $tag
 					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'swatch', 'date' )
 					: $value;
 			}
@@ -190,7 +190,7 @@ class ProConditionalTest extends TestCase {
 		// Pro: per_unit allowed.
 		Monkey\Functions\when( 'apply_filters' )->alias(
 			function ( $tag, $value ) {
-				return 'apo_price_modes' === $tag ? array( 'fixed', 'per_unit' ) : $value;
+				return 'clpo_price_modes' === $tag ? array( 'fixed', 'per_unit' ) : $value;
 			}
 		);
 		$pro = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );

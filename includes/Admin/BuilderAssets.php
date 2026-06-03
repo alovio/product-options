@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Admin;
+namespace CoreLabs\ProductOptions\Admin;
 
-use APO\Fields\FieldTypes;
+use CoreLabs\ProductOptions\Fields\FieldTypes;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,8 +19,8 @@ final class BuilderAssets {
 
 	public function add_meta_box(): void {
 		add_meta_box(
-			'apo-builder-box',
-			__( 'Product Options', 'conditional-product-options' ),
+			'clpo-builder-box',
+			__( 'Product Options', 'corelabs-product-options' ),
 			array( $this, 'render_box' ),
 			'product',
 			'normal',
@@ -30,7 +30,7 @@ final class BuilderAssets {
 
 	/** @param \WP_Post $post */
 	public function render_box( $post ): void {
-		printf( '<div id="apo-builder" data-product-id="%d"></div>', (int) $post->ID );
+		printf( '<div id="clpo-builder" data-product-id="%d"></div>', (int) $post->ID );
 	}
 
 	public function enqueue( string $hook ): void {
@@ -42,25 +42,25 @@ final class BuilderAssets {
 			return;
 		}
 
-		$asset_file = APO_PATH . 'build/index.asset.php';
+		$asset_file = CLPO_PATH . 'build/index.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
 		$asset = require $asset_file;
 
-		wp_enqueue_script( 'apo-builder', APO_URL . 'build/index.js', $asset['dependencies'], $asset['version'], true );
-		wp_set_script_translations( 'apo-builder', 'conditional-product-options', APO_PATH . 'languages' );
-		wp_enqueue_style( 'apo-builder', APO_URL . 'build/index.css', array(), $asset['version'] );
-		wp_style_add_data( 'apo-builder', 'rtl', 'replace' );
+		wp_enqueue_script( 'clpo-builder', CLPO_URL . 'build/index.js', $asset['dependencies'], $asset['version'], true );
+		wp_set_script_translations( 'clpo-builder', 'corelabs-product-options', CLPO_PATH . 'languages' );
+		wp_enqueue_style( 'clpo-builder', CLPO_URL . 'build/index.css', array(), $asset['version'] );
+		wp_style_add_data( 'clpo-builder', 'rtl', 'replace' );
 		wp_localize_script(
-			'apo-builder',
-			'APO_BUILDER',
+			'clpo-builder',
+			'CLPO_BUILDER',
 			array(
 				'root'       => esc_url_raw( rest_url( '/' ) ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'fieldTypes' => FieldTypes::all(),
-				'isPro'      => \APO\Pro\ProModule::is_pro(),
-				'operators'  => (array) apply_filters( 'apo_allowed_operators', array( 'is', 'is_not' ) ),
+				'isPro'      => \CoreLabs\ProductOptions\Pro\ProModule::is_pro(),
+				'operators'  => (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not' ) ),
 			)
 		);
 	}

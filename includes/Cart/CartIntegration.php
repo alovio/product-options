@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Cart;
+namespace CoreLabs\ProductOptions\Cart;
 
-use APO\Fields\FieldRepository;
+use CoreLabs\ProductOptions\Fields\FieldRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -192,7 +192,7 @@ final class CartIntegration {
 		}
 		$type = $field['type'] ?? '';
 		if ( 'checkbox' === $type ) {
-			return _x( 'Yes', 'checked option in cart/order', 'conditional-product-options' );
+			return _x( 'Yes', 'checked option in cart/order', 'corelabs-product-options' );
 		}
 		if ( 'number' === $type && is_numeric( $val ) ) {
 			$num = (float) $val;

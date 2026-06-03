@@ -1,5 +1,5 @@
 {
-  "name": "advanced-product-options",
+  "name": "corelabs-product-options",
   "private": true,
   "scripts": {
     "start": "wp-scripts start",

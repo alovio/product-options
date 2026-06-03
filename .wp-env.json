@@ -1,8 +1,8 @@
 {
 	"plugins": [ "https://downloads.wordpress.org/plugin/woocommerce.zip" ],
 	"mappings": {
-		"wp-content/plugins/conditional-product-options": ".",
-		"wp-content/plugins/conditional-product-options-pro": "./conditional-product-options-pro"
+		"wp-content/plugins/corelabs-product-options": ".",
+		"wp-content/plugins/corelabs-product-options-pro": "./corelabs-product-options-pro"
 	},
 	"config": {
 		"WP_DEBUG": true,

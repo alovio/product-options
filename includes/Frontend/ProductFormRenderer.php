@@ -1,10 +1,10 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Frontend;
+namespace CoreLabs\ProductOptions\Frontend;
 
-use APO\Fields\FieldRepository;
-use APO\Logic\ConditionalLogic;
+use CoreLabs\ProductOptions\Fields\FieldRepository;
+use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -54,7 +54,7 @@ final class ProductFormRenderer {
 			$this->render_field( $f, ! empty( $active[ $f['id'] ?? '' ] ) );
 		}
 		if ( $has_priced ) {
-			echo '<p class="apo-options-total">' . esc_html__( 'Options total:', 'conditional-product-options' )
+			echo '<p class="apo-options-total">' . esc_html__( 'Options total:', 'corelabs-product-options' )
 				. ' <span class="apo-options-total__value" aria-live="polite" aria-atomic="true">+0.00</span></p>';
 		}
 		echo '<script type="application/json" class="apo-rules">'
@@ -71,23 +71,23 @@ final class ProductFormRenderer {
 	private static function type_label( string $type ): string {
 		switch ( $type ) {
 			case 'textarea':
-				return __( 'Text area', 'conditional-product-options' );
+				return __( 'Text area', 'corelabs-product-options' );
 			case 'number':
-				return __( 'Number', 'conditional-product-options' );
+				return __( 'Number', 'corelabs-product-options' );
 			case 'checkbox':
-				return __( 'Checkbox', 'conditional-product-options' );
+				return __( 'Checkbox', 'corelabs-product-options' );
 			case 'radio':
 			case 'select':
 			case 'swatch':
-				return __( 'Choose an option', 'conditional-product-options' );
+				return __( 'Choose an option', 'corelabs-product-options' );
 			case 'price':
-				return __( 'Surcharge', 'conditional-product-options' );
+				return __( 'Surcharge', 'corelabs-product-options' );
 			case 'date':
-				return __( 'Date', 'conditional-product-options' );
+				return __( 'Date', 'corelabs-product-options' );
 			case 'text':
-				return __( 'Text', 'conditional-product-options' );
+				return __( 'Text', 'corelabs-product-options' );
 			default:
-				return __( 'Option', 'conditional-product-options' );
+				return __( 'Option', 'corelabs-product-options' );
 		}
 	}
 
@@ -96,7 +96,7 @@ final class ProductFormRenderer {
 			return '';
 		}
 		return ' <span class="apo-required" aria-hidden="true">*</span><span class="apo-sr-only">'
-			. esc_html__( '(required)', 'conditional-product-options' ) . '</span>';
+			. esc_html__( '(required)', 'corelabs-product-options' ) . '</span>';
 	}
 
 	private function desc_markup( array $f, string $id ): string {
@@ -104,7 +104,7 @@ final class ProductFormRenderer {
 		if ( '' === $desc ) {
 			return '';
 		}
-		return sprintf( '<small class="apo-field__desc" id="%s">%s</small>', esc_attr( 'apo_desc_' . $id ), esc_html( $desc ) );
+		return sprintf( '<small class="apo-field__desc" id="%s">%s</small>', esc_attr( 'clpo_desc_' . $id ), esc_html( $desc ) );
 	}
 
 	private function render_field( array $f, bool $active ): void {
@@ -120,7 +120,7 @@ final class ProductFormRenderer {
 			return;
 		}
 
-		$fid   = 'apo_' . $id;
+		$fid   = 'clpo_' . $id;
 		$group = in_array( $type, array( 'radio', 'swatch' ), true );
 
 		printf( '<div class="apo-field" data-apo-field="%s"%s>', esc_attr( $id ), $hidden ); // phpcs:ignore WordPress.Security.EscapeOutput
@@ -151,14 +151,14 @@ final class ProductFormRenderer {
 	private function render_input( array $f ): void {
 		$id       = (string) $f['id'];
 		$name     = 'apo[' . $id . ']';
-		$fid      = 'apo_' . $id;
+		$fid      = 'clpo_' . $id;
 		$type     = (string) $f['type'];
 		$required = ! empty( $f['required'] );
 		$req      = $required ? ' required aria-required="true"' : '';
 		$rreq     = $required ? ' required' : '';
 		$default  = (string) ( $f['default'] ?? '' );
 		$ph       = ( '' !== (string) ( $f['placeholder'] ?? '' ) ) ? sprintf( ' placeholder="%s"', esc_attr( (string) $f['placeholder'] ) ) : '';
-		$descby   = ( '' !== (string) ( $f['description'] ?? '' ) ) ? sprintf( ' aria-describedby="%s"', esc_attr( 'apo_desc_' . $id ) ) : '';
+		$descby   = ( '' !== (string) ( $f['description'] ?? '' ) ) ? sprintf( ' aria-describedby="%s"', esc_attr( 'clpo_desc_' . $id ) ) : '';
 
 		switch ( $type ) {
 			case 'textarea':
@@ -189,7 +189,7 @@ final class ProductFormRenderer {
 				}
 				break;
 			case 'select':
-				printf( '<select id="%s" name="%s"%s%s><option value="">%s</option>', esc_attr( $fid ), esc_attr( $name ), $req, $descby, esc_html__( 'Choose an option', 'conditional-product-options' ) ); // phpcs:ignore WordPress.Security.EscapeOutput
+				printf( '<select id="%s" name="%s"%s%s><option value="">%s</option>', esc_attr( $fid ), esc_attr( $name ), $req, $descby, esc_html__( 'Choose an option', 'corelabs-product-options' ) ); // phpcs:ignore WordPress.Security.EscapeOutput
 				foreach ( (array) $f['options'] as $opt ) {
 					$sel = ( (string) $opt === $default ) ? ' selected' : '';
 					printf( '<option value="%s"%s>%s</option>', esc_attr( $opt ), $sel, esc_html( $opt ) ); // phpcs:ignore WordPress.Security.EscapeOutput

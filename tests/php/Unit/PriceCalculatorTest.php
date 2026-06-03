@@ -1,9 +1,9 @@
 <?php
 declare( strict_types=1 );
 
-namespace APO\Tests\Unit;
+namespace CoreLabs\ProductOptions\Tests\Unit;
 
-use APO\Cart\PriceCalculator;
+use CoreLabs\ProductOptions\Cart\PriceCalculator;
 use Brain\Monkey;
 
 class PriceCalculatorTest extends TestCase {
