@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: CoreLabs Product Options for WooCommerce
- * Plugin URI: https://addons.itahir.com/corelabs-product-options
+ * Plugin Name: Alovio Product Options for WooCommerce
+ * Plugin URI: https://alovio.org/product-options
  * Description: Add custom product fields with a drag-and-drop builder, conditional logic, and add-on pricing.
  * Version: 1.0.0
- * Author: CoreLabs
- * Author URI: https://addons.itahir.com
+ * Author: Alovio
+ * Author URI: https://alovio.org
  * Requires at least: 6.4
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce

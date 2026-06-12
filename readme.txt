@@ -1,8 +1,8 @@
-=== CoreLabs Product Options for WooCommerce ===
+=== Alovio Product Options for WooCommerce ===
 Contributors: 74h1r
 Tags: product options, extra fields, add-ons, conditional logic, product addons
 Requires at least: 6.4
-Tested up to: 7.0
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -12,7 +12,7 @@ Add custom product fields with conditional logic and add-on pricing to your stor
 
 == Description ==
 
-**CoreLabs Product Options for WooCommerce** lets you add extra fields and paid add-ons to your products, then show, hide, or require those fields based on what the customer chooses. Build forms visually with a drag-and-drop builder, preview them live, and let shoppers see a running, currency-formatted options total before they add to cart.
+**Alovio Product Options for WooCommerce** lets you add extra fields and paid add-ons to your products, then show, hide, or require those fields based on what the customer chooses. Build forms visually with a drag-and-drop builder, preview them live, and let shoppers see a running, currency-formatted options total before they add to cart.
 
 Whether you sell customizable products, gifts with engraving, made-to-order items, or services with optional extras, you can collect exactly the information you need and charge for it accurately.
 
@@ -62,7 +62,7 @@ The features listed under the free sections above are all included in this plugi
 == Installation ==
 
 1. Make sure WooCommerce is installed and active.
-2. In your WordPress admin, go to **Plugins > Add New** and search for "CoreLabs Product Options for WooCommerce", or upload the plugin ZIP under **Plugins > Add New > Upload Plugin**.
+2. In your WordPress admin, go to **Plugins > Add New** and search for "Alovio Product Options for WooCommerce", or upload the plugin ZIP under **Plugins > Add New > Upload Plugin**.
 3. Click **Install Now**, then **Activate**.
 4. Edit any product, open the **Product Options** tab, and use the drag-and-drop builder to add fields, set add-on prices, and configure conditional logic.
 5. Save the product and view it on the storefront to see your fields and the live options total.
