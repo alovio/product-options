@@ -1,8 +1,8 @@
-=== Alovio Product Options for WooCommerce ===
+=== Alovio Product Options – Extra Product Fields & Add-Ons for WooCommerce ===
 Contributors: 74h1r
-Tags: product options, extra fields, add-ons, conditional logic, product addons
+Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -100,6 +100,10 @@ Yes. The plugin is fully translatable and ready for localization.
 = Do I need Pro to use the plugin? =
 
 No. The free plugin is fully functional on its own. Pro is an optional, separately sold add-on that adds multi-condition logic, more operators, per-unit and percentage pricing, colour swatches, and date fields.
+
+= Is this a free alternative to Product Add-Ons or Extra Product Options? =
+
+Yes. If you are comparing against WooCommerce Product Add-Ons, Extra Product Options (Themecomplete) or a similar plugin, Alovio Product Options gives you extra fields, flat add-on pricing and a live, currency-formatted options total — plus conditional show / hide / require — in the free version. Add your first fields from the product's Product Options tab in a couple of minutes.
 
 == Screenshots ==
 
