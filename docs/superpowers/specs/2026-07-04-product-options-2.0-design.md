@@ -78,7 +78,7 @@ Version-gated routine on `admin_init` when `get_option('clpo_version') < 2.0`:
 1. For every product with non-empty `_clpo_field_group` meta → create CPT group: title "*{product name} — Options*", fields = meta JSON (normalized), assignment `{mode:products, ids:[product]}`, status publish.
 2. Original meta is **left in place** (rollback safety). Renderer/cart read **CPT-only** in 2.0; the meta is dead data.
 3. Idempotent: mark migrated products (`_clpo_migrated_to` = group id) and skip on re-run. Set `clpo_version`.
-4. **Cart sessions:** carts persist across the plugin update, so `get_from_session` must shape-detect a legacy `$values['apo']` single map (`{options, base_price, unique_key}`) and normalize it to the new per-group list (§4) as a single entry with `group_id = 0`; recalculate/display/order code then handles it uniformly. Entries whose group no longer resolves still price from their stored `base_price` + options (no fatal, no silent free upgrade).
+4. **Cart sessions:** carts persist across the plugin update, so `get_from_session` must shape-detect a legacy `$values['apo']` single map (`{options, base_price, unique_key}`) and normalize it to the new per-group list (§4) as a single entry with `group_id = 0`; recalculate/display/order code then handles it uniformly. Each entry stores its last computed **`addon_total`**: recalculate recomputes it from the resolved group's field definitions when the group still resolves for the product (legacy `group_id = 0` entries match against product-resolved groups — which covers migrated carts, since migration creates a product-assigned group); when no group resolves (deleted mid-cart), the stored `addon_total` is reused as-is (no fatal, no silent free upgrade).
 
 Uninstall (`uninstall.php`, still opt-in via `clpo_remove_data_on_uninstall`): also delete `alovio_option_group` posts + their meta + `_clpo_migrated_to`.
 
@@ -89,7 +89,7 @@ Uninstall (`uninstall.php`, still opt-in via `clpo_remove_data_on_uninstall`): a
 - PHP↔JS conditional-logic engine and `tests/fixtures/conditional-cases.json` parity harness.
 - Server stays authoritative for all money math.
 
-Cart-item internals gain `group_id` per options bundle: `$cart_item_data['apo']` becomes a **list** of per-group entries `{group_id, options, base_price, unique_key}` — computed once in `add_cart_item_data`, consumed by the same recalculate/display/order hooks (iterate the list).
+Cart-item internals gain `group_id` per options bundle: `$cart_item_data['apo']` becomes a **list** of per-group entries `{group_id, options, base_price, addon_total, unique_key}` — computed once in `add_cart_item_data`, consumed by the same recalculate/display/order hooks (iterate the list; `addon_total` semantics per §3.5 item 4).
 
 ## 5. Builder — adopt Checkout Fields verbatim
 
@@ -110,7 +110,7 @@ Port `~/woo-checkout-fields/src/builder/*` + `assets/css/builder.css` with `clcf
 
 Save = PUT `/groups/{id}` (fields + assignment together; one Save & publish button, publish flips post_status).
 
-## 6. Field types (17)
+## 6. Field types (18)
 
 | Origin | Types |
 |---|---|
@@ -152,9 +152,9 @@ All new types get: OptionSanitizer case, Validator case, ProductFormRenderer cas
 ## 10. Testing
 
 - Keep all 57 PHP + 23 JS green through the refactor.
-- New unit coverage: GroupResolver (all/category/product/priority/draft), migration (idempotency, meta preservation), sanitizer/validator/pricing per new type, per_char + formula math, formula PHP↔JS fixture parity, import schema-normalization.
+- New unit coverage: GroupResolver (all/category/product/priority/draft), migration (idempotency, meta preservation), sanitizer/validator/pricing per new type, per_char + formula math, formula PHP↔JS fixture parity, import schema-normalization, **legacy cart-session normalization** (old-shape `apo` flowing through recalculate/display/order, incl. deleted-group `addon_total` reuse), **carted file-token lifecycle** (cron exemption while carted, 30-day expiry, clear-on-order).
 - Builder: extend CF's jest patterns to new panels (Pricing/Assignment reducers).
-- Live QA (wp-env + Playwright): money-path with a global group + a product group on one product (breakdown box math), file upload end-to-end, migration from a seeded 1.0 site, metabox deep links.
+- Live QA (wp-env + Playwright): money-path with a global group + a product group on one product (breakdown box math), file upload end-to-end, migration from a seeded 1.0 site, metabox deep links, **variable product: breakdown base/Total update after `found_variation` and matches the cart price**.
 
 ## 11. Release (2.0.0)
 
