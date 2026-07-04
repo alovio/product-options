@@ -10,7 +10,7 @@ Take the plugin from MVP to a real product in one major release (**2.0.0**):
 1. **100% free** — remove the Pro gate; every feature ships in the wp.org plugin (same move as Alovio Checkout Fields 1.2.x).
 2. **Global option groups** — build once, apply to all products / categories / specific products.
 3. **Builder = Checkout Fields builder** — adopt the Alovio family builder verbatim; only plugin-specific content differs.
-4. **New field types & pricing modes** — 17 field types, 5 pricing modes (incl. per-character and formula).
+4. **New field types & pricing modes** — 18 field types, 5 pricing modes (incl. per-character and formula).
 5. **Storefront upgrade** — price breakdown box + polish pack.
 
 Non-goals: license server, Pro add-on continuation (code-heaven listing's fate is a business decision outside this codebase), cross-group conditional logic, block-editor product form integration beyond what works today.
@@ -46,7 +46,7 @@ Post meta:
 
 ### 3.2 Resolution & rendering
 
-`GroupResolver::for_product( int $product_id ): array` — returns all **published** groups whose assignment matches the product (all / any assigned category incl. ancestors / explicit product id), ordered by priority then title. Result cached per-request; invalidated on group save (`clean_post_cache` + a `wp_cache` group key bump).
+`GroupResolver::for_product( int $product_id ): array` — returns all **published** groups whose assignment matches the product (all / any assigned category incl. ancestors / explicit product id), ordered by priority then title. Result cached in a **per-request static** only (no persistent object cache in 2.0 — the query is one `WP_Query` over a small CPT); the static resets naturally each request.
 
 Storefront renders each matching group as its own `.apo-options` block (existing renderer, one `<script class="apo-rules">` per group). Conditional logic stays **scoped within a group** — the engine is untouched. Cart/validation paths iterate all matching groups.
 
@@ -56,7 +56,7 @@ Storefront renders each matching group as its own `.apo-options` block (existing
   - `#/groups` — list (name, status, field count, priced-field count, assignment summary) + New/Duplicate/Delete
   - `#/groups/{id}` — the builder (§5)
   - `#/templates` — starter templates (§8)
-  - `#/settings` — uninstall-data toggle (existing option), future home for misc settings
+  - `#/settings` — uninstall-data toggle (new UI for the existing `clpo_remove_data_on_uninstall` option, which until now had no setter), future home for misc settings
 - **Product metabox** (replaces the current builder metabox): read-only summary — list of groups applying to this product with **"Edit ↗"** deep links (`admin.php?page=alovio-product-options#/groups/{id}`), plus **"Create options for this product"** → POST creates a draft group pre-assigned to this product, then redirects into the builder.
 
 ### 3.4 REST API (`clpo/v1`, capability `manage_woocommerce` + nonce)
@@ -68,7 +68,8 @@ Storefront renders each matching group as its own `.apo-options` block (existing
 | `/groups/{id}/duplicate` | POST | copy |
 | `/export` · `/import` | GET · POST | JSON round-trip (§8) |
 | `/products/search?q=` | GET | product picker for assignment UI |
-| `/product/{id}/fields` | GET | **kept, read-only** — powers the metabox summary; POST is removed |
+| `/categories/search?q=` | GET | category picker for assignment UI (id, name, parent path) |
+| `/product/{id}/fields` | GET | **kept, read-only** — powers the metabox summary; POST is removed. Keeps its current `edit_product` capability check (it is called from the product-edit screen, where editors may lack `manage_woocommerce`) |
 
 ### 3.5 Migration (1.x → 2.0)
 
@@ -77,6 +78,7 @@ Version-gated routine on `admin_init` when `get_option('clpo_version') < 2.0`:
 1. For every product with non-empty `_clpo_field_group` meta → create CPT group: title "*{product name} — Options*", fields = meta JSON (normalized), assignment `{mode:products, ids:[product]}`, status publish.
 2. Original meta is **left in place** (rollback safety). Renderer/cart read **CPT-only** in 2.0; the meta is dead data.
 3. Idempotent: mark migrated products (`_clpo_migrated_to` = group id) and skip on re-run. Set `clpo_version`.
+4. **Cart sessions:** carts persist across the plugin update, so `get_from_session` must shape-detect a legacy `$values['apo']` single map (`{options, base_price, unique_key}`) and normalize it to the new per-group list (§4) as a single entry with `group_id = 0`; recalculate/display/order code then handles it uniformly. Entries whose group no longer resolves still price from their stored `base_price` + options (no fatal, no silent free upgrade).
 
 Uninstall (`uninstall.php`, still opt-in via `clpo_remove_data_on_uninstall`): also delete `alovio_option_group` posts + their meta + `_clpo_migrated_to`.
 
@@ -117,6 +119,8 @@ Save = PUT `/groups/{id}` (fields + assignment together; one Save & publish butt
 | Ported from Checkout Fields 1.2.x | email, phone, url, time, **file** (secure upload: allowlist ext/size, obfuscated dir, admin-only access) |
 | New to family | **image swatch** (options = {label, image_id/url}, media-library picker in builder), **button group** (options = text buttons, single-select), **quantity** (stepper UI, integer min/max/step) |
 
+**File-upload lifecycle differs from CF and must be adapted, not copied verbatim.** In CF, upload→order takes minutes; here the file sits in a *cart*, and persistent carts routinely exceed CF's 48 h orphan-cleanup window. Changes to the ported `FileUploads`: (a) when a file value enters the cart, its token is marked **carted** (token meta) and exempted from the orphan cron; the mark is refreshed from the cart-session hook and cleared when the cart item is removed or converted to an order (attach-on-checkout stays as in CF); (b) unclaimed *carted* tokens expire after 30 days instead of 48 h; (c) cart/checkout line display shows the original **file name** (from token meta), never the storage token — order meta shows the admin download link as in CF.
+
 All new types get: OptionSanitizer case, Validator case, ProductFormRenderer case, FieldPreview renderer, JS `readValues` support where input shape differs (file/quantity), and order-meta display formatting (file → admin download link, image swatch → label).
 
 ## 7. Pricing modes (5)
@@ -124,7 +128,8 @@ All new types get: OptionSanitizer case, Validator case, ProductFormRenderer cas
 `priceMode` per field: `fixed` | `per_unit` (number/quantity) | `percent` (of purchased entity's base price) | **`per_char`** (text/textarea: `price × trimmed length`) | **`formula`**.
 
 **Formula mode:** expression evaluated over group-field tokens, e.g. `{width} * {height} * 0.85`.
-- Engine: port **Alovio Calculator's** decimal-safe expression evaluator (PHP + JS mirror; shunting-yard, no eval). Grammar: numbers, `+ - * /`, parentheses, `{field_id}` tokens (numeric value of engaged fields, else 0), `min() max() round()`.
+- Engine: port **Alovio Calculator's** decimal-safe expression evaluator (PHP + JS mirror; precedence-climbing/Pratt parser, no eval). The port **strips** the calculator's larger surface (`Functions::SPECS` beyond `min/max/round`, `if()`, comparison operators) — 2.0 grammar is exactly: numbers, `+ - * /`, parentheses, `{field_id}` tokens (numeric value of engaged fields, else 0), `min() max() round()`, expression length ≤ 200 chars.
+- Runtime behavior: evaluation errors (divide-by-zero, bad token) → contribution **0** on the storefront, `wc_get_logger()->warning` on the server; results are **clamped to ≥ 0** (no negative-price discounts in 2.0).
 - Authoritative on server in `PriceCalculator::addon_total`; mirrored client-side for the live breakdown. Parity via a new `tests/fixtures/formula-cases.json`.
 - Builder: formula textarea with token insert buttons + live validation (parse errors shown inline).
 
@@ -139,6 +144,8 @@ All new types get: OptionSanitizer case, Validator case, ProductFormRenderer cas
 ## 9. Storefront
 
 **Breakdown box (chosen design B):** replaces the single "Options total" line whenever ≥1 priced field is engaged. Rows: base price, each engaged priced option (label + formatted amount), dashed-rule **Total** row (base + options). Live client-side updates (aria-live polite); server renders initial state. Ships in `frontend.css`, inherits theme fonts/colors, uses existing currency-format helper.
+
+**Variable products:** the box's base price must track the selected variation — the frontend listens to WooCommerce's `found_variation` / `reset_data` events on the variations form and updates the base (and therefore percent-mode and Total rows) from `variation.display_price`, falling back to `data-apo-base` until a variation is chosen. This keeps the client display consistent with the server, which already prices from the variation (`CartIntegration::add_cart_item_data`).
 
 **Polish pack (all themes, no options):** price suffix on labels/choices ("Gift wrap **(+$8.00)**"), tooltip/help icon rendering for field description (`?` toggle, keyboard accessible), character counter on max-length text fields (`14 / 40`), inline required validation on blur/submit (message under field, `aria-invalid` + `aria-describedby` — no more silent scroll-to-top), focus rings, upgraded swatch/date/file/quantity styling, RTL parity.
 
@@ -158,5 +165,13 @@ readme rewrite ("100% free", new feature set, new FAQ) · fresh screenshots (hub
 - **Metabox → hub jump feels indirect** → deep links + "Create options for this product" one-click path (§3.3).
 - **Multiple groups on one product** (new surface) → priority ordering + per-group logic scoping + live QA case (§10).
 - **Formula abuse/perf** → strict grammar, parse-time validation, length cap (200 chars), no functions beyond min/max/round.
-- **File uploads** → reuse CF's hardened implementation verbatim (allowlist, size cap, obfuscated storage, no direct listing).
-- **Migration surprises** → idempotent + original meta untouched; QA on a seeded 1.0 site before release.
+- **File uploads** → reuse CF's hardened storage/access implementation (allowlist, size cap, obfuscated storage, no direct listing) with the cart-lifecycle adaptations of §6.
+- **Migration surprises** → idempotent + original meta untouched + legacy cart-session normalization (§3.5); QA on a seeded 1.0 site before release.
+
+## 13. Suggested delivery phases (for the implementation plan)
+
+1. Data model + GroupResolver + migration (incl. cart-session shim) — old renderer temporarily reads resolved groups.
+2. Hub SPA + builder port (CF shell) + Assignment panel + metabox summary.
+3. Field types + pricing modes (per type: sanitize/validate/render/preview/tests) + formula engine port.
+4. Storefront: breakdown box, variable-product base tracking, polish pack.
+5. Templates/import-export, release packaging, live QA, SVN 2.0.0.
