@@ -23,6 +23,11 @@ abstract class TestCase extends PHPUnitTestCase {
 		Monkey\Functions\when( 'sanitize_text_field' )->returnArg( 1 );
 		Monkey\Functions\when( 'sanitize_textarea_field' )->returnArg( 1 );
 		Monkey\Functions\when( 'sanitize_hex_color' )->returnArg( 1 );
+		Monkey\Functions\when( '_n' )->alias(
+			static function ( $single, $plural, $number ) {
+				return 1 === (int) $number ? $single : $plural;
+			}
+		);
 	}
 
 	protected function tearDown(): void {
