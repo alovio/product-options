@@ -45,9 +45,12 @@ final class FrontendAssets {
 					'number'   => __( '“%s” must be a number.', 'corelabs-product-options' ),
 				),
 				'upload'      => array(
-					'url'   => esc_url_raw( rest_url( 'clpo/v1/upload' ) ),
-					'nonce' => wp_create_nonce( 'clpo_upload' ),
-					'maxMb' => (int) ceil( \CoreLabs\ProductOptions\Cart\FileUploads::max_bytes() / 1048576 ),
+					'url'       => esc_url_raw( rest_url( 'clpo/v1/upload' ) ),
+					'nonce'     => wp_create_nonce( 'clpo_upload' ),
+					// Logged-in visitors: REST cookie auth demands a wp_rest nonce
+					// or the request is rejected before our permission callback.
+					'restNonce' => wp_create_nonce( 'wp_rest' ),
+					'maxMb'     => (int) ceil( \CoreLabs\ProductOptions\Cart\FileUploads::max_bytes() / 1048576 ),
 				),
 			)
 		);

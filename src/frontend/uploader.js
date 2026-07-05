@@ -37,7 +37,11 @@ export function wireUploads() {
 		try {
 			const form = new FormData();
 			form.append( 'file', file );
-			const resp = await fetch( cfg.url, { method: 'POST', headers: { 'X-CLPO-Nonce': cfg.nonce }, body: form } );
+			const headers = { 'X-CLPO-Nonce': cfg.nonce };
+			if ( cfg.restNonce ) {
+				headers[ 'X-WP-Nonce' ] = cfg.restNonce;
+			}
+			const resp = await fetch( cfg.url, { method: 'POST', headers, body: form } );
 			const data = await resp.json();
 			if ( ! resp.ok || ! data.token ) {
 				throw new Error( ( data && data.message ) || 'upload failed' );
