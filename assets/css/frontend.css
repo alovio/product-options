@@ -106,3 +106,7 @@
 .apo-swatch--image { display: inline-flex; flex-direction: column; align-items: center; width: 56px; }
 .apo-swatch__img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; }
 .apo-swatch--image input:checked ~ .apo-swatch__img { border-color: currentColor; }
+
+/* File field */
+.apo-file { display: inline-flex; flex-direction: column; gap: 4px; }
+.apo-file-status { font-size: 12px; color: #6b7280; }

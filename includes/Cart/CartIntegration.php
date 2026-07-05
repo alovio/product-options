@@ -20,6 +20,7 @@ final class CartIntegration {
 		add_action( 'woocommerce_before_calculate_totals', array( $this, 'recalculate' ), 20, 1 );
 		add_filter( 'woocommerce_get_item_data', array( $this, 'display_in_cart' ), 10, 2 );
 		add_action( 'woocommerce_checkout_create_order_line_item', array( $this, 'add_order_item_meta' ), 10, 4 );
+		add_action( 'woocommerce_cart_item_removed', array( $this, 'release_file_tokens' ), 10, 2 );
 	}
 
 	/**
@@ -49,7 +50,11 @@ final class CartIntegration {
 		if ( empty( $groups ) ) {
 			return $passed;
 		}
-		$errors = CartItemShape::collect_errors( $groups, $this->posted() );
+		$posted = $this->posted();
+		$errors = CartItemShape::collect_errors( $groups, $posted );
+		foreach ( $groups as $g ) {
+			$errors = array_merge( $errors, FileUploads::validate_tokens( $g, OptionSanitizer::sanitize( $g, $posted ) ) );
+		}
 		if ( ! empty( $errors ) ) {
 			foreach ( $errors as $error ) {
 				wc_add_notice( $error, 'error' );
@@ -96,6 +101,7 @@ final class CartIntegration {
 		}
 		if ( array() !== $entries ) {
 			$cart_item_data['apo'] = $entries;
+			self::each_file_token( $entries, array( FileUploads::class, 'mark_carted_token' ) );
 		}
 		return $cart_item_data;
 	}
@@ -111,6 +117,7 @@ final class CartIntegration {
 	public function get_from_session( $cart_item, $values ) {
 		if ( isset( $values['apo'] ) ) {
 			$cart_item['apo'] = CartItemShape::normalize_apo( $values['apo'] );
+			self::each_file_token( $cart_item['apo'], array( FileUploads::class, 'mark_carted_token' ) );
 		}
 		return $cart_item;
 	}
@@ -192,11 +199,48 @@ final class CartIntegration {
 			$fields = self::fields_by_id( CartItemShape::pick_group( $groups, $entry['group_id'] ) );
 			foreach ( $entry['options'] as $fid => $val ) {
 				$f = $fields[ $fid ] ?? null;
+				if ( $f && 'file' === ( $f['type'] ?? '' ) ) {
+					$resolved = FileUploads::consume( (string) $val );
+					$item->add_meta_data(
+						( '' !== $f['label'] ) ? $f['label'] : $fid,
+						$resolved ? $resolved['name'] . ' — ' . $resolved['url'] : (string) $val,
+						true
+					);
+					continue;
+				}
 				$item->add_meta_data(
 					( $f && '' !== $f['label'] ) ? $f['label'] : $fid,
 					self::format_value( $f, $val ),
 					true
 				);
+			}
+		}
+	}
+
+	/**
+	 * @param array<string,mixed> $removed_key
+	 * @param \WC_Cart            $cart
+	 */
+	public function release_file_tokens( $removed_key, $cart ): void {
+		$item = $cart->removed_cart_contents[ $removed_key ] ?? null;
+		if ( ! is_array( $item ) || empty( $item['apo'] ) ) {
+			return;
+		}
+		self::each_file_token( CartItemShape::normalize_apo( $item['apo'] ), array( FileUploads::class, 'clear_carted_token' ) );
+	}
+
+	/**
+	 * Walk every 32-hex file token in the per-group entries.
+	 *
+	 * @param array[]  $entries normalized apo entries.
+	 * @param callable $cb      receives the token string.
+	 */
+	private static function each_file_token( array $entries, callable $cb ): void {
+		foreach ( $entries as $entry ) {
+			foreach ( (array) ( $entry['options'] ?? array() ) as $val ) {
+				if ( is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
+					$cb( $val );
+				}
 			}
 		}
 	}
@@ -224,6 +268,10 @@ final class CartIntegration {
 			$val = implode( ', ', $val );
 		}
 		$type = $field['type'] ?? '';
+		if ( 'file' === $type && is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
+			$name = FileUploads::display_name( $val );
+			return '' !== $name ? $name : __( 'Uploaded file', 'corelabs-product-options' );
+		}
 		if ( 'checkbox' === $type ) {
 			return _x( 'Yes', 'checked option in cart/order', 'corelabs-product-options' );
 		}

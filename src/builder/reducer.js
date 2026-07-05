@@ -40,6 +40,7 @@ export const DEFAULTS = {
 		...BASE,
 		options: [ { label: 'Option 1', image: '' } ],
 	},
+	file: { label: 'Upload a file', ...BASE },
 };
 
 let counter = 0;

@@ -34,6 +34,11 @@ final class FrontendAssets {
 				'decimalSep'  => wc_get_price_decimal_separator(),
 				'thousandSep' => wc_get_price_thousand_separator(),
 				'position'    => get_option( 'woocommerce_currency_pos', 'left' ),
+				'upload'      => array(
+					'url'   => esc_url_raw( rest_url( 'clpo/v1/upload' ) ),
+					'nonce' => wp_create_nonce( 'clpo_upload' ),
+					'maxMb' => (int) ceil( \CoreLabs\ProductOptions\Cart\FileUploads::max_bytes() / 1048576 ),
+				),
 			)
 		);
 		wp_set_script_translations( 'clpo-frontend', 'corelabs-product-options', CLPO_PATH . 'languages' );

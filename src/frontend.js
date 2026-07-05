@@ -4,6 +4,7 @@
  */
 import { wire } from './frontend/conditional-logic';
 import { wirePrices } from './frontend/price-update';
+import { wireUploads } from './frontend/uploader';
 import '../assets/css/frontend.css';
 
 function init() {
@@ -43,6 +44,8 @@ function init() {
 		wirePrices( form, fields, totalEl, base );
 	} );
 }
+
+wireUploads();
 
 if ( document.readyState !== 'loading' ) {
 	init();

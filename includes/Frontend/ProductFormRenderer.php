@@ -263,6 +263,13 @@ final class ProductFormRenderer {
 				}
 				echo '</div>';
 				break;
+			case 'file':
+				echo '<span class="apo-file">';
+				printf( '<input type="hidden" name="%s" value="" />', esc_attr( $name ) );
+				printf( '<input type="file" id="%s" class="apo-file-picker"%s%s />', esc_attr( $fid ), $req, $descby ); // phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<span class="apo-file-status" aria-live="polite"></span>';
+				echo '</span>';
+				break;
 			case 'price':
 				printf(
 					'<input type="hidden" name="%s" value="yes" /><span class="apo-fee">+%s</span>',

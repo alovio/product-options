@@ -39,5 +39,6 @@ final class Plugin {
 		( new \CoreLabs\ProductOptions\Frontend\ProductFormRenderer() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\FrontendAssets() )->register();
 		( new \CoreLabs\ProductOptions\Cart\CartIntegration() )->register();
+		( new \CoreLabs\ProductOptions\Cart\FileUploads() )->register();
 	}
 }

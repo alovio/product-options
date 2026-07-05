@@ -60,6 +60,11 @@ final class OptionSanitizer {
 						}
 					}
 					break;
+				case 'file':
+					if ( is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
+						$out[ $id ] = $val;
+					}
+					break;
 				case 'phone':
 					if ( null !== $val && '' !== $val ) {
 						$phone = trim( (string) preg_replace( '/[^0-9+\-() ]/', '', (string) $val ) );

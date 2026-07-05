@@ -10,7 +10,7 @@ class FieldTypesTest extends TestCase {
 
 	public function test_all_returns_builtin_types(): void {
 		$this->assertSame(
-			array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time', 'quantity', 'buttons', 'image_swatch' ),
+			array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time', 'quantity', 'buttons', 'image_swatch', 'file' ),
 			FieldTypes::all()
 		);
 	}
