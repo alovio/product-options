@@ -297,8 +297,9 @@ final class GroupResolver {
 ### Task 1.4: Renderer + validation read resolved groups (multi-group)
 
 **Files:**
-- Modify: `includes/Frontend/ProductFormRenderer.php` (render every resolved group as its own `.apo-options` block), `includes/Cart/CartIntegration.php::validate` (iterate groups)
-- Test: extend `tests/php/Unit/` only where logic is pure (renderer stays live-QA'd; validation loop gets a unit test)
+- Create: `includes/Cart/CartItemShape.php` (starts here with `collect_errors`; Task 1.5 adds the other two statics)
+- Modify: `includes/Frontend/ProductFormRenderer.php` (render every resolved group as its own `.apo-options` block), `includes/Cart/CartIntegration.php::validate` (iterate groups), `src/frontend.js` (the form-scoped totals fix below)
+- Test: `tests/php/Unit/CartItemShapeTest.php` (validation loop; renderer stays live-QA'd)
 
 - [ ] **Step 1: Failing test — validate() iterates all resolved groups**
 
@@ -320,9 +321,9 @@ Extract a pure helper first so it is testable: `CartItemShape::collect_errors( a
 ### Task 1.5: Cart list-shape + legacy session shim + addon_total
 
 **Files:**
-- Create: `includes/Cart/CartItemShape.php` — the three PURE statics (`normalize_apo`, `pick_group`, `collect_errors`) live here so `CartIntegration` stays hooks-only (it grows again in Chunk 3 with file-token wiring)
+- Modify: `includes/Cart/CartItemShape.php` — add `normalize_apo` + `pick_group` beside 1.4's `collect_errors` (all three PURE statics live here so `CartIntegration` stays hooks-only — it grows again in Chunk 3 with file-token wiring)
 - Modify: `includes/Cart/CartIntegration.php` (`add_cart_item_data`, `get_from_session`, `recalculate`, `display_in_cart`, `add_order_item_meta` — all delegate shape logic to `CartItemShape`)
-- Test: `tests/php/Unit/CartItemShapeTest.php`
+- Test: extend `tests/php/Unit/CartItemShapeTest.php`
 
 - [ ] **Step 1: Failing tests for the pure normalizer + recalc rule (spec §3.5.4, §4)**
 
@@ -426,7 +427,7 @@ npx wp-env run cli wp post list --post_type=alovio_option_group --format=table
 
 Expected: one publish group titled "<Product> — Options"; storefront product page still shows its fields (now via resolver).
 
-- [ ] **Step 6: Commit** — stage Migration.php, Plugin.php, uninstall.php, main file, test; `"feat: 1.x→2.0 migration (product meta → CPT groups, idempotent, batched) + uninstall coverage (spec §3.5)"`.
+- [ ] **Step 6: Commit** — stage Migration.php, Plugin.php, uninstall.php, test; `"feat: 1.x→2.0 migration (product meta → CPT groups, idempotent, batched) + uninstall coverage (spec §3.5)"`.
 
 **Chunk 1 exit criteria:** all tests green; a 1.0-seeded wp-env site upgrades in place: product page renders identical fields through the resolver, cart prices unchanged, legacy cart session survives (manual: add-to-cart before the code switch, reload after).
 
@@ -527,7 +528,7 @@ rg -n "clcf|CLCF|checkout-fields|Checkout Fields" src/builder assets/css/builder
   - `FieldPreview.jsx`: map the 10 current types (text, textarea, number, checkbox, radio, select, price, heading, swatch, date) onto CF's renderers. Two renderers CF lacks — port both from v1's deleted `LivePreview.jsx` (recover with `git show $(git rev-list -1 HEAD -- src/builder/LivePreview.jsx):src/builder/LivePreview.jsx`): the swatch dot markup AND the `price` (surcharge) renderer (`case 'price'` → `.apo-fee`).
   - `Palette.jsx`: palette source = `window.CLPO_HUB.fieldTypes`; CF's Palette also imports `{ TEMPLATES } from './templates'` and renders a "Start from a template" chips section — `templates.js` is NOT copied, so strip the import + chips section (templates return as the hub `#/templates` screen in Chunk 5).
 
-- [ ] **Step 3: Port the store jest suite** — copy CF `tests/js/store.test.js` → `tests/js/builder-store.test.js`, rename keys, extend for `assignment/priority` actions. Remove the Task 2.2 `describe.skip`. Run: `npm run test:js` → PASS.
+- [ ] **Step 3: Port the store jest suite** — copy CF `tests/js/store.test.js` → `tests/js/builder-store.test.js`, rename keys, extend for `assignment/priority` actions. Run: `npm run test:js` → PASS.
 - [ ] **Step 4:** `npm run build` → compiles. **Step 5: Commit** — `"feat: port Alovio CF builder (shell/palette/canvas/settings/sim) to clpo (spec §5)"`.
 
 ### Task 2.5: Hub router + Groups list screen
@@ -658,8 +659,8 @@ public function test_carted_token_expires_after_30_days(): void { /* age 31 days
 - [ ] **Step 1: Write the fixture FIRST** (`tests/fixtures/formula-cases.json`) — cases: `{expr, values, expected}` where `expected` is a number OR an error tag:
   basic arithmetic + precedence `2+3*4=14`; parens; `{a}*{b}` tokens; missing token → 0; `min(…) max(…) round(…)`; divide-by-zero → `{"error":"runtime"}`; negative result → clamped `0`; >200-char expr → `{"error":"compile"}`; malformed (`2*`, `{a`, unknown func, wrong arity) → `{"error":"compile"}`; decimal safety case `0.1+0.2=0.3` exact.
 - [ ] **Step 2: Failing PHP test** — `FormulaTest` iterates the fixture calling `FormulaPrice::evaluate( string $expr, array $values ): float` (returns ≥0 float; throws nothing — BOTH error kinds return 0.0). Additionally, for `error:"compile"` cases only, assert `FormulaPrice::validate($expr)` returns an error string; for `error:"runtime"` cases (div-zero — thrown by `DecimalMath::div` during evaluation, invisible to a compile-only check) assert `validate()` returns null but `evaluate()` still yields 0.0. Run → FAIL.
-- [ ] **Step 3: Port + implement the facade** — `FormulaPrice::evaluate`: length check → `Formula-style compile` (Lexer→Parser) → scale values ×100 (2dp money) via DecimalMath → `Evaluator` → unscale, clamp ≥0; catch `FormulaError` → `wc_get_logger()->warning( …, ['source'=>'alovio-product-options'] )` → 0.0. `validate()` = compile-only, returns null|error-message (for the builder inline validation + REST-side schema normalization). Run → PHP PASS.
-- [ ] **Step 4: Failing JS test** — same fixture through `src/shared/formula/evaluator.js` (`evaluateFormula(expr, values)` mirrors clamp/error→0). Run → FAIL → port JS → PASS.
+- [ ] **Step 3: Port + implement the facade** — `FormulaPrice::evaluate`: length check → `Formula-style compile` (Lexer→Parser) → scale values ×100 (2dp money) via DecimalMath → `Evaluator` → unscale, clamp ≥0; catch `FormulaError` → `wc_get_logger()->warning( …, ['source'=>'alovio-product-options'] )` → 0.0. `validate()` = compile-only INCLUDING the ≤200-length check, returns null|error-message (for the builder inline validation + REST-side schema normalization). Run → PHP PASS.
+- [ ] **Step 4: Failing JS test** — same fixture through `src/shared/formula/evaluator.js`: `evaluateFormula(expr, values)` mirrors clamp/error→0, AND export `validateFormula(expr)` (compile-only incl. length check, returns null|message — the builder's inline error source in 3.6; evaluateFormula alone exposes no error kind). Run → FAIL → port JS → PASS.
 - [ ] **Step 5: Wire pricing** — `PriceCalculator::addon_total`: `formula` case = `FormulaPrice::evaluate( $field['formula'], $numeric_values_of_engaged_fields )`; add `PriceCalculator::breakdown( array $group, array $submitted, int $decimals, float $base ): array` returning `{field_id, label, amount}` rows (reuses the same per-field computation — refactor the loop body into a private per-field method so total() and breakdown() share it). JS `computeAddonTotal` mirrors; also export `computeBreakdown` for Chunk 4. Schema: `formula` key sanitized (length ≤200) + `FormulaPrice::validate` on save (invalid → mode falls back to fixed + REST response carries a `warnings[]` entry).
 - [ ] **Step 6: Run everything** — `composer test`, `npm run test:js`, `npm run build` → ALL PASS. **Step 7: Commit** — `"feat: formula pricing — ported decimal-safe engine (PHP+JS, fixture parity) + breakdown() (spec §7)"`.
 
@@ -729,7 +730,7 @@ End state: design-B breakdown box live-updating (variations included); polish pa
 - Create: `includes/Admin/ImportExport.php` (pure `package( array $groups ): array` / `unpack( array $json ): array{groups: array[], warnings: string[]}`), wire routes into `GroupsRestController` (`GET /export?ids=`, `POST /import`)
 - Test: `tests/php/Unit/ImportExportTest.php`
 
-- [ ] **Step 1: Failing tests** — `package` shape `{version:'2.0', groups:[{title,fields,assignment,priority}]}` (no ids); `unpack` drops unknown field types/price modes into `warnings[]` (uses `FieldSchema::normalize` + reports what was removed), missing keys defaulted, non-array input → error entry; round-trip `unpack(package(x))` preserves normalized content.
+- [ ] **Step 1: Failing tests** — `package` shape `{version:'2.0', groups:[{title,fields,assignment,priority}]}` (no ids); `unpack` drops unknown field types/price modes into `warnings[]` (uses `FieldSchema::normalize` + reports what was removed), missing keys defaulted, non-array input → error entry; round-trip `unpack(package(x))` preserves normalized content. Route semantics: `GET /export?ids=1,2` exports those groups; **ids omitted → ALL groups** (the header "Export all" consumer) — add a test pinning both.
 - [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (import handler: every unpacked group → `repo->save(0, …)` with `status: draft`; response `{created: ids[], warnings}`).
 - [ ] **Step 4: Run** — PASS. **Step 5: Commit** — `"feat: group export/import with schema-normalizing warnings (spec §8)"`.
 
