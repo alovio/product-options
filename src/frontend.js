@@ -22,7 +22,9 @@ function init() {
 		wire( form, fields );
 		const optionsEl = node.closest( '.apo-options' );
 		const base = optionsEl ? parseFloat( optionsEl.dataset.apoBase ) || 0 : 0;
-		const totalEl = form.querySelector( '.apo-options-total__value' );
+		// Scope the total to THIS group's block — with several priced groups on
+		// one form, a form-wide query would write every subtotal into group 1.
+		const totalEl = optionsEl && optionsEl.querySelector( '.apo-options-total__value' );
 		wirePrices( form, fields, totalEl, base );
 	} );
 }

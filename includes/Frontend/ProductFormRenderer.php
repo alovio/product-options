@@ -3,23 +3,22 @@ declare( strict_types=1 );
 
 namespace CoreLabs\ProductOptions\Frontend;
 
-use CoreLabs\ProductOptions\Fields\FieldRepository;
+use CoreLabs\ProductOptions\Groups\GroupResolver;
 use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Render a product's option fields inside the add-to-cart form. All output is
- * escaped; initial visibility is computed server-side so there is no flash for
- * cached/no-JS visitors.
+ * Render every resolved option group inside the add-to-cart form, each as its
+ * own .apo-options block (spec §3.2). All output is escaped; initial
+ * visibility is computed server-side so there is no flash for cached/no-JS
+ * visitors.
+ *
+ * Known limitation (spec-level): field ids are only unique within a group; if
+ * two resolved groups share a field id, their `apo[<id>]` inputs collide.
+ * Builder-generated ids are effectively unique, so this is accepted for 2.0.
  */
 final class ProductFormRenderer {
-
-	private FieldRepository $repo;
-
-	public function __construct( ?FieldRepository $repo = null ) {
-		$this->repo = $repo ?? new FieldRepository();
-	}
 
 	public function register(): void {
 		add_action( 'woocommerce_before_add_to_cart_button', array( $this, 'render' ) );
@@ -32,13 +31,20 @@ final class ProductFormRenderer {
 			return;
 		}
 
-		$group  = $this->repo->get( $product_id );
+		$base = ( is_object( $product ) && method_exists( $product, 'get_price' ) ) ? (float) $product->get_price() : 0.0;
+
+		foreach ( GroupResolver::for_product( $product_id ) as $group ) {
+			$this->render_group( $group, $base );
+		}
+	}
+
+	/** @param array<string,mixed> $group canonical group array (id/fields/…). */
+	private function render_group( array $group, float $base ): void {
 		$fields = $group['fields'] ?? array();
 		if ( empty( $fields ) ) {
 			return;
 		}
 
-		$base   = ( is_object( $product ) && method_exists( $product, 'get_price' ) ) ? (float) $product->get_price() : 0.0;
 		$active = ConditionalLogic::active_map( $group, array() );
 
 		$has_priced = false;
@@ -49,7 +55,11 @@ final class ProductFormRenderer {
 			}
 		}
 
-		printf( '<div class="apo-options" data-apo-base="%s">', esc_attr( (string) $base ) );
+		printf(
+			'<div class="apo-options" data-apo-group="%d" data-apo-base="%s">',
+			(int) ( $group['id'] ?? 0 ),
+			esc_attr( (string) $base )
+		);
 		foreach ( $fields as $f ) {
 			$this->render_field( $f, ! empty( $active[ $f['id'] ?? '' ] ) );
 		}
@@ -58,7 +68,7 @@ final class ProductFormRenderer {
 				. ' <span class="apo-options-total__value" aria-live="polite" aria-atomic="true">+0.00</span></p>';
 		}
 		echo '<script type="application/json" class="apo-rules">'
-			. wp_json_encode( $group, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
+			. wp_json_encode( array( 'fields' => $fields ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
 			. '</script>';
 		echo '</div>';
 	}

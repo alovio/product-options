@@ -51,12 +51,11 @@ final class CartIntegration {
 	 * @return bool
 	 */
 	public function validate( $passed, $product_id, $quantity ) {
-		$group = $this->repo->get( (int) $product_id );
-		if ( empty( $group['fields'] ) ) {
+		$groups = \CoreLabs\ProductOptions\Groups\GroupResolver::for_product( (int) $product_id );
+		if ( empty( $groups ) ) {
 			return $passed;
 		}
-		$opts   = OptionSanitizer::sanitize( $group, $this->posted() );
-		$errors = Validator::validate( $group, $opts );
+		$errors = CartItemShape::collect_errors( $groups, $this->posted() );
 		if ( ! empty( $errors ) ) {
 			foreach ( $errors as $error ) {
 				wc_add_notice( $error, 'error' );
