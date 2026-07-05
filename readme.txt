@@ -97,9 +97,11 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 
 == Screenshots ==
 
-1. The Product Options hub — groups, assignments and templates in one place.
-2. The full-screen builder: palette, live product preview with simulation, and field settings.
-3. The storefront price breakdown box updating live as options are chosen.
+1. The Product Options hub — every option group with its status and assignment, one click from editing.
+2. The full-screen builder: 18-type palette, live product preview with a preview-as-customer simulation bar, and the formula pricing editor.
+3. Six starter templates — gift options, engraving, t-shirt designer, made-to-order, delivery date and donation.
+4. The storefront: option cards light up as customers choose — price pills, colour swatches and a quantity stepper.
+5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
 
