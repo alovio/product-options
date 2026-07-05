@@ -87,6 +87,29 @@ export function formatMoney( amount ) {
 }
 
 /**
+ * Mutable base-price holder: WooCommerce variation events move it, every
+ * breakdown update reads it (spec §9 variable products).
+ *
+ * @param {number} initial base from data-apo-base.
+ */
+export function createBaseTracker( initial ) {
+	const start = parseFloat( initial ) || 0;
+	let current = start;
+	return {
+		get: () => current,
+		set: ( v ) => {
+			const n = parseFloat( v );
+			if ( ! isNaN( n ) ) {
+				current = n;
+			}
+		},
+		reset: () => {
+			current = start;
+		},
+	};
+}
+
+/**
  * Pure row model for the breakdown box (spec §9, design B). Empty array when
  * nothing priced is engaged — the box stays hidden.
  *

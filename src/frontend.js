@@ -3,7 +3,7 @@
  * then wire conditional visibility and the display-only options total.
  */
 import { wire } from './frontend/conditional-logic';
-import { wireBreakdown } from './frontend/price-update';
+import { wireBreakdown, createBaseTracker } from './frontend/price-update';
 import { wireUploads } from './frontend/uploader';
 import '../assets/css/frontend.css';
 
@@ -54,7 +54,25 @@ function init() {
 		if ( ! boxEl ) {
 			return;
 		}
-		wireBreakdown( form, groups, boxEl, () => base );
+		const tracker = createBaseTracker( base );
+		const update = wireBreakdown( form, groups, boxEl, tracker.get );
+
+		// Variable products: follow the selected variation's price (spec §9).
+		// Woo fires these as jQuery events on form.variations_form.
+		if ( typeof window.jQuery !== 'undefined' && form.classList.contains( 'variations_form' ) ) {
+			window
+				.jQuery( form )
+				.on( 'found_variation', ( e, variation ) => {
+					if ( variation && variation.display_price !== undefined ) {
+						tracker.set( variation.display_price );
+						update();
+					}
+				} )
+				.on( 'reset_data', () => {
+					tracker.reset();
+					update();
+				} );
+		}
 	} );
 }
 
