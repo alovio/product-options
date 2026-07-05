@@ -398,3 +398,15 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-pillopt { display: inline-block; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px 10px; margin-right: 6px; font-size: 12px; }
 .clpo-swimg { width: 30px; height: 30px; object-fit: cover; border-radius: 6px; margin-right: 6px; }
 .clpo-swimg--empty { display: inline-flex; align-items: center; justify-content: center; background: #f0f0f1; }
+
+/* Templates grid + notices */
+.clpo-tplgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
+.clpo-tplcard { background: #fff; border: 1px solid #e2e4e7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.clpo-tplcard h3 { margin: 0; font-size: 14px; }
+.clpo-tplcard p { margin: 0; font-size: 12.5px; color: #646970; flex: 1; }
+.clpo-tplcard .clpo-btn-primary { align-self: flex-start; }
+.clpo-typechip { display: inline-block; font-size: 10.5px; background: #f0f0f1; border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; color: #50575e; }
+.clpo-notice { border-left: 4px solid #72aee6; background: #fff; padding: 8px 12px; box-shadow: 0 1px 1px rgba(0,0,0,.04); font-size: 13px; }
+.clpo-notice.is-success { border-color: #00a32a; }
+.clpo-notice.is-warning { border-color: #dba617; }
+.clpo-notice.is-error { border-color: #d63638; }

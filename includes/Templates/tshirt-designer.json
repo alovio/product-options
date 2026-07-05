@@ -1,0 +1,17 @@
+{
+	"version": "2.0",
+	"groups": [
+		{
+			"title": "T-shirt designer",
+			"priority": 10,
+			"assignment": { "mode": "all", "ids": [] },
+			"fields": [
+				{ "id": "shirt_size", "type": "buttons", "label": "Size", "required": true, "options": [ "S", "M", "L", "XL" ] },
+				{ "id": "print_style", "type": "image_swatch", "label": "Print style", "price": 6, "priceMode": "fixed",
+					"options": [ { "label": "Classic", "image": "" }, { "label": "Vintage", "image": "" }, { "label": "Neon", "image": "" } ] },
+				{ "id": "custom_text", "type": "text", "label": "Custom text", "price": 4, "priceMode": "fixed", "maxLength": 30 },
+				{ "id": "artwork", "type": "file", "label": "Your artwork (PNG/JPG/PDF)" }
+			]
+		}
+	]
+}

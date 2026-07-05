@@ -5,30 +5,12 @@ import apiFetch from '@wordpress/api-fetch';
 import '../builder/store';
 import AppShell from '../builder/AppShell';
 import GroupsList from './screens/GroupsList';
+import Templates from './screens/Templates';
 import Settings from './screens/Settings';
 import { currentRoute, navigate } from './router';
 import '../../assets/css/builder.css';
 
 const T = 'corelabs-product-options';
-
-function TemplatesPlaceholder() {
-	return (
-		<div className="clpo-app">
-			<div className="clpo-hdr">
-				<div className="clpo-logo"><span className="clpo-mark">▲</span> Alovio <span className="clpo-sub">{ __( 'Product Options', T ) }</span></div>
-				<nav className="clpo-hubnav">
-					<a href="#/groups">{ __( 'Groups', T ) }</a>
-					<a className="is-on" href="#/templates">{ __( 'Templates', T ) }</a>
-					<a href="#/settings">{ __( 'Settings', T ) }</a>
-				</nav>
-				<div className="clpo-grow"></div>
-			</div>
-			<div className="clpo-list-wrap">
-				<p className="clpo-list-note">{ __( 'Starter templates are coming in this release.', T ) }</p>
-			</div>
-		</div>
-	);
-}
 
 function Hub() {
 	const [ route, setRoute ] = useState( currentRoute() );
@@ -43,7 +25,7 @@ function Hub() {
 		return <AppShell key={ route.id } groupId={ route.id } onBack={ () => navigate( '#/groups' ) } />;
 	}
 	if ( route.name === 'templates' ) {
-		return <TemplatesPlaceholder />;
+		return <Templates />;
 	}
 	if ( route.name === 'settings' ) {
 		return <Settings />;

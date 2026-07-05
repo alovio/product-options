@@ -115,6 +115,24 @@ final class GroupsRestController {
 		);
 		register_rest_route(
 			self::NS,
+			'/templates',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'list_templates' ),
+				'permission_callback' => array( $this, 'can_manage' ),
+			)
+		);
+		register_rest_route(
+			self::NS,
+			'/templates/(?P<id>[a-z0-9-]+)/use',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'use_template' ),
+				'permission_callback' => array( $this, 'can_manage' ),
+			)
+		);
+		register_rest_route(
+			self::NS,
 			'/settings',
 			array(
 				array(
@@ -309,6 +327,36 @@ final class GroupsRestController {
 				'warnings' => $unpacked['warnings'],
 			)
 		);
+	}
+
+	public function list_templates() {
+		$items = array();
+		foreach ( \CoreLabs\ProductOptions\Templates\Templates::all() as $tpl ) {
+			$fields  = $tpl['package']['groups'][0]['fields'] ?? array();
+			$items[] = array(
+				'id'          => $tpl['id'],
+				'name'        => $tpl['name'],
+				'description' => $tpl['description'],
+				'types'       => array_values( array_unique( array_column( $fields, 'type' ) ) ),
+			);
+		}
+		return rest_ensure_response( $items );
+	}
+
+	/** @param \WP_REST_Request $request */
+	public function use_template( $request ) {
+		$tpl = \CoreLabs\ProductOptions\Templates\Templates::get( (string) $request['id'] );
+		if ( null === $tpl ) {
+			return new \WP_Error( 'clpo_not_found', __( 'Template not found.', 'corelabs-product-options' ), array( 'status' => 404 ) );
+		}
+		$unpacked = ImportExport::unpack( $tpl['package'] );
+		$group    = $unpacked['groups'][0] ?? null;
+		if ( null === $group ) {
+			return new \WP_Error( 'clpo_bad_template', __( 'Template could not be loaded.', 'corelabs-product-options' ), array( 'status' => 500 ) );
+		}
+		$group['status'] = 'draft';
+		$saved           = $this->repo->save( 0, $group );
+		return rest_ensure_response( $saved );
 	}
 
 	public function get_settings() {

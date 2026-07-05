@@ -1,0 +1,14 @@
+{
+	"version": "2.0",
+	"groups": [
+		{
+			"title": "Donation / tip",
+			"priority": 10,
+			"assignment": { "mode": "all", "ids": [] },
+			"fields": [
+				{ "id": "tip_note", "type": "heading", "label": "Support our work", "description": "Add an optional tip — thank you!" },
+				{ "id": "tip_amount", "type": "number", "label": "Tip amount", "price": 1, "priceMode": "per_unit", "min": "0", "max": "500" }
+			]
+		}
+	]
+}

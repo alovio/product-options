@@ -1,0 +1,16 @@
+{
+	"version": "2.0",
+	"groups": [
+		{
+			"title": "Made-to-order dimensions",
+			"priority": 10,
+			"assignment": { "mode": "all", "ids": [] },
+			"fields": [
+				{ "id": "width_cm", "type": "number", "label": "Width (cm)", "required": true, "min": "10", "max": "300" },
+				{ "id": "height_cm", "type": "number", "label": "Height (cm)", "required": true, "min": "10", "max": "300" },
+				{ "id": "area_price", "type": "price", "label": "Custom size", "priceMode": "formula", "formula": "round({width_cm} * {height_cm} * 0.02, 2)" },
+				{ "id": "panels", "type": "quantity", "label": "Extra panels", "price": 15, "priceMode": "per_unit", "min": "0", "max": "10" }
+			]
+		}
+	]
+}
