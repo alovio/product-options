@@ -39,8 +39,33 @@ final class OptionSanitizer {
 					}
 					break;
 				case 'date':
+				case 'time':
 					if ( null !== $val && '' !== $val ) {
-						$out[ $id ] = sanitize_text_field( (string) $val );
+						$out[ $id ] = trim( sanitize_text_field( (string) $val ) );
+					}
+					break;
+				case 'email':
+					if ( null !== $val && '' !== $val ) {
+						$email = sanitize_email( (string) $val );
+						if ( '' !== $email ) {
+							$out[ $id ] = $email;
+						}
+					}
+					break;
+				case 'url':
+					if ( null !== $val && '' !== $val ) {
+						$url = esc_url_raw( (string) $val );
+						if ( '' !== $url && preg_match( '#^https?://#i', $url ) ) {
+							$out[ $id ] = $url;
+						}
+					}
+					break;
+				case 'phone':
+					if ( null !== $val && '' !== $val ) {
+						$phone = trim( (string) preg_replace( '/[^0-9+\-() ]/', '', (string) $val ) );
+						if ( preg_match( '/[0-9]/', $phone ) ) {
+							$out[ $id ] = $phone;
+						}
 					}
 					break;
 				case 'number':

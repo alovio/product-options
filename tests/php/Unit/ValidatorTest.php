@@ -72,4 +72,32 @@ class ValidatorTest extends TestCase {
 		$g = $this->group( array( array( 'id' => 'a', 'type' => 'text', 'label' => 'Name', 'required' => true, 'condition' => null ) ) );
 		$this->assertSame( array(), Validator::validate( $g, array( 'a' => 'Tahir' ) ) );
 	}
+
+	public function test_email_invalid_nonempty_errors(): void {
+		$g = array( 'fields' => array( array( 'id' => 'e', 'type' => 'email', 'label' => 'Your email', 'required' => false, 'condition' => null ) ) );
+		$errors = Validator::validate( $g, array( 'e' => 'nope' ) );
+		$this->assertCount( 1, $errors );
+		$this->assertStringContainsString( 'Your email', $errors[0] );
+		$this->assertSame( array(), Validator::validate( $g, array( 'e' => 'a@b.co' ) ) );
+	}
+
+	public function test_time_format_enforced(): void {
+		$g = array( 'fields' => array( array( 'id' => 't', 'type' => 'time', 'label' => 'Pickup time', 'required' => false, 'condition' => null ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 't' => '09:30' ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 't' => '23:59' ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 't' => '24:00' ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 't' => '9:30' ) ) );
+	}
+
+	public function test_phone_needs_five_digits(): void {
+		$g = array( 'fields' => array( array( 'id' => 'p', 'type' => 'phone', 'label' => 'Phone', 'required' => false, 'condition' => null ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 'p' => '+1 555 00' ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 'p' => '+1 5' ) ) );
+	}
+
+	public function test_url_scheme_required(): void {
+		$g = array( 'fields' => array( array( 'id' => 'u', 'type' => 'url', 'label' => 'Link', 'required' => false, 'condition' => null ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 'u' => 'https://x.test' ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 'u' => 'x.test' ) ) );
+	}
 }

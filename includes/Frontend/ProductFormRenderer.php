@@ -188,6 +188,14 @@ final class ProductFormRenderer {
 				$val = ( '' !== $default ) ? sprintf( ' value="%s"', esc_attr( $default ) ) : '';
 				printf( '<input type="date" id="%s" name="%s"%s%s%s%s%s />', esc_attr( $fid ), esc_attr( $name ), $req, $min, $max, $descby, $val ); // phpcs:ignore WordPress.Security.EscapeOutput
 				break;
+			case 'email':
+			case 'url':
+			case 'time':
+			case 'phone':
+				$html_type = 'phone' === $type ? 'tel' : $type;
+				$val       = ( '' !== $default ) ? sprintf( ' value="%s"', esc_attr( $default ) ) : '';
+				printf( '<input type="%s" id="%s" name="%s"%s%s%s%s />', esc_attr( $html_type ), esc_attr( $fid ), esc_attr( $name ), $req, $ph, $descby, $val ); // phpcs:ignore WordPress.Security.EscapeOutput
+				break;
 			case 'checkbox':
 				$chk = ( 'yes' === $default ) ? ' checked' : '';
 				printf( '<input type="checkbox" id="%s" name="%s" value="yes"%s%s%s />', esc_attr( $fid ), esc_attr( $name ), $req, $descby, $chk ); // phpcs:ignore WordPress.Security.EscapeOutput

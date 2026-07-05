@@ -29,6 +29,10 @@ export const DEFAULTS = {
 		],
 	},
 	date: { label: 'Pick a date', ...BASE, min: '', max: '' },
+	email: { label: 'Email address', ...BASE },
+	phone: { label: 'Phone number', ...BASE },
+	url: { label: 'Website / link', ...BASE },
+	time: { label: 'Pick a time', ...BASE },
 };
 
 let counter = 0;

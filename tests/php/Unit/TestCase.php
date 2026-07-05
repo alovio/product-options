@@ -23,6 +23,17 @@ abstract class TestCase extends PHPUnitTestCase {
 		Monkey\Functions\when( 'sanitize_text_field' )->returnArg( 1 );
 		Monkey\Functions\when( 'sanitize_textarea_field' )->returnArg( 1 );
 		Monkey\Functions\when( 'sanitize_hex_color' )->returnArg( 1 );
+		Monkey\Functions\when( 'sanitize_email' )->alias(
+			static function ( $email ) {
+				return filter_var( (string) $email, FILTER_VALIDATE_EMAIL ) ? (string) $email : '';
+			}
+		);
+		Monkey\Functions\when( 'esc_url_raw' )->alias(
+			static function ( $url ) {
+				$url = (string) $url;
+				return preg_match( '#^https?://#i', $url ) ? $url : '';
+			}
+		);
 		Monkey\Functions\when( '_n' )->alias(
 			static function ( $single, $plural, $number ) {
 				return 1 === (int) $number ? $single : $plural;

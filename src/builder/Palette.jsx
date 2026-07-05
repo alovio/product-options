@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 
 const T = 'corelabs-product-options';
-const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date' ];
+const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time' ];
 
 const META = {
 	text: { label: __( 'Text', T ), ic: 'Aa' },
