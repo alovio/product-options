@@ -44,8 +44,15 @@ export default function PreviewCanvas() {
 		},
 	} );
 
+	const deselect = ( e ) => {
+		if ( ! e.target.closest( '.clpo-fld' ) && ! e.target.closest( 'button' ) ) {
+			selectField( null );
+		}
+	};
+
 	return (
-		<div className="clpo-canvas">
+		// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+		<div className="clpo-canvas" onClick={ deselect }>
 			<div className="clpo-sheet">
 				<div className="clpo-shead">
 					<h2>{ __( 'Product preview', T ) }</h2>

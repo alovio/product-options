@@ -5,6 +5,7 @@ import { STORE } from './store';
 import General from './panels/General';
 import Logic from './panels/Logic';
 import Pricing from './panels/Pricing';
+import Assignment from './panels/Assignment';
 
 const T = 'corelabs-product-options';
 
@@ -20,10 +21,20 @@ export default function SettingsPanel() {
 	}, [ field && field.id ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if ( ! field ) {
+		// No field selected: group-level settings (assignment + priority).
 		return (
 			<div className="clpo-settings">
-				<div className="clpo-sp-empty">
-					{ __( 'Select a field on the canvas to edit its settings — or add one from the left.', T ) }
+				<div className="clpo-sp-head">
+					<div className="clpo-sp-title">
+						<span className="clpo-ic">⚙</span>
+						<div>
+							<h3>{ __( 'Group settings', T ) }</h3>
+							<small>{ __( 'select a field to edit it', T ) }</small>
+						</div>
+					</div>
+				</div>
+				<div className="clpo-sp-body">
+					<Assignment />
 				</div>
 			</div>
 		);

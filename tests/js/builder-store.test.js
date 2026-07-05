@@ -78,6 +78,7 @@ describe( 'builder reducer', () => {
 		expect( s.priority ).toBe( 5 );
 		expect( s.sim ).toEqual( {} );
 		expect( s.past ).toEqual( [] );
+		expect( s.selectedId ).toBeNull();
 	} );
 
 	it( 'setAssignment normalizes mode and ids; all clears ids', () => {

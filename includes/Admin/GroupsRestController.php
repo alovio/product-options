@@ -199,11 +199,20 @@ final class GroupsRestController {
 	/** @param \WP_REST_Request $request */
 	public function search_products( $request ) {
 		$q     = (string) $request->get_param( 'q' );
+		// wc_get_products() has no free-text search arg — plain WP_Query 's' does.
+		$posts = get_posts(
+			array(
+				'post_type'   => 'product',
+				'post_status' => 'publish',
+				's'           => $q,
+				'numberposts' => 20,
+			)
+		);
 		$items = array();
-		foreach ( wc_get_products( array( 's' => $q, 'limit' => 20, 'status' => 'publish' ) ) as $p ) {
+		foreach ( $posts as $p ) {
 			$items[] = array(
-				'id'   => (int) $p->get_id(),
-				'name' => (string) $p->get_name(),
+				'id'   => (int) $p->ID,
+				'name' => (string) $p->post_title,
 			);
 		}
 		return rest_ensure_response( $items );

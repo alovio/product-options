@@ -147,6 +147,7 @@ export function reducer( state = initialState, action = {} ) {
 				...state,
 				past: [],
 				sim: {},
+				selectedId: null,
 				fields: Array.isArray( g.fields ) ? g.fields : [],
 				title: String( g.title || '' ),
 				status: g.status === 'publish' ? 'publish' : 'draft',
