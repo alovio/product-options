@@ -29,6 +29,7 @@ final class Plugin {
 		}
 		$this->booted = true;
 
+		( new \CoreLabs\ProductOptions\Groups\OptionGroupCpt() )->register();
 		( new \CoreLabs\ProductOptions\Admin\RestController() )->register();
 		( new \CoreLabs\ProductOptions\Admin\BuilderAssets() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\ProductFormRenderer() )->register();
