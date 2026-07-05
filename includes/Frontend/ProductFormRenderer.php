@@ -109,41 +109,40 @@ final class ProductFormRenderer {
 
 	private function label_text( array $f ): string {
 		$label = (string) ( $f['label'] ?? '' );
-		$label = '' !== $label ? $label : self::type_label( (string) ( $f['type'] ?? '' ) );
-		return $label . self::price_suffix( $f );
+		return '' !== $label ? $label : self::type_label( (string) ( $f['type'] ?? '' ) );
 	}
 
 	/**
-	 * "(+$8.00)" / "(+$2.00 each)" / "(+$0.50 / character)" / "(+10%)" /
-	 * "(price varies)" — appended to the field label so shoppers see the cost
-	 * before engaging (spec §9).
+	 * The price pill shown at the right edge of a field-card header:
+	 * "+$8.00" / "+$2.00 each" / "+$0.50 / character" / "+10%" /
+	 * "price varies" (formula). Empty when the field carries no charge.
 	 */
-	private static function price_suffix( array $f ): string {
+	private static function price_pill( array $f ): string {
 		$mode  = (string) ( $f['priceMode'] ?? 'fixed' );
 		$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
 
-		if ( 'formula' === $mode ) {
-			return ' (' . __( 'price varies', 'corelabs-product-options' ) . ')';
-		}
-		if ( $price <= 0 || 'price' === ( $f['type'] ?? '' ) ) {
-			return ''; // surcharge fields already print their own +fee row.
-		}
-		$fmt = static function ( float $amount ): string {
+		$text = '';
+		$fmt  = static function ( float $amount ): string {
 			return function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( $amount ) ) : number_format( $amount, 2 );
 		};
-		if ( 'percent' === $mode ) {
+		if ( 'formula' === $mode ) {
+			$text = __( 'price varies', 'corelabs-product-options' );
+		} elseif ( $price <= 0 || 'price' === ( $f['type'] ?? '' ) ) {
+			$text = ''; // surcharge fields already print their own +fee row.
+		} elseif ( 'percent' === $mode ) {
 			/* translators: %s: percentage number */
-			return ' (' . sprintf( __( '+%s%%', 'corelabs-product-options' ), (string) ( $price + 0 ) ) . ')';
-		}
-		if ( 'per_unit' === $mode ) {
+			$text = sprintf( __( '+%s%%', 'corelabs-product-options' ), (string) ( $price + 0 ) );
+		} elseif ( 'per_unit' === $mode ) {
 			/* translators: %s: formatted price */
-			return ' (' . sprintf( __( '+%s each', 'corelabs-product-options' ), $fmt( $price ) ) . ')';
-		}
-		if ( 'per_char' === $mode ) {
+			$text = sprintf( __( '+%s each', 'corelabs-product-options' ), $fmt( $price ) );
+		} elseif ( 'per_char' === $mode ) {
 			/* translators: %s: formatted price */
-			return ' (' . sprintf( __( '+%s / character', 'corelabs-product-options' ), $fmt( $price ) ) . ')';
+			$text = sprintf( __( '+%s / character', 'corelabs-product-options' ), $fmt( $price ) );
+		} else {
+			$text = '+' . $fmt( $price );
 		}
-		return ' (+' . $fmt( $price ) . ')';
+
+		return '' === $text ? '' : '<span class="apo-price-pill">' . esc_html( $text ) . '</span>';
 	}
 
 	private static function type_label( string $type ): string {
@@ -211,21 +210,22 @@ final class ProductFormRenderer {
 		printf( '<div class="apo-field" data-apo-field="%s"%s>', esc_attr( $id ), $hidden ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 		if ( $group ) {
-			echo '<fieldset class="apo-fieldset"><legend class="apo-field__label">'
-				. esc_html( $this->label_text( $f ) ) . $this->required_marker( $f ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput
+			echo '<fieldset class="apo-fieldset"><legend class="apo-field__label"><span class="apo-field__label-text">'
+				. esc_html( $this->label_text( $f ) ) . $this->required_marker( $f ) . '</span>' . self::price_pill( $f ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput
 			echo $this->desc_markup( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
 			$this->render_input( $f );
 			echo '</fieldset>';
 		} elseif ( 'price' === $type ) {
-			echo '<span class="apo-field__label">' . esc_html( $this->label_text( $f ) ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput
+			echo '<span class="apo-field__label"><span class="apo-field__label-text">' . esc_html( $this->label_text( $f ) ) . '</span>' . self::price_pill( $f ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput
 			echo $this->desc_markup( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
 			$this->render_input( $f );
 		} else {
 			printf(
-				'<label class="apo-field__label" for="%s">%s%s</label>',
+				'<label class="apo-field__label" for="%s"><span class="apo-field__label-text">%s%s</span>%s</label>',
 				esc_attr( $fid ),
 				esc_html( $this->label_text( $f ) ),
-				$this->required_marker( $f ) // phpcs:ignore WordPress.Security.EscapeOutput
+				$this->required_marker( $f ), // phpcs:ignore WordPress.Security.EscapeOutput
+				self::price_pill( $f ) // phpcs:ignore WordPress.Security.EscapeOutput
 			);
 			echo $this->desc_markup( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
 			$this->render_input( $f );
@@ -349,11 +349,12 @@ final class ProductFormRenderer {
 				echo '</span>';
 				break;
 			case 'price':
-				printf(
-					'<input type="hidden" name="%s" value="yes" /><span class="apo-fee">+%s</span>',
-					esc_attr( $name ),
-					esc_html( (string) ( $f['price'] ?? 0 ) )
-				);
+				printf( '<input type="hidden" name="%s" value="yes" />', esc_attr( $name ) );
+				if ( 'formula' !== ( $f['priceMode'] ?? 'fixed' ) && (float) ( $f['price'] ?? 0 ) > 0 ) {
+					// Formula surcharges show live in the breakdown box instead.
+					$fee = function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( (float) $f['price'] ) ) : number_format( (float) $f['price'], 2 );
+					printf( '<span class="apo-fee">+%s</span>', esc_html( $fee ) );
+				}
 				break;
 			default: // text
 				$ml  = ! empty( $f['maxLength'] ) ? sprintf( ' maxlength="%d"', (int) $f['maxLength'] ) : '';

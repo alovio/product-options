@@ -96,24 +96,43 @@ export function wirePolish( formEl, groups ) {
 		} );
 	} );
 
+	const readFieldValue = ( wrap, f ) => {
+		const input = wrap.querySelector( 'input:not([type="hidden"]), select, textarea' ) || wrap.querySelector( 'input' );
+		if ( input && input.type === 'radio' ) {
+			const checked = wrap.querySelector( 'input[type="radio"]:checked' );
+			return { input, value: checked ? checked.value : '' };
+		}
+		if ( input && input.type === 'checkbox' ) {
+			return { input, value: input.checked ? 'yes' : '' };
+		}
+		if ( f.type === 'file' ) {
+			const hidden = wrap.querySelector( 'input[type="hidden"]' );
+			return { input, value: hidden ? hidden.value : '' };
+		}
+		return { input, value: input ? input.value : '' };
+	};
+
+	// Field cards light up when engaged (design B).
+	const refreshEngaged = () => {
+		fields.forEach( ( f ) => {
+			const wrap = fieldWrap( formEl, f.id );
+			if ( ! wrap || f.type === 'heading' ) {
+				return;
+			}
+			const engaged = f.type === 'price' || readFieldValue( wrap, f ).value !== '';
+			wrap.classList.toggle( 'is-engaged', engaged );
+		} );
+	};
+	formEl.addEventListener( 'change', refreshEngaged );
+	formEl.addEventListener( 'input', refreshEngaged );
+	refreshEngaged();
+
 	const validateField = ( f ) => {
 		const wrap = fieldWrap( formEl, f.id );
 		if ( ! wrap || wrap.hidden || f.type === 'heading' || f.type === 'price' ) {
 			return null;
 		}
-		const input = wrap.querySelector( 'input:not([type="hidden"]), select, textarea' ) || wrap.querySelector( 'input' );
-		let value;
-		if ( input && input.type === 'radio' ) {
-			const checked = wrap.querySelector( 'input[type="radio"]:checked' );
-			value = checked ? checked.value : '';
-		} else if ( input && input.type === 'checkbox' ) {
-			value = input.checked ? 'yes' : '';
-		} else if ( f.type === 'file' ) {
-			const hidden = wrap.querySelector( 'input[type="hidden"]' );
-			value = hidden ? hidden.value : '';
-		} else {
-			value = input ? input.value : '';
-		}
+		const { input, value } = readFieldValue( wrap, f );
 		const message = inlineErrorFor( f, value, messages );
 		setError( wrap, input, message );
 		return message ? wrap : null;
