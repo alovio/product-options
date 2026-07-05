@@ -29,14 +29,16 @@ final class Plugin {
 		}
 		$this->booted = true;
 
-		// The Pro module is shipped separately (excluded from the free build); load it only when present.
-		if ( class_exists( \CoreLabs\ProductOptions\Pro\ProModule::class ) ) {
-			( new \CoreLabs\ProductOptions\Pro\ProModule() )->register();
-		}
+		( new \CoreLabs\ProductOptions\Groups\OptionGroupCpt() )->register();
+		( new \CoreLabs\ProductOptions\Setup\Migration() )->register();
 		( new \CoreLabs\ProductOptions\Admin\RestController() )->register();
+		( new \CoreLabs\ProductOptions\Admin\GroupsRestController() )->register();
+		( new \CoreLabs\ProductOptions\Admin\HubPage() )->register();
 		( new \CoreLabs\ProductOptions\Admin\BuilderAssets() )->register();
+		( new \CoreLabs\ProductOptions\Admin\ProductSummaryBox() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\ProductFormRenderer() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\FrontendAssets() )->register();
 		( new \CoreLabs\ProductOptions\Cart\CartIntegration() )->register();
+		( new \CoreLabs\ProductOptions\Cart\FileUploads() )->register();
 	}
 }

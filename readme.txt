@@ -4,134 +4,130 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Add custom product fields with conditional logic and add-on pricing to your store. Drag-and-drop builder, live preview, and a running options total.
+18 field types, conditional logic, formula pricing, global option groups and a live price breakdown — a complete product configurator, 100% free.
 
 == Description ==
 
-**Alovio Product Options for WooCommerce** lets you add extra fields and paid add-ons to your products, then show, hide, or require those fields based on what the customer chooses. Build forms visually with a drag-and-drop builder, preview them live, and let shoppers see a running, currency-formatted options total before they add to cart.
+**Alovio Product Options** turns WooCommerce products into configurable products. Add extra fields and paid add-ons, show or hide them with conditional logic, price them per unit, per character, as a percentage or with a formula — and let shoppers watch a live price breakdown update as they choose.
 
-Whether you sell customizable products, gifts with engraving, made-to-order items, or services with optional extras, you can collect exactly the information you need and charge for it accurately.
+Everything is free. No Pro version, no locked features, no upsell screens.
 
-= Field types included (free) =
+= Build once, apply everywhere =
 
-* **Text** — single-line input with placeholder and max-length.
-* **Text area** — multi-line input for longer notes.
-* **Number** — with min, max, and step controls.
-* **Checkbox** — a single yes/no option.
-* **Multiple choice (radio)** — pick one from a list of options.
-* **Dropdown (select)** — choose one option from a menu.
-* **Surcharge / fee** — add a fixed charge to the order.
-* **Section heading** — group and label your fields.
+Create an **option group** in the visual builder and apply it to **all products**, whole **categories**, or hand-picked products. Priorities control the order when several groups meet on one product. A slim panel on the product-edit screen shows exactly which groups apply, with one-click deep links.
 
-= Conditional logic (free) =
+= 18 field types =
 
-Show, hide, or require any field based on the value of another field using a single condition with the **is** and **is not** operators. Keep your product forms clean by only revealing the fields that are relevant to each customer's selection.
+Text, text area, number, checkbox, multiple choice (radio), dropdown, **button group**, **colour swatch**, **image swatch**, **quantity stepper**, date, time, email, phone, URL, **file upload** (secure, rate-limited, MIME-verified), surcharge, and section heading.
 
-= Add-on pricing (free) =
+= Conditional logic — all of it free =
 
-Attach a flat add-on price to options so the cost of customizations is reflected automatically. The product page shows a live, currency-formatted **options total** that updates as customers make selections, so there are no surprises at checkout.
+Show, hide or require any field based on other fields, with **multi-condition AND/OR rules** and five operators (*is, is not, contains, greater than, less than*). The builder previews rules live: set a value in the simulation bar and watch fields appear and disappear exactly as they will on the product page.
 
-= Builder and field settings (free) =
+= Five pricing modes =
 
-* Drag-and-drop builder with **live preview**.
-* Per-field **placeholder**, **help / description text**, and **default value**.
-* **Min, max, and step** for number fields.
-* **Max-length** for text fields.
+* **Fixed** — a flat add-on price.
+* **Per unit** — price × the number entered (number and quantity fields).
+* **Per character** — price × text length (engraving!).
+* **Percentage** — a share of the product price, variation-aware.
+* **Formula** — decimal-safe expressions over your fields: `{width} * {height} * 0.85`, with `min()`, `max()`, `round()`.
+
+= Live price breakdown =
+
+Instead of a mystery total, shoppers see an itemized box: base price, each chosen option with its cost, and the final total — updating live, following the selected variation, formatted in your store currency.
+
+= A builder you'll actually enjoy =
+
+The full-screen builder shows your fields **as the customer sees them**, with drag-and-drop ordering, undo, ⌘S save, a preview-as-customer simulation bar and a live options total. Start from one of **six templates** — gift options, engraving, t-shirt designer, made-to-order dimensions, delivery date, donation — or import/export groups as JSON between sites.
 
 = Built right =
 
 * **HPOS compatible** (High-Performance Order Storage).
-* **Accessible** — proper `fieldset`/`legend` structure, ARIA attributes, and visible focus styles.
-* **Fully translatable** — ready for localization into any language.
-
-= Go further with Pro =
-
-A separate **Pro add-on** (sold separately, not on WordPress.org) extends the free plugin with:
-
-* Advanced **multi-condition** logic and more operators.
-* **Per-unit** and **percentage** pricing.
-* **Colour swatches**.
-* **Date** fields.
-
-The features listed under the free sections above are all included in this plugin. Pro is optional and adds the capabilities listed in this section only.
+* **Accessible** — fieldset/legend structure, ARIA attributes, focus styles, inline validation messages.
+* **Translatable & RTL-ready.**
+* Option values flow into cart, checkout, order emails and the admin order screen; uploads become admin download links.
+* Server-side prices are always authoritative — the browser preview can never change what gets charged.
 
 == Installation ==
 
 1. Make sure WooCommerce is installed and active.
-2. In your WordPress admin, go to **Plugins > Add New** and search for "Alovio Product Options for WooCommerce", or upload the plugin ZIP under **Plugins > Add New > Upload Plugin**.
-3. Click **Install Now**, then **Activate**.
-4. Edit any product, open the **Product Options** tab, and use the drag-and-drop builder to add fields, set add-on prices, and configure conditional logic.
-5. Save the product and view it on the storefront to see your fields and the live options total.
+2. Go to **Plugins → Add New**, search for "Alovio Product Options", install and activate.
+3. Open **WooCommerce → Product Options** and create your first group — or start from a template.
+4. Assign the group to all products, categories or specific products, hit **Save & publish**, and check the product page.
+
+Upgrading from 1.x? Your per-product fields are migrated to option groups automatically — nothing to do.
 
 == Frequently Asked Questions ==
 
+= Is it really all free? =
+
+Yes. As of 2.0 every feature — multi-condition logic, all field types, all pricing modes, file uploads, templates, import/export — ships in this plugin. There is no Pro version.
+
 = Does this require WooCommerce? =
 
-Yes. WooCommerce must be installed and active for the plugin to work.
+Yes. WooCommerce must be installed and active.
 
-= What field types are available in the free version? =
+= Can I apply the same options to many products? =
 
-Text, text area, number, checkbox, multiple choice (radio), dropdown (select), surcharge/fee, and section heading.
+Yes — that's the core of 2.0. Assign a group to all products, one or more categories (child categories included), or specific products. Multiple groups can apply to one product.
 
-= Can I show or hide a field based on another field? =
+= Can I charge based on a calculation? =
 
-Yes. The free version supports single-condition conditional logic to show, hide, or require a field based on another field's value, using the "is" and "is not" operators. Advanced multi-condition logic and additional operators are available in the Pro add-on.
+Yes. The formula pricing mode evaluates decimal-safe expressions over your number and quantity fields, e.g. `round({width} * {height} * 0.02, 2)`.
 
-= How does add-on pricing work? =
+= Does the price follow product variations? =
 
-The free version supports flat add-on pricing: you assign a fixed price to options, and the product page displays a running, currency-formatted options total as customers make selections. Per-unit and percentage pricing are available in the Pro add-on.
+Yes. The breakdown box tracks the selected variation's price, and percentage-mode options recalculate from it. The server prices from the variation too.
 
-= Is the plugin compatible with HPOS (High-Performance Order Storage)? =
+= How do file uploads work? =
 
-Yes. The plugin is compatible with WooCommerce's High-Performance Order Storage.
+Files upload immediately on selection to a randomized, listing-protected folder after extension and real MIME checks, with a size cap and per-IP rate limiting. The cart shows the file name; the order stores an admin download link. Abandoned uploads are cleaned up automatically.
 
-= Is the plugin accessible? =
+= Is the plugin compatible with HPOS? =
 
-Yes. Forms use proper `fieldset` and `legend` structure, ARIA attributes, and visible focus styles to support keyboard and screen-reader users.
+Yes, fully.
 
-= Can I translate the plugin? =
+= Can I move option groups between sites? =
 
-Yes. The plugin is fully translatable and ready for localization.
-
-= Do I need Pro to use the plugin? =
-
-No. The free plugin is fully functional on its own. Pro is an optional, separately sold add-on that adds multi-condition logic, more operators, per-unit and percentage pricing, colour swatches, and date fields.
-
-= Is this a free alternative to Product Add-Ons or Extra Product Options? =
-
-Yes. If you are comparing against WooCommerce Product Add-Ons, Extra Product Options (Themecomplete) or a similar plugin, Alovio Product Options gives you extra fields, flat add-on pricing and a live, currency-formatted options total — plus conditional show / hide / require — in the free version. Add your first fields from the product's Product Options tab in a couple of minutes.
+Yes — export any group (or all of them) as JSON and import on another site. Imports arrive as drafts and are schema-checked with clear warnings.
 
 == Screenshots ==
 
-1. The drag-and-drop builder with live preview, showing fields and single-condition conditional logic settings.
-2. The product page with custom options and the live, currency-formatted options total.
+1. The Product Options hub — groups, assignments and templates in one place.
+2. The full-screen builder: palette, live product preview with simulation, and field settings.
+3. The storefront price breakdown box updating live as options are chosen.
+
+== Changelog ==
+
+= 2.0.0 =
+* Everything is free: the Pro gate is gone — multi-condition logic, colour swatches, date fields, per-unit and percentage pricing now ship in the plugin.
+* NEW: Global option groups — build once, apply to all products, categories or specific products, with priorities.
+* NEW: Full-screen builder hub (WooCommerce → Product Options) with a live product preview, preview-as-customer simulation, undo and ⌘S save.
+* NEW field types: image swatch, button group, quantity stepper, file upload, email, phone, URL, time.
+* NEW pricing modes: per-character and decimal-safe formula (`{width} * {height} * 0.85` with min/max/round).
+* NEW: Live price breakdown box on the product page — itemized, currency-formatted, variation-aware.
+* NEW: Six starter templates and JSON import/export for option groups.
+* Storefront polish: prices on labels, help tooltips, character counters, inline validation, focus styles, RTL.
+* 1.x per-product fields migrate to option groups automatically; carts survive the upgrade.
+
+= 1.0.0 =
+* Initial release.
+
+== Upgrade Notice ==
+
+= 2.0.0 =
+Major release: everything is now free — global option groups, 18 field types, formula pricing, live price breakdown. 1.x data migrates automatically.
 
 == Development ==
 
 This plugin is not obfuscated. The compiled assets in `build/` are generated from the human-readable source shipped in this package:
 
-* `src/` — the admin builder (React, via `@wordpress/scripts`) and the product-page runtime (vanilla JS) that compile to `build/index.js` and `build/frontend.js`.
-* `assets/css/` — the stylesheet sources compiled to `build/index.css` and `build/frontend.css`.
+* `src/` — the admin hub/builder (React, via `@wordpress/scripts`), the product-page runtime and the shared formula engine, compiled to `build/hub.js` and `build/frontend.js`.
+* `assets/css/` — stylesheet sources compiled into the bundles.
 * `composer.json` — the PSR-4 autoload map for the `includes/` PHP classes.
 
-To rebuild from source:
-
-`npm install` then `npm run build` (uses `@wordpress/scripts` / webpack; see `webpack.config.js`).
-`composer install` regenerates the PHP autoloader.
-
-== Changelog ==
-
-= 1.0.0 =
-* Initial release.
-* Field types: text, text area, number, checkbox, multiple choice (radio), dropdown (select), surcharge/fee, and section heading.
-* Single-condition conditional logic (show / hide / require) with "is" and "is not" operators.
-* Flat add-on pricing with a live, currency-formatted options total.
-* Drag-and-drop builder with live preview.
-* Per-field placeholder, help/description text, default value, number min/max/step, and text max-length.
-* HPOS compatibility.
-* Accessibility: fieldset/legend structure, ARIA attributes, and focus styles.
-* Fully translatable.
+To rebuild from source: `npm install && npm run build` (webpack via `@wordpress/scripts`; see `webpack.config.js`), and `composer install` for the PHP autoloader.

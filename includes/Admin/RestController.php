@@ -24,6 +24,8 @@ final class RestController {
 	}
 
 	public function register_routes(): void {
+		// GET-only since 2.0: kept for back-compat consumers; group editing goes
+		// through clpo/v1/groups. Keeps edit_product (called from the product screen).
 		register_rest_route(
 			'clpo/v1',
 			'/product/(?P<id>\d+)/fields',
@@ -31,11 +33,6 @@ final class RestController {
 				array(
 					'methods'             => 'GET',
 					'callback'            => array( $this, 'get_fields' ),
-					'permission_callback' => array( $this, 'can_edit' ),
-				),
-				array(
-					'methods'             => 'POST',
-					'callback'            => array( $this, 'save_fields' ),
 					'permission_callback' => array( $this, 'can_edit' ),
 				),
 			)
@@ -53,11 +50,4 @@ final class RestController {
 		return rest_ensure_response( $this->repo->get( (int) $request['id'] ) );
 	}
 
-	/** @param \WP_REST_Request $request */
-	public function save_fields( $request ) {
-		$body  = $request->get_json_params();
-		$group = is_array( $body ) ? $body : array();
-
-		return rest_ensure_response( $this->repo->save( (int) $request['id'], $group ) );
-	}
 }

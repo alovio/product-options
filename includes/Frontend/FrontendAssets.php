@@ -34,6 +34,24 @@ final class FrontendAssets {
 				'decimalSep'  => wc_get_price_decimal_separator(),
 				'thousandSep' => wc_get_price_thousand_separator(),
 				'position'    => get_option( 'woocommerce_currency_pos', 'left' ),
+				'i18n'        => array(
+					'base'  => __( 'Base price', 'corelabs-product-options' ),
+					'total' => __( 'Total', 'corelabs-product-options' ),
+				),
+				'messages'    => array(
+					/* translators: %s: field label */
+					'required' => __( '“%s” is required.', 'corelabs-product-options' ),
+					/* translators: %s: field label */
+					'number'   => __( '“%s” must be a number.', 'corelabs-product-options' ),
+				),
+				'upload'      => array(
+					'url'       => esc_url_raw( rest_url( 'clpo/v1/upload' ) ),
+					'nonce'     => wp_create_nonce( 'clpo_upload' ),
+					// Logged-in visitors: REST cookie auth demands a wp_rest nonce
+					// or the request is rejected before our permission callback.
+					'restNonce' => wp_create_nonce( 'wp_rest' ),
+					'maxMb'     => (int) ceil( \CoreLabs\ProductOptions\Cart\FileUploads::max_bytes() / 1048576 ),
+				),
 			)
 		);
 		wp_set_script_translations( 'clpo-frontend', 'corelabs-product-options', CLPO_PATH . 'languages' );

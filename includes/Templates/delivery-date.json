@@ -1,0 +1,15 @@
+{
+	"version": "2.0",
+	"groups": [
+		{
+			"title": "Delivery date",
+			"priority": 10,
+			"assignment": { "mode": "all", "ids": [] },
+			"fields": [
+				{ "id": "delivery_date", "type": "date", "label": "Preferred delivery date", "required": true },
+				{ "id": "delivery_time", "type": "time", "label": "Preferred time" },
+				{ "id": "rush", "type": "checkbox", "label": "Rush processing", "price": 10, "priceMode": "percent", "description": "Adds 10% of the product price." }
+			]
+		}
+	]
+}

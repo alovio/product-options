@@ -1,0 +1,18 @@
+{
+	"version": "2.0",
+	"groups": [
+		{
+			"title": "Engraving",
+			"priority": 10,
+			"assignment": { "mode": "all", "ids": [] },
+			"fields": [
+				{ "id": "engrave", "type": "checkbox", "label": "Add engraving" },
+				{ "id": "engrave_text", "type": "text", "label": "Engraving text", "required": true, "price": 0.5, "priceMode": "per_char", "maxLength": 40,
+					"description": "Charged per character.",
+					"conditions": [ { "field": "engrave", "operator": "is", "value": "yes" } ], "conditionMatch": "all", "conditionAction": "show" },
+				{ "id": "engrave_font", "type": "buttons", "label": "Font", "options": [ "Serif", "Script", "Block" ],
+					"conditions": [ { "field": "engrave", "operator": "is", "value": "yes" } ], "conditionMatch": "all", "conditionAction": "show" }
+			]
+		}
+	]
+}

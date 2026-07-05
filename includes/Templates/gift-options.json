@@ -1,0 +1,18 @@
+{
+	"version": "2.0",
+	"groups": [
+		{
+			"title": "Gift options",
+			"priority": 10,
+			"assignment": { "mode": "all", "ids": [] },
+			"fields": [
+				{ "id": "gift_wrap", "type": "checkbox", "label": "Gift wrap", "price": 5, "priceMode": "fixed" },
+				{ "id": "ribbon", "type": "swatch", "label": "Ribbon colour", "price": 2, "priceMode": "fixed",
+					"options": [ { "label": "Red", "color": "#dc2626" }, { "label": "Gold", "color": "#eab308" }, { "label": "Silver", "color": "#94a3b8" } ],
+					"conditions": [ { "field": "gift_wrap", "operator": "is", "value": "yes" } ], "conditionMatch": "all", "conditionAction": "show" },
+				{ "id": "gift_message", "type": "textarea", "label": "Gift message", "maxLength": 200,
+					"conditions": [ { "field": "gift_wrap", "operator": "is", "value": "yes" } ], "conditionMatch": "all", "conditionAction": "show" }
+			]
+		}
+	]
+}

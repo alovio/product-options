@@ -15,10 +15,10 @@ final class FieldSchema {
 	public static function normalize( array $raw ): array {
 		$fields = ( isset( $raw['fields'] ) && is_array( $raw['fields'] ) ) ? $raw['fields'] : array();
 
-		$ops     = (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not' ) );
+		$ops     = (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not', 'contains', 'gt', 'lt' ) );
 		$actions = (array) apply_filters( 'clpo_allowed_actions', array( 'show', 'hide', 'require' ) );
-		$multi   = (bool) apply_filters( 'clpo_multi_conditions', false );
-		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed' ) );
+		$multi   = (bool) apply_filters( 'clpo_multi_conditions', true );
+		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed', 'per_unit', 'percent', 'per_char', 'formula' ) );
 
 		// First pass: keep valid-typed fields with unique, non-empty ids.
 		$kept = array();
@@ -51,7 +51,8 @@ final class FieldSchema {
 				'label'       => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
 				'required'    => ! empty( $f['required'] ),
 				'price'       => $price < 0 ? 0.0 : $price,
-				'priceMode'   => in_array( $pm, $modes, true ) ? $pm : 'fixed',
+				'priceMode'   => self::normalize_price_mode( $pm, (string) $f['type'], $modes, (string) ( $f['formula'] ?? '' ) ),
+				'formula'     => substr( sanitize_text_field( (string) ( $f['formula'] ?? '' ) ), 0, \CoreLabs\ProductOptions\Formula\FormulaPrice::MAX_LENGTH ),
 				'placeholder' => isset( $f['placeholder'] ) ? sanitize_text_field( (string) $f['placeholder'] ) : '',
 				'description' => isset( $f['description'] ) ? sanitize_text_field( (string) $f['description'] ) : '',
 				'default'     => isset( $f['default'] ) ? sanitize_text_field( (string) $f['default'] ) : '',
@@ -68,6 +69,28 @@ final class FieldSchema {
 			'version' => 1,
 			'fields'  => $out,
 		);
+	}
+
+	/**
+	 * Price modes are type-constrained: per_char needs text, per_unit needs a
+	 * numeric input. Anything else falls back to fixed.
+	 *
+	 * @param string[] $modes allowed mode list (filterable).
+	 */
+	private static function normalize_price_mode( string $pm, string $type, array $modes, string $formula = '' ): string {
+		if ( ! in_array( $pm, $modes, true ) ) {
+			return 'fixed';
+		}
+		if ( 'per_char' === $pm && ! in_array( $type, array( 'text', 'textarea' ), true ) ) {
+			return 'fixed';
+		}
+		if ( 'per_unit' === $pm && ! in_array( $type, array( 'number', 'quantity' ), true ) ) {
+			return 'fixed';
+		}
+		if ( 'formula' === $pm && null !== \CoreLabs\ProductOptions\Formula\FormulaPrice::validate( $formula ) ) {
+			return 'fixed'; // invalid/empty expression never ships live.
+		}
+		return $pm;
 	}
 
 	/**
@@ -168,7 +191,7 @@ final class FieldSchema {
 			);
 		}
 
-		if ( 'number' === $type ) {
+		if ( 'number' === $type || 'quantity' === $type ) {
 			$num = static fn( $k ) => ( isset( $f[ $k ] ) && '' !== $f[ $k ] && is_numeric( $f[ $k ] ) ) ? (string) ( $f[ $k ] + 0 ) : '';
 			return array(
 				'min'  => $num( 'min' ),
@@ -187,6 +210,22 @@ final class FieldSchema {
 
 	private static function normalize_options( array $f ): array {
 		$raw = ( isset( $f['options'] ) && is_array( $f['options'] ) ) ? $f['options'] : array();
+
+		if ( 'image_swatch' === ( $f['type'] ?? '' ) ) {
+			$out = array();
+			foreach ( $raw as $o ) {
+				$label = is_array( $o ) ? sanitize_text_field( (string) ( $o['label'] ?? '' ) ) : sanitize_text_field( (string) $o );
+				if ( '' === $label ) {
+					continue;
+				}
+				$image = is_array( $o ) ? esc_url_raw( (string) ( $o['image'] ?? '' ) ) : '';
+				$out[] = array(
+					'label' => $label,
+					'image' => $image,
+				);
+			}
+			return $out;
+		}
 
 		if ( 'swatch' === ( $f['type'] ?? '' ) ) {
 			$out = array();

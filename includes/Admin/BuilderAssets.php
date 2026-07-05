@@ -8,59 +8,41 @@ use CoreLabs\ProductOptions\Fields\FieldTypes;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Mount the React builder in the product editor and enqueue its bundle.
+ * Enqueue the hub SPA bundle on the Product Options hub page only.
+ * (The v1 product-editor metabox builder is gone; the product screen gets a
+ * slim server-rendered summary box instead — see ProductSummaryBox.)
  */
 final class BuilderAssets {
 
 	public function register(): void {
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
-	public function add_meta_box(): void {
-		add_meta_box(
-			'clpo-builder-box',
-			__( 'Product Options', 'corelabs-product-options' ),
-			array( $this, 'render_box' ),
-			'product',
-			'normal',
-			'high'
-		);
-	}
-
-	/** @param \WP_Post $post */
-	public function render_box( $post ): void {
-		printf( '<div id="clpo-builder" data-product-id="%d"></div>', (int) $post->ID );
-	}
-
 	public function enqueue( string $hook ): void {
-		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
-			return;
-		}
-		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( $screen && 'product' !== $screen->post_type ) {
+		if ( 'woocommerce_page_' . HubPage::SLUG !== $hook ) {
 			return;
 		}
 
-		$asset_file = CLPO_PATH . 'build/index.asset.php';
+		$asset_file = CLPO_PATH . 'build/hub.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
 		$asset = require $asset_file;
 
-		wp_enqueue_script( 'clpo-builder', CLPO_URL . 'build/index.js', $asset['dependencies'], $asset['version'], true );
-		wp_set_script_translations( 'clpo-builder', 'corelabs-product-options', CLPO_PATH . 'languages' );
-		wp_enqueue_style( 'clpo-builder', CLPO_URL . 'build/index.css', array(), $asset['version'] );
-		wp_style_add_data( 'clpo-builder', 'rtl', 'replace' );
+		// The Options panel's image picker uses the classic wp.media modal.
+		wp_enqueue_media();
+		wp_enqueue_script( 'clpo-hub', CLPO_URL . 'build/hub.js', $asset['dependencies'], $asset['version'], true );
+		wp_set_script_translations( 'clpo-hub', 'corelabs-product-options', CLPO_PATH . 'languages' );
+		wp_enqueue_style( 'clpo-hub', CLPO_URL . 'build/hub.css', array(), $asset['version'] );
+		wp_style_add_data( 'clpo-hub', 'rtl', 'replace' );
 		wp_localize_script(
-			'clpo-builder',
-			'CLPO_BUILDER',
+			'clpo-hub',
+			'CLPO_HUB',
 			array(
 				'root'       => esc_url_raw( rest_url( '/' ) ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'fieldTypes' => FieldTypes::all(),
-				'isPro'      => \CoreLabs\ProductOptions\Pro\ProModule::is_pro(),
-				'operators'  => (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not' ) ),
+				'operators'  => (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not', 'contains', 'gt', 'lt' ) ),
 			)
 		);
 	}

@@ -58,3 +58,30 @@ describe( 'Pro operators + multi-conditions (parity with PHP)', () => {
 		expect( fieldActive( any, { a: 'p', b: 'q' } ) ).toBe( false );
 	} );
 } );
+
+describe( 'readValues input-shape handling', () => {
+	function formWith( html ) {
+		document.body.innerHTML = `<form>${ html }</form>`;
+		return document.querySelector( 'form' );
+	}
+
+	it( 'reads the CHECKED radio for radio-shaped types (buttons/image_swatch/swatch)', () => {
+		const { readValues } = require( '../../src/frontend/conditional-logic' );
+		const form = formWith( `
+			<input type="radio" name="apo[b]" value="Classic" />
+			<input type="radio" name="apo[b]" value="Modern" checked />
+		` );
+		const values = readValues( form, [ { id: 'b', type: 'buttons' } ] );
+		expect( values.b ).toBe( 'Modern' );
+	} );
+
+	it( 'returns empty string when no radio checked', () => {
+		const { readValues } = require( '../../src/frontend/conditional-logic' );
+		const form = formWith( `
+			<input type="radio" name="apo[i]" value="Oak" />
+			<input type="radio" name="apo[i]" value="Pine" />
+		` );
+		const values = readValues( form, [ { id: 'i', type: 'image_swatch' } ] );
+		expect( values.i ).toBe( '' );
+	} );
+} );

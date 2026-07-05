@@ -39,8 +39,38 @@ final class OptionSanitizer {
 					}
 					break;
 				case 'date':
+				case 'time':
 					if ( null !== $val && '' !== $val ) {
-						$out[ $id ] = sanitize_text_field( (string) $val );
+						$out[ $id ] = trim( sanitize_text_field( (string) $val ) );
+					}
+					break;
+				case 'email':
+					if ( null !== $val && '' !== $val ) {
+						$email = sanitize_email( (string) $val );
+						if ( '' !== $email ) {
+							$out[ $id ] = $email;
+						}
+					}
+					break;
+				case 'url':
+					if ( null !== $val && '' !== $val ) {
+						$url = esc_url_raw( (string) $val );
+						if ( '' !== $url && preg_match( '#^https?://#i', $url ) ) {
+							$out[ $id ] = $url;
+						}
+					}
+					break;
+				case 'file':
+					if ( is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
+						$out[ $id ] = $val;
+					}
+					break;
+				case 'phone':
+					if ( null !== $val && '' !== $val ) {
+						$phone = trim( (string) preg_replace( '/[^0-9+\-() ]/', '', (string) $val ) );
+						if ( preg_match( '/[0-9]/', $phone ) ) {
+							$out[ $id ] = $phone;
+						}
 					}
 					break;
 				case 'number':
@@ -53,14 +83,28 @@ final class OptionSanitizer {
 						$out[ $id ] = 'yes';
 					}
 					break;
+				case 'quantity':
+					if ( null !== $val && '' !== $val && is_numeric( $val ) ) {
+						$n = (int) $val;
+						if ( '' !== (string) ( $f['min'] ?? '' ) ) {
+							$n = max( (int) $f['min'], $n );
+						}
+						if ( '' !== (string) ( $f['max'] ?? '' ) ) {
+							$n = min( (int) $f['max'], $n );
+						}
+						$out[ $id ] = $n;
+					}
+					break;
 				case 'select':
 				case 'radio':
+				case 'buttons':
 					$opts = array_map( 'strval', (array) ( $f['options'] ?? array() ) );
 					if ( null !== $val && in_array( (string) $val, $opts, true ) ) {
 						$out[ $id ] = (string) $val;
 					}
 					break;
 				case 'swatch':
+				case 'image_swatch':
 					$labels = array_map(
 						static fn( $o ) => (string) ( is_array( $o ) ? ( $o['label'] ?? '' ) : $o ),
 						(array) ( $f['options'] ?? array() )

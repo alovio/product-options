@@ -63,4 +63,47 @@ class OptionSanitizerTest extends TestCase {
 		$g = $this->group( array( array( 'id' => 'p', 'type' => 'price', 'price' => 5.0 ) ) );
 		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'p' => 'whatever' ) ) );
 	}
+
+	public function test_email_kept_when_valid_dropped_when_garbage(): void {
+		$g = $this->group( array( array( 'id' => 'e', 'type' => 'email' ) ) );
+		$this->assertSame( array( 'e' => 'a@b.co' ), OptionSanitizer::sanitize( $g, array( 'e' => 'a@b.co' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'e' => 'not-an-email' ) ) );
+	}
+
+	public function test_url_rejects_javascript_scheme(): void {
+		$g = $this->group( array( array( 'id' => 'u', 'type' => 'url' ) ) );
+		$this->assertSame( array( 'u' => 'https://x.test/a' ), OptionSanitizer::sanitize( $g, array( 'u' => 'https://x.test/a' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'u' => 'javascript:alert(1)' ) ) ); // phpcs:ignore
+	}
+
+	public function test_phone_strips_letters_keeps_dial_chars(): void {
+		$g = $this->group( array( array( 'id' => 'p2', 'type' => 'phone' ) ) );
+		$this->assertSame( array( 'p2' => '+1 (555) 000-11' ), OptionSanitizer::sanitize( $g, array( 'p2' => '+1x (555)abc 000-11' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'p2' => 'abcdef' ) ) );
+	}
+
+	public function test_time_trimmed_and_kept(): void {
+		$g = $this->group( array( array( 'id' => 't2', 'type' => 'time' ) ) );
+		$this->assertSame( array( 't2' => '14:30' ), OptionSanitizer::sanitize( $g, array( 't2' => ' 14:30 ' ) ) );
+	}
+
+	public function test_quantity_cast_to_int_and_clamped(): void {
+		$g = $this->group( array( array( 'id' => 'q', 'type' => 'quantity', 'min' => '1', 'max' => '10', 'step' => '1' ) ) );
+		$this->assertSame( array( 'q' => 3 ), OptionSanitizer::sanitize( $g, array( 'q' => '3.7' ) ) );
+		$this->assertSame( array( 'q' => 10 ), OptionSanitizer::sanitize( $g, array( 'q' => '99' ) ) );
+		$this->assertSame( array( 'q' => 1 ), OptionSanitizer::sanitize( $g, array( 'q' => '-5' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'q' => '' ) ) );
+	}
+
+	public function test_buttons_allowlist_like_radio(): void {
+		$g = $this->group( array( array( 'id' => 'b', 'type' => 'buttons', 'options' => array( 'Classic', 'Modern' ) ) ) );
+		$this->assertSame( array( 'b' => 'Modern' ), OptionSanitizer::sanitize( $g, array( 'b' => 'Modern' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'b' => 'Hacky' ) ) );
+	}
+
+	public function test_image_swatch_matches_on_label(): void {
+		$g = $this->group( array( array( 'id' => 'i', 'type' => 'image_swatch', 'options' => array( array( 'label' => 'Oak', 'image' => 'https://x.test/oak.jpg' ) ) ) ) );
+		$this->assertSame( array( 'i' => 'Oak' ), OptionSanitizer::sanitize( $g, array( 'i' => 'Oak' ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'i' => 'Pine' ) ) );
+	}
 }

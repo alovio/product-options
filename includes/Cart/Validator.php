@@ -53,8 +53,44 @@ final class Validator {
 				$errors[] = sprintf( __( '“%s” must be a number.', 'corelabs-product-options' ), $label );
 			}
 
-			if ( in_array( $type, array( 'select', 'radio', 'swatch' ), true ) && ! empty( $f['options'] ) ) {
-				$valid = ( 'swatch' === $type )
+			if ( 'email' === $type && ! filter_var( (string) $value, FILTER_VALIDATE_EMAIL ) ) {
+				/* translators: %s: field label */
+				$errors[] = sprintf( __( '“%s” must be a valid email address.', 'corelabs-product-options' ), $label );
+			}
+
+			if ( 'time' === $type && ! preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', (string) $value ) ) {
+				/* translators: %s: field label */
+				$errors[] = sprintf( __( '“%s” must be a valid time (HH:MM).', 'corelabs-product-options' ), $label );
+			}
+
+			if ( 'phone' === $type && preg_match_all( '/[0-9]/', (string) $value ) < 5 ) {
+				/* translators: %s: field label */
+				$errors[] = sprintf( __( '“%s” must be a valid phone number.', 'corelabs-product-options' ), $label );
+			}
+
+			if ( 'url' === $type && ! preg_match( '#^https?://#i', (string) $value ) ) {
+				/* translators: %s: field label */
+				$errors[] = sprintf( __( '“%s” must be a valid link (https://…).', 'corelabs-product-options' ), $label );
+			}
+
+			if ( 'quantity' === $type ) {
+				if ( ! is_numeric( $value ) ) {
+					/* translators: %s: field label */
+					$errors[] = sprintf( __( '“%s” must be a number.', 'corelabs-product-options' ), $label );
+				} else {
+					if ( '' !== (string) ( $f['min'] ?? '' ) && (float) $value < (float) $f['min'] ) {
+						/* translators: %s: field label */
+						$errors[] = sprintf( __( '“%s” is below the minimum quantity.', 'corelabs-product-options' ), $label );
+					}
+					if ( '' !== (string) ( $f['max'] ?? '' ) && (float) $value > (float) $f['max'] ) {
+						/* translators: %s: field label */
+						$errors[] = sprintf( __( '“%s” is above the maximum quantity.', 'corelabs-product-options' ), $label );
+					}
+				}
+			}
+
+			if ( in_array( $type, array( 'select', 'radio', 'buttons', 'swatch', 'image_swatch' ), true ) && ! empty( $f['options'] ) ) {
+				$valid = in_array( $type, array( 'swatch', 'image_swatch' ), true )
 					? array_map( static fn( $o ) => (string) ( $o['label'] ?? '' ), (array) $f['options'] )
 					: array_map( 'strval', (array) $f['options'] );
 				if ( ! in_array( (string) $value, $valid, true ) ) {
