@@ -38,6 +38,12 @@ final class FrontendAssets {
 					'base'  => __( 'Base price', 'corelabs-product-options' ),
 					'total' => __( 'Total', 'corelabs-product-options' ),
 				),
+				'messages'    => array(
+					/* translators: %s: field label */
+					'required' => __( '“%s” is required.', 'corelabs-product-options' ),
+					/* translators: %s: field label */
+					'number'   => __( '“%s” must be a number.', 'corelabs-product-options' ),
+				),
 				'upload'      => array(
 					'url'   => esc_url_raw( rest_url( 'clpo/v1/upload' ) ),
 					'nonce' => wp_create_nonce( 'clpo_upload' ),

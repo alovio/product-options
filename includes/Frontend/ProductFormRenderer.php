@@ -109,7 +109,41 @@ final class ProductFormRenderer {
 
 	private function label_text( array $f ): string {
 		$label = (string) ( $f['label'] ?? '' );
-		return '' !== $label ? $label : self::type_label( (string) ( $f['type'] ?? '' ) );
+		$label = '' !== $label ? $label : self::type_label( (string) ( $f['type'] ?? '' ) );
+		return $label . self::price_suffix( $f );
+	}
+
+	/**
+	 * "(+$8.00)" / "(+$2.00 each)" / "(+$0.50 / character)" / "(+10%)" /
+	 * "(price varies)" — appended to the field label so shoppers see the cost
+	 * before engaging (spec §9).
+	 */
+	private static function price_suffix( array $f ): string {
+		$mode  = (string) ( $f['priceMode'] ?? 'fixed' );
+		$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
+
+		if ( 'formula' === $mode ) {
+			return ' (' . __( 'price varies', 'corelabs-product-options' ) . ')';
+		}
+		if ( $price <= 0 || 'price' === ( $f['type'] ?? '' ) ) {
+			return ''; // surcharge fields already print their own +fee row.
+		}
+		$fmt = static function ( float $amount ): string {
+			return function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( $amount ) ) : number_format( $amount, 2 );
+		};
+		if ( 'percent' === $mode ) {
+			/* translators: %s: percentage number */
+			return ' (' . sprintf( __( '+%s%%', 'corelabs-product-options' ), (string) ( $price + 0 ) ) . ')';
+		}
+		if ( 'per_unit' === $mode ) {
+			/* translators: %s: formatted price */
+			return ' (' . sprintf( __( '+%s each', 'corelabs-product-options' ), $fmt( $price ) ) . ')';
+		}
+		if ( 'per_char' === $mode ) {
+			/* translators: %s: formatted price */
+			return ' (' . sprintf( __( '+%s / character', 'corelabs-product-options' ), $fmt( $price ) ) . ')';
+		}
+		return ' (+' . $fmt( $price ) . ')';
 	}
 
 	private static function type_label( string $type ): string {
@@ -148,7 +182,14 @@ final class ProductFormRenderer {
 		if ( '' === $desc ) {
 			return '';
 		}
-		return sprintf( '<small class="apo-field__desc" id="%s">%s</small>', esc_attr( 'clpo_desc_' . $id ), esc_html( $desc ) );
+		// A keyboard-accessible ? toggle + collapsible panel (spec §9) — the
+		// panel keeps the clpo_desc_ id so aria-describedby wiring still works.
+		return sprintf(
+			'<button type="button" class="apo-tip-toggle" aria-expanded="false" aria-controls="%1$s" aria-label="%3$s">?</button><small class="apo-tip apo-field__desc" id="%1$s" hidden>%2$s</small>',
+			esc_attr( 'clpo_desc_' . $id ),
+			esc_html( $desc ),
+			esc_attr__( 'More information', 'corelabs-product-options' )
+		);
 	}
 
 	private function render_field( array $f, bool $active ): void {
@@ -208,6 +249,9 @@ final class ProductFormRenderer {
 			case 'textarea':
 				$ml = ! empty( $f['maxLength'] ) ? sprintf( ' maxlength="%d"', (int) $f['maxLength'] ) : '';
 				printf( '<textarea id="%s" name="%s" rows="3"%s%s%s%s>%s</textarea>', esc_attr( $fid ), esc_attr( $name ), $req, $ph, $ml, $descby, esc_textarea( $default ) ); // phpcs:ignore WordPress.Security.EscapeOutput
+				if ( '' !== $ml ) {
+					echo '<span class="apo-counter" data-apo-counter aria-live="polite" aria-atomic="true"></span>';
+				}
 				break;
 			case 'number':
 				$min  = ( '' !== (string) ( $f['min'] ?? '' ) ) ? sprintf( ' min="%s"', esc_attr( (string) $f['min'] ) ) : '';
@@ -315,6 +359,9 @@ final class ProductFormRenderer {
 				$ml  = ! empty( $f['maxLength'] ) ? sprintf( ' maxlength="%d"', (int) $f['maxLength'] ) : '';
 				$val = ( '' !== $default ) ? sprintf( ' value="%s"', esc_attr( $default ) ) : '';
 				printf( '<input type="text" id="%s" name="%s"%s%s%s%s%s />', esc_attr( $fid ), esc_attr( $name ), $req, $ph, $ml, $descby, $val ); // phpcs:ignore WordPress.Security.EscapeOutput
+				if ( '' !== $ml ) {
+					echo '<span class="apo-counter" data-apo-counter aria-live="polite" aria-atomic="true"></span>';
+				}
 		}
 	}
 }

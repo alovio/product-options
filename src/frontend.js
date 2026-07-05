@@ -5,6 +5,7 @@
 import { wire } from './frontend/conditional-logic';
 import { wireBreakdown, createBaseTracker } from './frontend/price-update';
 import { wireUploads } from './frontend/uploader';
+import { wirePolish } from './frontend/polish';
 import '../assets/css/frontend.css';
 
 function init() {
@@ -50,6 +51,8 @@ function init() {
 
 	// One shared breakdown box per form, merging every group (spec §9).
 	byForm.forEach( ( { groups, base }, form ) => {
+		wirePolish( form, groups );
+
 		const boxEl = form.querySelector( '.apo-breakdown' );
 		if ( ! boxEl ) {
 			return;

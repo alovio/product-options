@@ -116,3 +116,31 @@
 .apo-breakdown ul { list-style: none; margin: 0; padding: 0; }
 .apo-breakdown__row { display: flex; justify-content: space-between; gap: 16px; padding: 2px 0; font-size: 0.92em; opacity: 0.75; }
 .apo-breakdown__row--total { border-top: 1px dashed rgba(0,0,0,0.25); margin-top: 6px; padding-top: 7px; font-weight: 700; font-size: 1em; opacity: 1; }
+
+/* ── Polish pack (spec §9) ───────────────────────────────────────────── */
+/* Tooltip toggle */
+.apo-tip-toggle { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; margin-left: 6px; border-radius: 50%; border: 1px solid currentColor; background: transparent; font-size: 11px; line-height: 1; cursor: pointer; opacity: 0.6; vertical-align: text-top; padding: 0; }
+.apo-tip-toggle:hover, .apo-tip-toggle[aria-expanded="true"] { opacity: 1; }
+.apo-tip { display: block; margin-top: 4px; }
+
+/* Character counter */
+.apo-counter { display: block; font-size: 11px; opacity: 0.6; text-align: right; max-width: 360px; }
+
+/* Inline validation */
+.apo-error { display: block; color: #b32d2e; font-size: 12px; margin-top: 4px; }
+.apo-field input[aria-invalid="true"], .apo-field textarea[aria-invalid="true"], .apo-field select[aria-invalid="true"] { border-color: #b32d2e; }
+
+/* Focus rings (all interactive option controls) */
+.apo-field input:focus-visible, .apo-field select:focus-visible, .apo-field textarea:focus-visible,
+.apo-qty__btn:focus-visible, .apo-tip-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* Swatch upgrade: bigger targets, non-color checked ring, hover scale */
+.apo-swatch { cursor: pointer; }
+.apo-swatch__dot { width: 28px; height: 28px; display: inline-block; border-radius: 50%; border: 1px solid rgba(0,0,0,0.2); transition: transform .12s ease; }
+.apo-swatch:hover .apo-swatch__dot, .apo-swatch:hover .apo-swatch__img { transform: scale(1.08); }
+.apo-swatch input:checked ~ .apo-swatch__dot { outline: 2px solid currentColor; outline-offset: 2px; }
+.apo-swatch input:focus-visible ~ .apo-swatch__dot, .apo-swatch input:focus-visible ~ .apo-swatch__img { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* Date/time/email/url/tel inputs match text-input metrics */
+.apo-field input[type="date"], .apo-field input[type="time"], .apo-field input[type="email"],
+.apo-field input[type="url"], .apo-field input[type="tel"] { min-height: 2.2em; padding: 0.35em 0.6em; max-width: 360px; }
