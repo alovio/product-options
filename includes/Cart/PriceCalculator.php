@@ -40,6 +40,8 @@ final class PriceCalculator {
 			$mode = (string) ( $f['priceMode'] ?? 'fixed' );
 			if ( 'per_unit' === $mode && in_array( $type, array( 'number', 'quantity' ), true ) && is_numeric( $value ) ) {
 				$total += $price * (float) $value;
+			} elseif ( 'per_char' === $mode && in_array( $type, array( 'text', 'textarea' ), true ) ) {
+				$total += $price * mb_strlen( trim( (string) $value ) );
 			} elseif ( 'percent' === $mode ) {
 				$total += $base * $price / 100;
 			} else {

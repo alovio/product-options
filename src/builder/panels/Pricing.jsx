@@ -18,14 +18,16 @@ export default function Pricing( { field } ) {
 
 	const modeOptions = [
 		{ label: __( 'Fixed amount', T ), value: 'fixed' },
-		...( field.type === 'number' ? [ { label: __( 'Per unit (× number entered)', T ), value: 'per_unit' } ] : [] ),
+		...( [ 'number', 'quantity' ].includes( field.type ) ? [ { label: __( 'Per unit (× number entered)', T ), value: 'per_unit' } ] : [] ),
+		...( [ 'text', 'textarea' ].includes( field.type ) ? [ { label: __( 'Per character (× text length)', T ), value: 'per_char' } ] : [] ),
 		{ label: __( 'Percentage of product price', T ), value: 'percent' },
 	];
 
 	const amountLabel =
 		mode === 'percent' ? __( 'Add-on — percentage (%)', T )
 			: mode === 'per_unit' ? __( 'Add-on — price per unit', T )
-				: __( 'Add-on price', T );
+				: mode === 'per_char' ? __( 'Add-on — price per character', T )
+					: __( 'Add-on price', T );
 
 	return (
 		<>
@@ -50,7 +52,9 @@ export default function Pricing( { field } ) {
 						? `${ __( 'Charges', T ) } ${ price }% ${ __( 'of the product price.', T ) }`
 						: mode === 'per_unit'
 							? `${ __( 'Charges', T ) } ${ price } ${ __( 'for each unit entered.', T ) }`
-							: `${ __( 'Charges a flat', T ) } ${ price }.` }
+							: mode === 'per_char'
+								? `${ __( 'Charges', T ) } ${ price } ${ __( 'for each character typed.', T ) }`
+								: `${ __( 'Charges a flat', T ) } ${ price }.` }
 				</p>
 			) }
 		</>

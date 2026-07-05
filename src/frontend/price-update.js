@@ -32,6 +32,8 @@ export function computeAddonTotal( fields, values, base = 0 ) {
 		}
 		if ( f.priceMode === 'per_unit' && ( f.type === 'number' || f.type === 'quantity' ) && ! isNaN( num ) ) {
 			total += price * num;
+		} else if ( f.priceMode === 'per_char' && ( f.type === 'text' || f.type === 'textarea' ) ) {
+			total += price * String( v ).trim().length;
 		} else if ( f.priceMode === 'percent' ) {
 			total += ( base * price ) / 100;
 		} else {

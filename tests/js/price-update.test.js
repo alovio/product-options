@@ -38,3 +38,14 @@ describe( 'quantity pricing gates', () => {
 		expect( computeAddonTotal( fields, { q: '0' } ) ).toBe( 0 );
 	} );
 } );
+
+describe( 'per_char pricing', () => {
+	const { computeAddonTotal } = require( '../../src/frontend/price-update' );
+
+	it( 'multiplies price by trimmed length', () => {
+		const fields = [ { id: 't', type: 'text', price: 0.5, priceMode: 'per_char' } ];
+		expect( computeAddonTotal( fields, { t: 'Hello world' } ) ).toBe( 5.5 );
+		expect( computeAddonTotal( fields, { t: '  ab  ' } ) ).toBe( 1 );
+		expect( computeAddonTotal( fields, { t: '' } ) ).toBe( 0 );
+	} );
+} );

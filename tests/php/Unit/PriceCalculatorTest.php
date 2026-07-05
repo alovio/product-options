@@ -93,4 +93,11 @@ class PriceCalculatorTest extends TestCase {
 		$this->assertSame( 6.0, PriceCalculator::addon_total( $g, array( 'q' => 3 ), 2 ) );
 		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 'q' => 0 ), 2 ) );
 	}
+
+	public function test_per_char_multiplies_by_trimmed_length(): void {
+		$g = array( 'version' => 1, 'fields' => array( array( 'id' => 't', 'type' => 'text', 'price' => 0.5, 'priceMode' => 'per_char', 'condition' => null ) ) );
+		$this->assertSame( 5.5, PriceCalculator::addon_total( $g, array( 't' => 'Hello world' ), 2 ) ); // 11 chars
+		$this->assertSame( 2.0, PriceCalculator::addon_total( $g, array( 't' => ' həəə ' ), 2 ) ); // 4 mb chars trimmed
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 't' => '' ), 2 ) );
+	}
 }

@@ -126,4 +126,13 @@ class FieldSchemaTest extends TestCase {
 		$this->assertSame( 'is', $out['fields'][1]['condition']['operator'] );
 		$this->assertSame( 'show', $out['fields'][1]['condition']['action'] );
 	}
+
+	public function test_per_char_only_for_text_types(): void {
+		$out = \CoreLabs\ProductOptions\Fields\FieldSchema::normalize( array( 'fields' => array(
+			array( 'id' => 't', 'type' => 'text', 'price' => 1, 'priceMode' => 'per_char' ),
+			array( 'id' => 'c', 'type' => 'checkbox', 'price' => 1, 'priceMode' => 'per_char' ),
+		) ) );
+		$this->assertSame( 'per_char', $out['fields'][0]['priceMode'] );
+		$this->assertSame( 'fixed', $out['fields'][1]['priceMode'] );
+	}
 }
