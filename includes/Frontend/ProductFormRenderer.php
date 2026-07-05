@@ -33,9 +33,55 @@ final class ProductFormRenderer {
 
 		$base = ( is_object( $product ) && method_exists( $product, 'get_price' ) ) ? (float) $product->get_price() : 0.0;
 
-		foreach ( GroupResolver::for_product( $product_id ) as $group ) {
+		$groups = GroupResolver::for_product( $product_id );
+		foreach ( $groups as $group ) {
 			$this->render_group( $group, $base );
 		}
+		$this->render_breakdown_box( $groups, $base );
+	}
+
+	/**
+	 * One shared price-breakdown box (spec §9, design B): base price, each
+	 * engaged priced option, dashed Total. Server renders the initial (default
+	 * values) state; the frontend bundle re-renders live.
+	 *
+	 * @param array[] $groups resolved canonical groups.
+	 */
+	private function render_breakdown_box( array $groups, float $base ): void {
+		$has_priced = false;
+		$rows       = array();
+		foreach ( $groups as $group ) {
+			foreach ( (array) ( $group['fields'] ?? array() ) as $f ) {
+				if ( ( isset( $f['price'] ) && (float) $f['price'] > 0 ) || 'price' === ( $f['type'] ?? '' ) || 'formula' === ( $f['priceMode'] ?? '' ) ) {
+					$has_priced = true;
+					break 2;
+				}
+			}
+		}
+		if ( ! $has_priced ) {
+			return;
+		}
+
+		$decimals = function_exists( 'wc_get_price_decimals' ) ? wc_get_price_decimals() : 2;
+		foreach ( $groups as $group ) {
+			$rows = array_merge( $rows, \CoreLabs\ProductOptions\Cart\PriceCalculator::breakdown( $group, array(), $decimals, $base ) );
+		}
+
+		$fmt = static function ( float $amount ): string {
+			return function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( $amount ) ) : number_format( $amount, 2 );
+		};
+
+		printf( '<div class="apo-breakdown" data-apo-breakdown aria-live="polite" aria-atomic="true"%s><ul>', empty( $rows ) ? ' hidden' : '' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		if ( ! empty( $rows ) ) {
+			$sum = 0.0;
+			printf( '<li class="apo-breakdown__row"><span>%s</span><span>%s</span></li>', esc_html__( 'Base price', 'corelabs-product-options' ), esc_html( $fmt( $base ) ) );
+			foreach ( $rows as $row ) {
+				$sum += $row['amount'];
+				printf( '<li class="apo-breakdown__row"><span>%s</span><span>+%s</span></li>', esc_html( $row['label'] ), esc_html( $fmt( $row['amount'] ) ) );
+			}
+			printf( '<li class="apo-breakdown__row apo-breakdown__row--total"><span>%s</span><span>%s</span></li>', esc_html__( 'Total', 'corelabs-product-options' ), esc_html( $fmt( $base + $sum ) ) );
+		}
+		echo '</ul></div>';
 	}
 
 	/** @param array<string,mixed> $group canonical group array (id/fields/…). */
@@ -47,14 +93,6 @@ final class ProductFormRenderer {
 
 		$active = ConditionalLogic::active_map( $group, array() );
 
-		$has_priced = false;
-		foreach ( $fields as $f ) {
-			if ( ( isset( $f['price'] ) && (float) $f['price'] > 0 ) || 'price' === ( $f['type'] ?? '' ) ) {
-				$has_priced = true;
-				break;
-			}
-		}
-
 		printf(
 			'<div class="apo-options" data-apo-group="%d" data-apo-base="%s">',
 			(int) ( $group['id'] ?? 0 ),
@@ -62,10 +100,6 @@ final class ProductFormRenderer {
 		);
 		foreach ( $fields as $f ) {
 			$this->render_field( $f, ! empty( $active[ $f['id'] ?? '' ] ) );
-		}
-		if ( $has_priced ) {
-			echo '<p class="apo-options-total">' . esc_html__( 'Options total:', 'corelabs-product-options' )
-				. ' <span class="apo-options-total__value" aria-live="polite" aria-atomic="true">+0.00</span></p>';
 		}
 		echo '<script type="application/json" class="apo-rules">'
 			. wp_json_encode( array( 'fields' => $fields ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )

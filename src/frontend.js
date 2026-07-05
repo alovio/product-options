@@ -3,11 +3,13 @@
  * then wire conditional visibility and the display-only options total.
  */
 import { wire } from './frontend/conditional-logic';
-import { wirePrices } from './frontend/price-update';
+import { wireBreakdown } from './frontend/price-update';
 import { wireUploads } from './frontend/uploader';
 import '../assets/css/frontend.css';
 
 function init() {
+	const byForm = new Map(); // form -> { groups: [{fields}], base }
+
 	document.querySelectorAll( 'script.apo-rules' ).forEach( ( node ) => {
 		let group;
 		try {
@@ -21,8 +23,11 @@ function init() {
 			return;
 		}
 		wire( form, fields );
+
+		const optionsEl = node.closest( '.apo-options' );
+
 		// Quantity steppers: −/＋ buttons nudge the input and fire change.
-		node.closest( '.apo-options' ).querySelectorAll( '.apo-qty__btn' ).forEach( ( btn ) => {
+		optionsEl.querySelectorAll( '.apo-qty__btn' ).forEach( ( btn ) => {
 			btn.addEventListener( 'click', () => {
 				const input = btn.parentElement.querySelector( 'input[type="number"]' );
 				if ( ! input ) {
@@ -36,12 +41,20 @@ function init() {
 				input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 			} );
 		} );
-		const optionsEl = node.closest( '.apo-options' );
-		const base = optionsEl ? parseFloat( optionsEl.dataset.apoBase ) || 0 : 0;
-		// Scope the total to THIS group's block — with several priced groups on
-		// one form, a form-wide query would write every subtotal into group 1.
-		const totalEl = optionsEl && optionsEl.querySelector( '.apo-options-total__value' );
-		wirePrices( form, fields, totalEl, base );
+
+		if ( ! byForm.has( form ) ) {
+			byForm.set( form, { groups: [], base: parseFloat( optionsEl.dataset.apoBase ) || 0 } );
+		}
+		byForm.get( form ).groups.push( { fields } );
+	} );
+
+	// One shared breakdown box per form, merging every group (spec §9).
+	byForm.forEach( ( { groups, base }, form ) => {
+		const boxEl = form.querySelector( '.apo-breakdown' );
+		if ( ! boxEl ) {
+			return;
+		}
+		wireBreakdown( form, groups, boxEl, () => base );
 	} );
 }
 

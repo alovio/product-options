@@ -34,6 +34,10 @@ final class FrontendAssets {
 				'decimalSep'  => wc_get_price_decimal_separator(),
 				'thousandSep' => wc_get_price_thousand_separator(),
 				'position'    => get_option( 'woocommerce_currency_pos', 'left' ),
+				'i18n'        => array(
+					'base'  => __( 'Base price', 'corelabs-product-options' ),
+					'total' => __( 'Total', 'corelabs-product-options' ),
+				),
 				'upload'      => array(
 					'url'   => esc_url_raw( rest_url( 'clpo/v1/upload' ) ),
 					'nonce' => wp_create_nonce( 'clpo_upload' ),

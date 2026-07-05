@@ -86,14 +86,67 @@ export function formatMoney( amount ) {
 	}
 }
 
-export function wirePrices( formEl, fields, displayEl, base = 0 ) {
+/**
+ * Pure row model for the breakdown box (spec §9, design B). Empty array when
+ * nothing priced is engaged — the box stays hidden.
+ *
+ * @param {Array<{fieldId:string,label:string,amount:number}>} breakdown engaged rows (all groups merged)
+ * @param {number} base   product base price
+ * @param {Object} labels { base, total } localized strings
+ * @return {Array<{label:string, amount:number, total?:boolean}>}
+ */
+export function renderBreakdownRows( breakdown, base, labels ) {
+	if ( ! breakdown.length ) {
+		return [];
+	}
+	const sum = breakdown.reduce( ( t, r ) => t + r.amount, 0 );
+	return [
+		{ label: labels.base, amount: base },
+		...breakdown.map( ( r ) => ( { label: r.label, amount: r.amount } ) ),
+		{ label: labels.total, amount: base + sum, total: true },
+	];
+}
+
+/**
+ * One shared breakdown box per product form: merges every group's engaged
+ * rows, re-renders on any change. `getBase` is read per update so the
+ * variation tracker (spec §9) can move the base under us.
+ *
+ * @param {HTMLElement} formEl
+ * @param {Array<{fields: Array}>} groups
+ * @param {HTMLElement} boxEl the .apo-breakdown container
+ * @param {Function} getBase () => number
+ */
+export function wireBreakdown( formEl, groups, boxEl, getBase ) {
+	const list = boxEl && boxEl.querySelector( 'ul' );
+	if ( ! list ) {
+		return;
+	}
+	const cfg = ( typeof window !== 'undefined' && window.CLPO_FE ) || {};
+	const labels = ( cfg.i18n ) || { base: 'Base price', total: 'Total' };
+
 	const update = () => {
-		const total = computeAddonTotal( fields, readValues( formEl, fields ), base );
-		if ( displayEl ) {
-			displayEl.textContent = '+' + formatMoney( total );
-		}
+		const base = getBase();
+		const merged = [];
+		groups.forEach( ( g ) => {
+			merged.push( ...computeBreakdown( g.fields, readValues( formEl, g.fields ), base ) );
+		} );
+		const rows = renderBreakdownRows( merged, base, labels );
+		boxEl.hidden = rows.length === 0;
+		list.textContent = '';
+		rows.forEach( ( r ) => {
+			const li = document.createElement( 'li' );
+			li.className = r.total ? 'apo-breakdown__row apo-breakdown__row--total' : 'apo-breakdown__row';
+			const name = document.createElement( 'span' );
+			name.textContent = r.label;
+			const amount = document.createElement( 'span' );
+			amount.textContent = r.total || r.label === labels.base ? formatMoney( r.amount ) : '+' + formatMoney( r.amount );
+			li.append( name, amount );
+			list.append( li );
+		} );
 	};
 	formEl.addEventListener( 'change', update );
 	formEl.addEventListener( 'input', update );
 	update();
+	return update;
 }
