@@ -35,6 +35,7 @@ final class Plugin {
 		( new \CoreLabs\ProductOptions\Admin\GroupsRestController() )->register();
 		( new \CoreLabs\ProductOptions\Admin\HubPage() )->register();
 		( new \CoreLabs\ProductOptions\Admin\BuilderAssets() )->register();
+		( new \CoreLabs\ProductOptions\Admin\ProductSummaryBox() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\ProductFormRenderer() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\FrontendAssets() )->register();
 		( new \CoreLabs\ProductOptions\Cart\CartIntegration() )->register();
