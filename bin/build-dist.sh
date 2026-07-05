@@ -18,10 +18,8 @@ mkdir -p "$DEST"
 # composer.json) alongside the compiled build/ so the bundle is not obfuscated.
 rsync -a \
 	--exclude='.git' --exclude='.github' --exclude='.gitignore' --exclude='.distignore' --exclude='.DS_Store' \
-	--exclude='.wp-env.json' --exclude='.playwright-mcp' --exclude='.wordpress-org' --exclude='node_modules' \
+	--exclude='.wp-env.json' --exclude='.playwright-mcp' --exclude='.wordpress-org' --exclude='.superpowers' --exclude='node_modules' \
 	--exclude='tests' --exclude='docs' --exclude='bin' \
-	--exclude='corelabs-product-options-pro' \
-	--exclude='includes/Pro' \
 	--exclude='package-lock.json' \
 	--exclude='phpunit.xml.dist' --exclude='.phpunit.result.cache' --exclude='dist' \
 	--exclude='vendor' \
@@ -35,9 +33,3 @@ cp "$ROOT/composer.json" "$ROOT/composer.lock" "$DEST/" 2>/dev/null || cp "$ROOT
 # Zip the free plugin.
 ( cd "$OUT" && zip -rqX "$SLUG.zip" "$SLUG" )
 echo "Built: $OUT/$SLUG.zip"
-
-# Zip the Pro add-on (sold separately), if present.
-if [ -d "$ROOT/$SLUG-pro" ]; then
-	( cd "$ROOT" && zip -rqX "$OUT/$SLUG-pro.zip" "$SLUG-pro" )
-	echo "Built: $OUT/$SLUG-pro.zip"
-fi

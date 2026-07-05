@@ -34,7 +34,7 @@ export default function FieldSettings() {
 	}
 
 	const set = ( patch ) => updateField( field.id, patch );
-	const isPro = !! ( window.CLPO_BUILDER && window.CLPO_BUILDER.isPro );
+	const isPro = true; // 2.0: everything free — this legacy builder is replaced in Chunk 2.
 
 	// Heading is a display-only field: just a label, description, and optional condition.
 	if ( field.type === 'heading' ) {

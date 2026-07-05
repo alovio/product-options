@@ -33,7 +33,7 @@ export default function ConditionEditor( { field } ) {
 	const { updateField } = useDispatch( STORE );
 	const others = fields.filter( ( f ) => f.id !== field.id );
 
-	const isPro = !! ( window.CLPO_BUILDER && window.CLPO_BUILDER.isPro );
+	const isPro = true; // 2.0: everything free — this legacy builder is replaced in Chunk 2.
 	const operators = ( window.CLPO_BUILDER && window.CLPO_BUILDER.operators ) || [ 'is', 'is_not' ];
 	const opOptions = operators.map( ( o ) => ( { label: OP_LABELS[ o ] || o, value: o } ) );
 	const actionOptions = [

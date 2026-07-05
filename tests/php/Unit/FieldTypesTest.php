@@ -8,9 +8,9 @@ use Brain\Monkey;
 
 class FieldTypesTest extends TestCase {
 
-	public function test_all_returns_free_types(): void {
+	public function test_all_returns_builtin_types(): void {
 		$this->assertSame(
-			array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading' ),
+			array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date' ),
 			FieldTypes::all()
 		);
 	}

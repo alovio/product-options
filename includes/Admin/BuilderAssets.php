@@ -59,8 +59,7 @@ final class BuilderAssets {
 				'root'       => esc_url_raw( rest_url( '/' ) ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'fieldTypes' => FieldTypes::all(),
-				'isPro'      => \CoreLabs\ProductOptions\Pro\ProModule::is_pro(),
-				'operators'  => (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not' ) ),
+				'operators'  => (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not', 'contains', 'gt', 'lt' ) ),
 			)
 		);
 	}

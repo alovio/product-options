@@ -8,7 +8,12 @@ use CoreLabs\ProductOptions\Fields\FieldSchema;
 use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 use Brain\Monkey;
 
-class ProConditionalTest extends TestCase {
+/**
+ * 2.0: everything ships free by default; the clpo_* filters remain as public
+ * extension points. These tests pin the full defaults AND prove the filters
+ * can still restrict/extend them.
+ */
+class ExtensionFiltersTest extends TestCase {
 
 	public function test_contains_operator(): void {
 		$field = array( 'condition' => array( 'field' => 't', 'operator' => 'contains', 'value' => 'abc', 'action' => 'show' ) );
@@ -56,18 +61,8 @@ class ProConditionalTest extends TestCase {
 		$this->assertFalse( ConditionalLogic::requires( $f, array( 'a' => 'x' ) ) );
 	}
 
-	public function test_schema_keeps_multi_when_gate_on(): void {
-		Monkey\Functions\when( 'apply_filters' )->alias(
-			function ( $tag, $value ) {
-				if ( 'clpo_multi_conditions' === $tag ) {
-					return true;
-				}
-				if ( 'clpo_allowed_operators' === $tag ) {
-					return array( 'is', 'is_not', 'contains', 'gt', 'lt' );
-				}
-				return $value;
-			}
-		);
+	public function test_schema_keeps_multi_conditions_by_default(): void {
+		// Base stub = passthrough filters -> the inlined full defaults apply.
 		$out = FieldSchema::normalize(
 			array(
 				'fields' => array(
@@ -92,8 +87,12 @@ class ProConditionalTest extends TestCase {
 		$this->assertSame( 'gt', $c['conditions'][1]['operator'] );
 	}
 
-	public function test_schema_strips_multi_when_free(): void {
-		// Base stub returns defaults: clpo_multi_conditions=false, operators=is/is_not.
+	public function test_filter_can_restrict_multi_conditions(): void {
+		Monkey\Functions\when( 'apply_filters' )->alias(
+			function ( $tag, $value ) {
+				return 'clpo_multi_conditions' === $tag ? false : $value;
+			}
+		);
 		$out = FieldSchema::normalize(
 			array(
 				'fields' => array(
@@ -128,22 +127,8 @@ class ProConditionalTest extends TestCase {
 		$this->assertSame( 2.0, PriceCalculator::addon_total( $g, array( 'n' => '5' ), 2 ) );
 	}
 
-	public function test_swatch_type_gated_and_options_normalized(): void {
-		// Free: swatch is not a valid type -> the field is dropped.
-		$free = FieldSchema::normalize(
-			array( 'fields' => array( array( 'id' => 's', 'type' => 'swatch', 'options' => array( array( 'label' => 'Red', 'color' => '#ff0000' ) ) ) ) )
-		);
-		$this->assertCount( 0, $free['fields'] );
-
-		// Pro: swatch valid; options become {label,color}; empty-label dropped.
-		Monkey\Functions\when( 'apply_filters' )->alias(
-			function ( $tag, $value ) {
-				return 'clpo_field_types' === $tag
-					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'swatch' )
-					: $value;
-			}
-		);
-		$pro = FieldSchema::normalize(
+	public function test_swatch_valid_by_default_and_options_normalized(): void {
+		$out = FieldSchema::normalize(
 			array(
 				'fields' => array(
 					array(
@@ -157,43 +142,48 @@ class ProConditionalTest extends TestCase {
 				),
 			)
 		);
-		$this->assertCount( 1, $pro['fields'] );
-		$this->assertCount( 1, $pro['fields'][0]['options'] );
-		$this->assertSame( 'Red', $pro['fields'][0]['options'][0]['label'] );
-		$this->assertSame( '#ff0000', $pro['fields'][0]['options'][0]['color'] );
+		$this->assertCount( 1, $out['fields'] );
+		$this->assertCount( 1, $out['fields'][0]['options'] );
+		$this->assertSame( 'Red', $out['fields'][0]['options'][0]['label'] );
+		$this->assertSame( '#ff0000', $out['fields'][0]['options'][0]['color'] );
 	}
 
-	public function test_date_type_gated_with_constraints(): void {
-		// Free: date is not a valid type -> dropped.
-		$free = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'd', 'type' => 'date', 'min' => '2026-01-01' ) ) ) );
-		$this->assertCount( 0, $free['fields'] );
+	public function test_date_valid_by_default_with_constraints(): void {
+		$out = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'd', 'type' => 'date', 'min' => '2026-01-01', 'max' => '2026-12-31' ) ) ) );
+		$this->assertCount( 1, $out['fields'] );
+		$this->assertSame( '2026-01-01', $out['fields'][0]['min'] );
+		$this->assertSame( '2026-12-31', $out['fields'][0]['max'] );
+	}
 
-		// Pro: date valid; min/max normalized.
+	public function test_filter_can_remove_field_types(): void {
 		Monkey\Functions\when( 'apply_filters' )->alias(
 			function ( $tag, $value ) {
 				return 'clpo_field_types' === $tag
-					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'swatch', 'date' )
+					? array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading' )
 					: $value;
 			}
 		);
-		$pro = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'd', 'type' => 'date', 'min' => '2026-01-01', 'max' => '2026-12-31' ) ) ) );
-		$this->assertCount( 1, $pro['fields'] );
-		$this->assertSame( '2026-01-01', $pro['fields'][0]['min'] );
-		$this->assertSame( '2026-12-31', $pro['fields'][0]['max'] );
+		$out = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 's', 'type' => 'swatch' ), array( 'id' => 't', 'type' => 'text' ) ) ) );
+		$this->assertCount( 1, $out['fields'] );
+		$this->assertSame( 'text', $out['fields'][0]['type'] );
 	}
 
-	public function test_schema_gates_price_mode(): void {
-		// Free default: per_unit is not allowed -> coerced to fixed.
-		$free = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );
-		$this->assertSame( 'fixed', $free['fields'][0]['priceMode'] );
+	public function test_price_mode_defaults_full_and_filter_can_restrict(): void {
+		// Default: per_unit is allowed.
+		$full = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );
+		$this->assertSame( 'per_unit', $full['fields'][0]['priceMode'] );
 
-		// Pro: per_unit allowed.
+		// Unknown mode coerces to fixed.
+		$bogus = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'bogus' ) ) ) );
+		$this->assertSame( 'fixed', $bogus['fields'][0]['priceMode'] );
+
+		// A filter can restrict the mode list.
 		Monkey\Functions\when( 'apply_filters' )->alias(
 			function ( $tag, $value ) {
-				return 'clpo_price_modes' === $tag ? array( 'fixed', 'per_unit' ) : $value;
+				return 'clpo_price_modes' === $tag ? array( 'fixed' ) : $value;
 			}
 		);
-		$pro = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );
-		$this->assertSame( 'per_unit', $pro['fields'][0]['priceMode'] );
+		$restricted = FieldSchema::normalize( array( 'fields' => array( array( 'id' => 'n', 'type' => 'number', 'price' => 1, 'priceMode' => 'per_unit' ) ) ) );
+		$this->assertSame( 'fixed', $restricted['fields'][0]['priceMode'] );
 	}
 }

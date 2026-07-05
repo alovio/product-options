@@ -15,10 +15,10 @@ final class FieldSchema {
 	public static function normalize( array $raw ): array {
 		$fields = ( isset( $raw['fields'] ) && is_array( $raw['fields'] ) ) ? $raw['fields'] : array();
 
-		$ops     = (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not' ) );
+		$ops     = (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not', 'contains', 'gt', 'lt' ) );
 		$actions = (array) apply_filters( 'clpo_allowed_actions', array( 'show', 'hide', 'require' ) );
-		$multi   = (bool) apply_filters( 'clpo_multi_conditions', false );
-		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed' ) );
+		$multi   = (bool) apply_filters( 'clpo_multi_conditions', true );
+		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed', 'per_unit', 'percent' ) );
 
 		// First pass: keep valid-typed fields with unique, non-empty ids.
 		$kept = array();
