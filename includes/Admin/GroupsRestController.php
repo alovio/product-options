@@ -97,6 +97,24 @@ final class GroupsRestController {
 		);
 		register_rest_route(
 			self::NS,
+			'/export',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'export_groups' ),
+				'permission_callback' => array( $this, 'can_manage' ),
+			)
+		);
+		register_rest_route(
+			self::NS,
+			'/import',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'import_groups' ),
+				'permission_callback' => array( $this, 'can_manage' ),
+			)
+		);
+		register_rest_route(
+			self::NS,
 			'/settings',
 			array(
 				array(
@@ -245,6 +263,52 @@ final class GroupsRestController {
 			);
 		}
 		return rest_ensure_response( $items );
+	}
+
+	/**
+	 * GET /export?ids=1,2 exports those groups; ids OMITTED exports ALL groups
+	 * (the header "Export all" consumer).
+	 *
+	 * @param \WP_REST_Request $request
+	 */
+	public function export_groups( $request ) {
+		$param  = (string) $request->get_param( 'ids' );
+		$all    = $this->repo->all();
+		$groups = $all;
+		if ( '' !== $param ) {
+			$ids    = array_map( 'intval', array_filter( explode( ',', $param ) ) );
+			$groups = array_values(
+				array_filter(
+					$all,
+					static function ( $g ) use ( $ids ) {
+						return in_array( (int) $g['id'], $ids, true );
+					}
+				)
+			);
+		}
+		return rest_ensure_response( ImportExport::package( $groups ) );
+	}
+
+	/**
+	 * POST /import — unpacked groups become DRAFTS; response carries the new
+	 * ids + normalization warnings.
+	 *
+	 * @param \WP_REST_Request $request
+	 */
+	public function import_groups( $request ) {
+		$unpacked = ImportExport::unpack( $request->get_json_params() );
+		$created  = array();
+		foreach ( $unpacked['groups'] as $g ) {
+			$g['status'] = 'draft';
+			$saved       = $this->repo->save( 0, $g );
+			$created[]   = (int) $saved['id'];
+		}
+		return rest_ensure_response(
+			array(
+				'created'  => $created,
+				'warnings' => $unpacked['warnings'],
+			)
+		);
 	}
 
 	public function get_settings() {
