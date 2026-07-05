@@ -100,4 +100,27 @@ class PriceCalculatorTest extends TestCase {
 		$this->assertSame( 2.0, PriceCalculator::addon_total( $g, array( 't' => ' həəə ' ), 2 ) ); // 4 mb chars trimmed
 		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 't' => '' ), 2 ) );
 	}
+
+	public function test_formula_mode_evaluates_over_sibling_values(): void {
+		$g = array( 'version' => 1, 'fields' => array(
+			array( 'id' => 'width', 'type' => 'number', 'price' => 0, 'priceMode' => 'fixed', 'condition' => null ),
+			array( 'id' => 'height', 'type' => 'number', 'price' => 0, 'priceMode' => 'fixed', 'condition' => null ),
+			array( 'id' => 'fee', 'type' => 'price', 'price' => 0, 'priceMode' => 'formula', 'formula' => '{width} * {height} * 0.85', 'condition' => null ),
+		) );
+		$this->assertSame( 17.0, PriceCalculator::addon_total( $g, array( 'width' => '4', 'height' => '5' ), 2 ) );
+		// missing tokens -> 0 contribution
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array(), 2 ) );
+	}
+
+	public function test_breakdown_rows_labels_and_amounts(): void {
+		$g = array( 'version' => 1, 'fields' => array(
+			array( 'id' => 'wrap', 'type' => 'checkbox', 'label' => 'Gift wrap', 'price' => 8, 'priceMode' => 'fixed', 'condition' => null ),
+			array( 'id' => 'note', 'type' => 'text', 'label' => 'Engraving', 'price' => 0.5, 'priceMode' => 'per_char', 'condition' => null ),
+		) );
+		$rows = PriceCalculator::breakdown( $g, array( 'wrap' => 'yes', 'note' => 'Hello' ), 2 );
+		$this->assertCount( 2, $rows );
+		$this->assertSame( 'Gift wrap', $rows[0]['label'] );
+		$this->assertSame( 8.0, $rows[0]['amount'] );
+		$this->assertSame( 2.5, $rows[1]['amount'] );
+	}
 }

@@ -135,4 +135,14 @@ class FieldSchemaTest extends TestCase {
 		$this->assertSame( 'per_char', $out['fields'][0]['priceMode'] );
 		$this->assertSame( 'fixed', $out['fields'][1]['priceMode'] );
 	}
+
+	public function test_formula_mode_falls_back_to_fixed_when_invalid(): void {
+		$out = \CoreLabs\ProductOptions\Fields\FieldSchema::normalize( array( 'fields' => array(
+			array( 'id' => 'a', 'type' => 'price', 'price' => 0, 'priceMode' => 'formula', 'formula' => '{x} * 2' ),
+			array( 'id' => 'b', 'type' => 'price', 'price' => 0, 'priceMode' => 'formula', 'formula' => '2*' ),
+		) ) );
+		$this->assertSame( 'formula', $out['fields'][0]['priceMode'] );
+		$this->assertSame( '{x} * 2', $out['fields'][0]['formula'] );
+		$this->assertSame( 'fixed', $out['fields'][1]['priceMode'] );
+	}
 }

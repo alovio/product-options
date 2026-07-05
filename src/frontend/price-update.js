@@ -3,16 +3,28 @@
  * computed server-side (CoreLabs\ProductOptions\Cart\PriceCalculator); this mirrors it for UX.
  */
 import { activeMap, readValues } from './conditional-logic';
+import { evaluateFormula } from '../shared/formula';
 
-export function computeAddonTotal( fields, values, base = 0 ) {
-	let total = 0;
+/**
+ * Per-field engaged amounts — the JS twin of PriceCalculator::breakdown.
+ *
+ * @return {Array<{fieldId: string, label: string, amount: number}>}
+ */
+export function computeBreakdown( fields, values, base = 0 ) {
+	const rows = [];
 	const map = activeMap( fields, values );
+	const numeric = {};
+	fields.forEach( ( f ) => {
+		if ( map[ f.id ] && values[ f.id ] !== undefined && values[ f.id ] !== '' && ! isNaN( parseFloat( values[ f.id ] ) ) ) {
+			numeric[ f.id ] = parseFloat( values[ f.id ] );
+		}
+	} );
 	fields.forEach( ( f ) => {
 		if ( ! map[ f.id ] ) {
 			return;
 		}
 		const price = parseFloat( f.price ) || 0;
-		if ( price <= 0 ) {
+		if ( price <= 0 && f.priceMode !== 'formula' ) {
 			return;
 		}
 		const v = values[ f.id ];
@@ -30,17 +42,27 @@ export function computeAddonTotal( fields, values, base = 0 ) {
 		if ( ! engaged ) {
 			return;
 		}
-		if ( f.priceMode === 'per_unit' && ( f.type === 'number' || f.type === 'quantity' ) && ! isNaN( num ) ) {
-			total += price * num;
+		let amount;
+		if ( f.priceMode === 'formula' ) {
+			amount = evaluateFormula( f.formula || '', numeric );
+		} else if ( f.priceMode === 'per_unit' && ( f.type === 'number' || f.type === 'quantity' ) && ! isNaN( num ) ) {
+			amount = price * num;
 		} else if ( f.priceMode === 'per_char' && ( f.type === 'text' || f.type === 'textarea' ) ) {
-			total += price * String( v ).trim().length;
+			amount = price * String( v ).trim().length;
 		} else if ( f.priceMode === 'percent' ) {
-			total += ( base * price ) / 100;
+			amount = ( base * price ) / 100;
 		} else {
-			total += price;
+			amount = price;
+		}
+		if ( amount > 0 ) {
+			rows.push( { fieldId: f.id, label: f.label || f.id, amount } );
 		}
 	} );
-	return total;
+	return rows;
+}
+
+export function computeAddonTotal( fields, values, base = 0 ) {
+	return computeBreakdown( fields, values, base ).reduce( ( t, r ) => t + r.amount, 0 );
 }
 
 export function formatMoney( amount ) {

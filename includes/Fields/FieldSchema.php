@@ -18,7 +18,7 @@ final class FieldSchema {
 		$ops     = (array) apply_filters( 'clpo_allowed_operators', array( 'is', 'is_not', 'contains', 'gt', 'lt' ) );
 		$actions = (array) apply_filters( 'clpo_allowed_actions', array( 'show', 'hide', 'require' ) );
 		$multi   = (bool) apply_filters( 'clpo_multi_conditions', true );
-		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed', 'per_unit', 'percent', 'per_char' ) );
+		$modes   = (array) apply_filters( 'clpo_price_modes', array( 'fixed', 'per_unit', 'percent', 'per_char', 'formula' ) );
 
 		// First pass: keep valid-typed fields with unique, non-empty ids.
 		$kept = array();
@@ -51,7 +51,8 @@ final class FieldSchema {
 				'label'       => isset( $f['label'] ) ? sanitize_text_field( (string) $f['label'] ) : '',
 				'required'    => ! empty( $f['required'] ),
 				'price'       => $price < 0 ? 0.0 : $price,
-				'priceMode'   => self::normalize_price_mode( $pm, (string) $f['type'], $modes ),
+				'priceMode'   => self::normalize_price_mode( $pm, (string) $f['type'], $modes, (string) ( $f['formula'] ?? '' ) ),
+				'formula'     => substr( sanitize_text_field( (string) ( $f['formula'] ?? '' ) ), 0, \CoreLabs\ProductOptions\Formula\FormulaPrice::MAX_LENGTH ),
 				'placeholder' => isset( $f['placeholder'] ) ? sanitize_text_field( (string) $f['placeholder'] ) : '',
 				'description' => isset( $f['description'] ) ? sanitize_text_field( (string) $f['description'] ) : '',
 				'default'     => isset( $f['default'] ) ? sanitize_text_field( (string) $f['default'] ) : '',
@@ -76,7 +77,7 @@ final class FieldSchema {
 	 *
 	 * @param string[] $modes allowed mode list (filterable).
 	 */
-	private static function normalize_price_mode( string $pm, string $type, array $modes ): string {
+	private static function normalize_price_mode( string $pm, string $type, array $modes, string $formula = '' ): string {
 		if ( ! in_array( $pm, $modes, true ) ) {
 			return 'fixed';
 		}
@@ -85,6 +86,9 @@ final class FieldSchema {
 		}
 		if ( 'per_unit' === $pm && ! in_array( $type, array( 'number', 'quantity' ), true ) ) {
 			return 'fixed';
+		}
+		if ( 'formula' === $pm && null !== \CoreLabs\ProductOptions\Formula\FormulaPrice::validate( $formula ) ) {
+			return 'fixed'; // invalid/empty expression never ships live.
 		}
 		return $pm;
 	}
