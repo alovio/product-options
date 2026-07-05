@@ -38,7 +38,7 @@ rsync -a --delete --exclude='.svn' --exclude='.DS_Store' "$DIST/" "$WC/tags/$VER
 mkdir -p "$WC/assets"
 cp "$WO/icon-256x256.png" "$WO/icon-128x128.png" \
    "$WO/banner-1544x500.png" "$WO/banner-772x250.png" \
-   "$WO/screenshot-1.png" "$WO/screenshot-2.png" "$WC/assets/"
+   "$WO/screenshot-1.png" "$WO/screenshot-2.png" "$WO/screenshot-3.png" "$WC/assets/"
 
 cd "$WC"
 # Schedule adds for everything new; schedule removes for anything deleted upstream.

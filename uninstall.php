@@ -11,7 +11,7 @@ if ( get_option( 'clpo_remove_data_on_uninstall' ) ) {
 	global $wpdb;
 
 	// Option-group posts + their meta (2.0 storage).
-	$group_ids = get_posts(
+	$clpo_group_ids = get_posts(
 		array(
 			'post_type'   => 'alovio_option_group',
 			'post_status' => 'any',
@@ -19,8 +19,8 @@ if ( get_option( 'clpo_remove_data_on_uninstall' ) ) {
 			'fields'      => 'ids',
 		)
 	);
-	foreach ( $group_ids as $gid ) {
-		wp_delete_post( (int) $gid, true );
+	foreach ( $clpo_group_ids as $clpo_gid ) {
+		wp_delete_post( (int) $clpo_gid, true );
 	}
 
 	// Legacy 1.x product meta + migration markers.

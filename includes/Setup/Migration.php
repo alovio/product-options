@@ -114,7 +114,7 @@ final class Migration {
 			self::MIGRATED_KEY,
 			$limit
 		);
-		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		$rows = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built with $wpdb->prepare() above.
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery
 		return is_array( $rows ) ? $rows : array();
 	}
