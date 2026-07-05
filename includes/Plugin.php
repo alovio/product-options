@@ -33,6 +33,7 @@ final class Plugin {
 		( new \CoreLabs\ProductOptions\Setup\Migration() )->register();
 		( new \CoreLabs\ProductOptions\Admin\RestController() )->register();
 		( new \CoreLabs\ProductOptions\Admin\GroupsRestController() )->register();
+		( new \CoreLabs\ProductOptions\Admin\HubPage() )->register();
 		( new \CoreLabs\ProductOptions\Admin\BuilderAssets() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\ProductFormRenderer() )->register();
 		( new \CoreLabs\ProductOptions\Frontend\FrontendAssets() )->register();
