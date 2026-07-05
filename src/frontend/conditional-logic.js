@@ -137,14 +137,17 @@ export function activeMap( fields, values ) {
 export function readValues( formEl, fields ) {
 	const values = {};
 	fields.forEach( ( f ) => {
-		if ( f.type === 'radio' ) {
-			const checked = formEl.querySelector( `[name="apo[${ f.id }]"]:checked` );
-			values[ f.id ] = checked ? checked.value : '';
-			return;
-		}
 		const input = formEl.querySelector( `[name="apo[${ f.id }]"]` );
 		if ( ! input ) {
 			values[ f.id ] = '';
+			return;
+		}
+		// Keyed on INPUT SHAPE, not field type: buttons/swatch/image_swatch all
+		// render as radios — the generic branch would read the FIRST radio's
+		// value regardless of :checked.
+		if ( input.type === 'radio' ) {
+			const checked = formEl.querySelector( `[name="apo[${ f.id }]"]:checked` );
+			values[ f.id ] = checked ? checked.value : '';
 			return;
 		}
 		if ( input.type === 'checkbox' ) {

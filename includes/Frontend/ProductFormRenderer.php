@@ -131,7 +131,7 @@ final class ProductFormRenderer {
 		}
 
 		$fid   = 'clpo_' . $id;
-		$group = in_array( $type, array( 'radio', 'swatch' ), true );
+		$group = in_array( $type, array( 'radio', 'swatch', 'buttons', 'image_swatch' ), true );
 
 		printf( '<div class="apo-field" data-apo-field="%s"%s>', esc_attr( $id ), $hidden ); // phpcs:ignore WordPress.Security.EscapeOutput
 
@@ -201,9 +201,10 @@ final class ProductFormRenderer {
 				printf( '<input type="checkbox" id="%s" name="%s" value="yes"%s%s%s />', esc_attr( $fid ), esc_attr( $name ), $req, $descby, $chk ); // phpcs:ignore WordPress.Security.EscapeOutput
 				break;
 			case 'radio':
+			case 'buttons':
 				foreach ( (array) $f['options'] as $opt ) {
 					$chk = ( (string) $opt === $default ) ? ' checked' : '';
-					printf( '<label class="apo-opt"><input type="radio" name="%s" value="%s"%s%s /> %s</label>', esc_attr( $name ), esc_attr( $opt ), $rreq, $chk, esc_html( $opt ) ); // phpcs:ignore WordPress.Security.EscapeOutput
+					printf( '<label class="apo-opt%s"><input type="radio" name="%s" value="%s"%s%s /> <span>%s</span></label>', 'buttons' === $type ? ' apo-btnopt' : '', esc_attr( $name ), esc_attr( $opt ), $rreq, $chk, esc_html( $opt ) ); // phpcs:ignore WordPress.Security.EscapeOutput
 				}
 				break;
 			case 'select':
@@ -227,6 +228,35 @@ final class ProductFormRenderer {
 						esc_attr( $name ),
 						$rreq,
 						esc_attr( $opt_color ),
+						$chk
+					);
+					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+				}
+				echo '</div>';
+				break;
+			case 'quantity':
+				$min = ( '' !== (string) ( $f['min'] ?? '' ) ) ? sprintf( ' min="%s"', esc_attr( (string) $f['min'] ) ) : ' min="0"';
+				$max = ( '' !== (string) ( $f['max'] ?? '' ) ) ? sprintf( ' max="%s"', esc_attr( (string) $f['max'] ) ) : '';
+				$val = ( '' !== $default ) ? esc_attr( $default ) : '0';
+				echo '<span class="apo-qty">';
+				echo '<button type="button" class="apo-qty__btn" data-apo-step="-1" aria-hidden="true" tabindex="-1">−</button>';
+				printf( '<input type="number" id="%s" name="%s" inputmode="numeric" step="1"%s%s%s%s value="%s" />', esc_attr( $fid ), esc_attr( $name ), $req, $min, $max, $descby, $val ); // phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<button type="button" class="apo-qty__btn" data-apo-step="1" aria-hidden="true" tabindex="-1">＋</button>';
+				echo '</span>';
+				break;
+			case 'image_swatch':
+				echo '<div class="apo-swatches apo-swatches--image">';
+				foreach ( (array) $f['options'] as $opt ) {
+					$opt_label = is_array( $opt ) ? (string) ( $opt['label'] ?? '' ) : (string) $opt;
+					$opt_image = is_array( $opt ) ? (string) ( $opt['image'] ?? '' ) : '';
+					$chk       = ( $opt_label === $default ) ? ' checked' : '';
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- all parts escaped below; $rreq/$chk internal fragments.
+					printf(
+						'<label class="apo-swatch apo-swatch--image" title="%1$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%1$s" />%4$s<span class="apo-swatch__label">%1$s</span></label>',
+						esc_attr( $opt_label ),
+						esc_attr( $name ),
+						$rreq,
+						'' !== $opt_image ? '<img class="apo-swatch__img" src="' . esc_url( $opt_image ) . '" alt="" />' : '<span class="apo-swatch__dot"></span>',
 						$chk
 					);
 					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped

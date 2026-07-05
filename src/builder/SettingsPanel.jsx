@@ -5,11 +5,12 @@ import { STORE } from './store';
 import General from './panels/General';
 import Logic from './panels/Logic';
 import Pricing from './panels/Pricing';
+import Options, { HAS_OPTIONS_TYPES } from './panels/Options';
 import Assignment from './panels/Assignment';
 
 const T = 'corelabs-product-options';
 
-const TYPE_IC = { text: 'Aa', textarea: '¶', number: '#', checkbox: '☑', radio: '◉', select: '▾', heading: 'H', price: '＄', swatch: '🎨', email: '@', phone: '☎', url: '🔗', date: '📅', time: '🕐', file: '📎' };
+const TYPE_IC = { text: 'Aa', textarea: '¶', number: '#', checkbox: '☑', radio: '◉', select: '▾', heading: 'H', price: '＄', swatch: '🎨', quantity: '±', buttons: '⬚', image_swatch: '🖼', email: '@', phone: '☎', url: '🔗', date: '📅', time: '🕐', file: '📎' };
 
 export default function SettingsPanel() {
 	const field = useSelect( ( select ) => select( STORE ).getSelected(), [] );
@@ -54,6 +55,9 @@ export default function SettingsPanel() {
 				</div>
 				<div className="clpo-tabs">
 					<button className={ `clpo-tab${ tab === 'general' ? ' is-on' : '' }` } onClick={ () => setTab( 'general' ) }>{ __( 'General', T ) }</button>
+					{ HAS_OPTIONS_TYPES.includes( field.type ) && (
+						<button className={ `clpo-tab${ tab === 'options' ? ' is-on' : '' }` } onClick={ () => setTab( 'options' ) }>{ __( 'Options', T ) }</button>
+					) }
 					<button className={ `clpo-tab${ tab === 'logic' ? ' is-on' : '' }` } onClick={ () => setTab( 'logic' ) }>{ __( 'Logic', T ) }</button>
 					{ field.type !== 'heading' && (
 						<button className={ `clpo-tab${ tab === 'pricing' ? ' is-on' : '' }` } onClick={ () => setTab( 'pricing' ) }>{ __( 'Pricing', T ) }</button>
@@ -62,6 +66,7 @@ export default function SettingsPanel() {
 			</div>
 			<div className="clpo-sp-body">
 				{ tab === 'general' && <General field={ field } /> }
+				{ tab === 'options' && HAS_OPTIONS_TYPES.includes( field.type ) && <Options field={ field } /> }
 				{ tab === 'logic' && <Logic field={ field } /> }
 				{ tab === 'pricing' && field.type !== 'heading' && <Pricing field={ field } /> }
 			</div>

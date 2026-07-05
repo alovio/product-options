@@ -24,3 +24,17 @@ describe( 'computeAddonTotal', () => {
 		expect( computeAddonTotal( fields, {} ) ).toBe( 0 );
 	} );
 } );
+
+describe( 'quantity pricing gates', () => {
+	const { computeAddonTotal } = require( '../../src/frontend/price-update' );
+
+	it( 'quantity × per_unit multiplies', () => {
+		const fields = [ { id: 'q', type: 'quantity', price: 2, priceMode: 'per_unit' } ];
+		expect( computeAddonTotal( fields, { q: '3' } ) ).toBe( 6 );
+	} );
+
+	it( 'quantity 0 is not engaged', () => {
+		const fields = [ { id: 'q', type: 'quantity', price: 2, priceMode: 'per_unit' } ];
+		expect( computeAddonTotal( fields, { q: '0' } ) ).toBe( 0 );
+	} );
+} );

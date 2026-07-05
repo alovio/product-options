@@ -29,6 +29,8 @@ final class BuilderAssets {
 		}
 		$asset = require $asset_file;
 
+		// The Options panel's image picker uses the classic wp.media modal.
+		wp_enqueue_media();
 		wp_enqueue_script( 'clpo-hub', CLPO_URL . 'build/hub.js', $asset['dependencies'], $asset['version'], true );
 		wp_set_script_translations( 'clpo-hub', 'corelabs-product-options', CLPO_PATH . 'languages' );
 		wp_enqueue_style( 'clpo-hub', CLPO_URL . 'build/hub.css', array(), $asset['version'] );

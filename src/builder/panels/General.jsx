@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE } from '../store';
 
 const T = 'corelabs-product-options';
-const HAS_OPTIONS = [ 'radio', 'select' ];
+const HAS_OPTIONS = [ 'radio', 'select', 'buttons', 'swatch', 'image_swatch' ];
 const HAS_PLACEHOLDER = [ 'text', 'textarea', 'number', 'email', 'phone', 'url' ];
 const HAS_MAXLEN = [ 'text', 'textarea' ];
 
@@ -50,7 +50,7 @@ export default function General( { field } ) {
 
 			<DefaultControl field={ field } set={ set } />
 
-			{ field.type === 'number' && (
+			{ ( field.type === 'number' || field.type === 'quantity' ) && (
 				<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 } }>
 					<TextControl type="number" label={ __( 'Min', T ) } value={ field.min || '' } onChange={ ( v ) => set( { min: v } ) } />
 					<TextControl type="number" label={ __( 'Max', T ) } value={ field.max || '' } onChange={ ( v ) => set( { max: v } ) } />
@@ -69,15 +69,8 @@ export default function General( { field } ) {
 				<TextControl type="number" min={ 0 } label={ __( 'Max length (characters)', T ) } value={ field.maxLength || '' } onChange={ ( v ) => set( { maxLength: parseInt( v, 10 ) || 0 } ) } />
 			) }
 
-			{ HAS_OPTIONS.includes( field.type ) && (
-				<TextareaControl
-					label={ __( 'Options (one per line)', T ) }
-					value={ ( field.options || [] ).join( '\n' ) }
-					onChange={ ( v ) => set( { options: v.split( '\n' ).map( ( s ) => s.trim() ).filter( Boolean ) } ) }
-				/>
-			) }
 			{ optionsEmpty && (
-				<Notice status="warning" isDismissible={ false }>{ __( 'Add at least one option.', T ) }</Notice>
+				<Notice status="warning" isDismissible={ false }>{ __( 'Add options in the Options tab.', T ) }</Notice>
 			) }
 		</>
 	);

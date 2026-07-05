@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 
 const T = 'corelabs-product-options';
-const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time' ];
+const FALLBACK = [ 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time', 'quantity', 'buttons', 'image_swatch' ];
 
 const META = {
 	text: { label: __( 'Text', T ), ic: 'Aa' },
@@ -21,6 +21,9 @@ const META = {
 	date: { label: __( 'Date', T ), ic: '📅' },
 	time: { label: __( 'Time', T ), ic: '🕐' },
 	file: { label: __( 'File', T ), ic: '📎' },
+	quantity: { label: __( 'Quantity', T ), ic: '±' },
+	buttons: { label: __( 'Buttons', T ), ic: '⬚' },
+	image_swatch: { label: __( 'Image swatch', T ), ic: '🖼' },
 };
 
 export default function Palette() {

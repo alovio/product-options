@@ -73,8 +73,24 @@ final class Validator {
 				$errors[] = sprintf( __( '“%s” must be a valid link (https://…).', 'corelabs-product-options' ), $label );
 			}
 
-			if ( in_array( $type, array( 'select', 'radio', 'swatch' ), true ) && ! empty( $f['options'] ) ) {
-				$valid = ( 'swatch' === $type )
+			if ( 'quantity' === $type ) {
+				if ( ! is_numeric( $value ) ) {
+					/* translators: %s: field label */
+					$errors[] = sprintf( __( '“%s” must be a number.', 'corelabs-product-options' ), $label );
+				} else {
+					if ( '' !== (string) ( $f['min'] ?? '' ) && (float) $value < (float) $f['min'] ) {
+						/* translators: %s: field label */
+						$errors[] = sprintf( __( '“%s” is below the minimum quantity.', 'corelabs-product-options' ), $label );
+					}
+					if ( '' !== (string) ( $f['max'] ?? '' ) && (float) $value > (float) $f['max'] ) {
+						/* translators: %s: field label */
+						$errors[] = sprintf( __( '“%s” is above the maximum quantity.', 'corelabs-product-options' ), $label );
+					}
+				}
+			}
+
+			if ( in_array( $type, array( 'select', 'radio', 'buttons', 'swatch', 'image_swatch' ), true ) && ! empty( $f['options'] ) ) {
+				$valid = in_array( $type, array( 'swatch', 'image_swatch' ), true )
 					? array_map( static fn( $o ) => (string) ( $o['label'] ?? '' ), (array) $f['options'] )
 					: array_map( 'strval', (array) $f['options'] );
 				if ( ! in_array( (string) $value, $valid, true ) ) {

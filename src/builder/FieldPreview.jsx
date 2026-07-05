@@ -44,6 +44,26 @@ function Control( { field } ) {
 			);
 		case 'price':
 			return <div className="clpo-input clpo-input--fee">＋ { field.price || 0 }</div>;
+		case 'quantity':
+			return <div className="clpo-input" style={ { maxWidth: 120 } }>− { field.default || 0 } ＋</div>;
+		case 'buttons':
+			return (
+				<div className="clpo-opts">
+					{ ( field.options || [] ).slice( 0, 4 ).map( ( o ) => (
+						<span key={ o } className="clpo-pillopt">{ o }</span>
+					) ) }
+				</div>
+			);
+		case 'image_swatch':
+			return (
+				<div className="clpo-opts">
+					{ ( field.options || [] ).slice( 0, 5 ).map( ( o ) => (
+						o.image
+							? <img key={ o.label } className="clpo-swimg" src={ o.image } alt={ o.label } title={ o.label } />
+							: <span key={ o.label } className="clpo-swimg clpo-swimg--empty" title={ o.label }>🖼</span>
+					) ) }
+				</div>
+			);
 		default:
 			return <div className="clpo-input">{ ph || '…' }</div>;
 	}

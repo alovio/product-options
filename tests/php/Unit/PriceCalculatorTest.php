@@ -87,4 +87,10 @@ class PriceCalculatorTest extends TestCase {
 		// gate=yes + a=yes -> b active and engaged.
 		$this->assertSame( 7.0, PriceCalculator::addon_total( $g, array( 'gate' => 'yes', 'a' => 'yes', 'b' => 'hi' ), 2 ) );
 	}
+
+	public function test_quantity_per_unit_and_zero_not_engaged(): void {
+		$g = array( 'version' => 1, 'fields' => array( array( 'id' => 'q', 'type' => 'quantity', 'price' => 2.0, 'priceMode' => 'per_unit', 'condition' => null ) ) );
+		$this->assertSame( 6.0, PriceCalculator::addon_total( $g, array( 'q' => 3 ), 2 ) );
+		$this->assertSame( 0.0, PriceCalculator::addon_total( $g, array( 'q' => 0 ), 2 ) );
+	}
 }

@@ -38,7 +38,7 @@ final class PriceCalculator {
 			// Pro pricing modes: per-unit (× quantity on number fields) and percent
 			// (% of the product base price). Default is a flat fixed fee.
 			$mode = (string) ( $f['priceMode'] ?? 'fixed' );
-			if ( 'per_unit' === $mode && 'number' === $type && is_numeric( $value ) ) {
+			if ( 'per_unit' === $mode && in_array( $type, array( 'number', 'quantity' ), true ) && is_numeric( $value ) ) {
 				$total += $price * (float) $value;
 			} elseif ( 'percent' === $mode ) {
 				$total += $base * $price / 100;
@@ -61,7 +61,7 @@ final class PriceCalculator {
 		if ( 'checkbox' === $type ) {
 			return ! empty( $value ) && '0' !== $value;
 		}
-		if ( 'number' === $type ) {
+		if ( 'number' === $type || 'quantity' === $type ) {
 			// A literal 0 (or empty) does not engage the fee.
 			return is_numeric( $value ) && 0.0 !== (float) $value;
 		}

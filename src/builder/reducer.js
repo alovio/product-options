@@ -33,6 +33,13 @@ export const DEFAULTS = {
 	phone: { label: 'Phone number', ...BASE },
 	url: { label: 'Website / link', ...BASE },
 	time: { label: 'Pick a time', ...BASE },
+	quantity: { label: 'Quantity', ...BASE, min: '0', max: '', step: '1' },
+	buttons: { label: 'Pick a style', ...BASE, options: [ 'Option 1', 'Option 2' ] },
+	image_swatch: {
+		label: 'Material',
+		...BASE,
+		options: [ { label: 'Option 1', image: '' } ],
+	},
 };
 
 let counter = 0;

@@ -100,4 +100,20 @@ class ValidatorTest extends TestCase {
 		$this->assertSame( array(), Validator::validate( $g, array( 'u' => 'https://x.test' ) ) );
 		$this->assertCount( 1, Validator::validate( $g, array( 'u' => 'x.test' ) ) );
 	}
+
+	public function test_quantity_min_max_enforced(): void {
+		$g = array( 'fields' => array( array( 'id' => 'q', 'type' => 'quantity', 'label' => 'Qty', 'required' => false, 'min' => '2', 'max' => '5', 'condition' => null ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 'q' => 3 ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 'q' => 1 ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 'q' => 9 ) ) );
+	}
+
+	public function test_buttons_and_image_swatch_selection_validated(): void {
+		$g = array( 'fields' => array(
+			array( 'id' => 'b', 'type' => 'buttons', 'label' => 'Style', 'required' => false, 'options' => array( 'Classic' ), 'condition' => null ),
+			array( 'id' => 'i', 'type' => 'image_swatch', 'label' => 'Material', 'required' => false, 'options' => array( array( 'label' => 'Oak', 'image' => '' ) ), 'condition' => null ),
+		) );
+		$this->assertSame( array(), Validator::validate( $g, array( 'b' => 'Classic', 'i' => 'Oak' ) ) );
+		$this->assertCount( 2, Validator::validate( $g, array( 'b' => 'X', 'i' => 'Y' ) ) );
+	}
 }

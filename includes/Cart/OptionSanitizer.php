@@ -78,14 +78,28 @@ final class OptionSanitizer {
 						$out[ $id ] = 'yes';
 					}
 					break;
+				case 'quantity':
+					if ( null !== $val && '' !== $val && is_numeric( $val ) ) {
+						$n = (int) $val;
+						if ( '' !== (string) ( $f['min'] ?? '' ) ) {
+							$n = max( (int) $f['min'], $n );
+						}
+						if ( '' !== (string) ( $f['max'] ?? '' ) ) {
+							$n = min( (int) $f['max'], $n );
+						}
+						$out[ $id ] = $n;
+					}
+					break;
 				case 'select':
 				case 'radio':
+				case 'buttons':
 					$opts = array_map( 'strval', (array) ( $f['options'] ?? array() ) );
 					if ( null !== $val && in_array( (string) $val, $opts, true ) ) {
 						$out[ $id ] = (string) $val;
 					}
 					break;
 				case 'swatch':
+				case 'image_swatch':
 					$labels = array_map(
 						static fn( $o ) => (string) ( is_array( $o ) ? ( $o['label'] ?? '' ) : $o ),
 						(array) ( $f['options'] ?? array() )

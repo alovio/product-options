@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 final class FieldTypes {
 
 	/** @var string[] Built-in field types. */
-	public const TYPES = array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time' );
+	public const TYPES = array( 'text', 'textarea', 'number', 'checkbox', 'radio', 'select', 'price', 'heading', 'swatch', 'date', 'email', 'phone', 'url', 'time', 'quantity', 'buttons', 'image_swatch' );
 
 	/** @return string[] */
 	public static function all(): array {

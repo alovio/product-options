@@ -22,7 +22,7 @@ export function computeAddonTotal( fields, values, base = 0 ) {
 			engaged = true;
 		} else if ( f.type === 'checkbox' ) {
 			engaged = !! v && v !== '0';
-		} else if ( f.type === 'number' ) {
+		} else if ( f.type === 'number' || f.type === 'quantity' ) {
 			engaged = v !== undefined && v !== '' && ! isNaN( num ) && num !== 0;
 		} else {
 			engaged = v !== undefined && v !== null && v !== '';
@@ -30,7 +30,7 @@ export function computeAddonTotal( fields, values, base = 0 ) {
 		if ( ! engaged ) {
 			return;
 		}
-		if ( f.priceMode === 'per_unit' && f.type === 'number' && ! isNaN( num ) ) {
+		if ( f.priceMode === 'per_unit' && ( f.type === 'number' || f.type === 'quantity' ) && ! isNaN( num ) ) {
 			total += price * num;
 		} else if ( f.priceMode === 'percent' ) {
 			total += ( base * price ) / 100;
