@@ -107,6 +107,43 @@
 	box-sizing: border-box;
 }
 
+/* Single checkbox — a proper, theme-tinted control (native, so it stays
+   accessible). The card's is-engaged glow signals the checked state too. */
+.apo-field > input[type="checkbox"] {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 20px;
+	height: 20px;
+	margin: 2px 0 0;
+	border: 1.5px solid rgba(0, 0, 0, 0.3);
+	border-radius: 6px;
+	background: #fff;
+	cursor: pointer;
+	position: relative;
+	flex-shrink: 0;
+	transition: background 0.12s ease, border-color 0.12s ease;
+}
+.apo-field > input[type="checkbox"]:hover { border-color: currentColor; }
+.apo-field > input[type="checkbox"]:checked {
+	background: currentColor;
+	border-color: currentColor;
+}
+.apo-field > input[type="checkbox"]:checked::after {
+	content: "";
+	position: absolute;
+	left: 6px;
+	top: 2px;
+	width: 5px;
+	height: 10px;
+	border: solid #fff;
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+.apo-field > input[type="checkbox"]:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
 .apo-field input:focus-visible,
 .apo-field select:focus-visible,
 .apo-field textarea:focus-visible,

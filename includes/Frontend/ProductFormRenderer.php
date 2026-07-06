@@ -177,17 +177,42 @@ final class ProductFormRenderer {
 	}
 
 	private function desc_markup( array $f, string $id ): string {
+		// Backward-compatible wrapper (used by the heading branch, which has no
+		// inline label-text to host the toggle): toggle + panel together.
+		return $this->tip_toggle( $f, $id ) . $this->tip_panel( $f, $id );
+	}
+
+	/**
+	 * The keyboard-accessible ? toggle (spec §9). Rendered INSIDE the field's
+	 * label-text span so it sits inline with the label — its CSS
+	 * (.apo-tip-toggle: inline-flex, margin-left) expects that. Empty when the
+	 * field has no description.
+	 */
+	private function tip_toggle( array $f, string $id ): string {
+		if ( '' === (string) ( $f['description'] ?? '' ) ) {
+			return '';
+		}
+		return sprintf(
+			'<button type="button" class="apo-tip-toggle" aria-expanded="false" aria-controls="%1$s" aria-label="%2$s">?</button>',
+			esc_attr( 'clpo_desc_' . $id ),
+			esc_attr__( 'More information', 'corelabs-product-options' )
+		);
+	}
+
+	/**
+	 * The collapsible description panel — a block after the label, keeping the
+	 * clpo_desc_ id so the toggle's aria-controls / the input's
+	 * aria-describedby wiring still resolves.
+	 */
+	private function tip_panel( array $f, string $id ): string {
 		$desc = (string) ( $f['description'] ?? '' );
 		if ( '' === $desc ) {
 			return '';
 		}
-		// A keyboard-accessible ? toggle + collapsible panel (spec §9) — the
-		// panel keeps the clpo_desc_ id so aria-describedby wiring still works.
 		return sprintf(
-			'<button type="button" class="apo-tip-toggle" aria-expanded="false" aria-controls="%1$s" aria-label="%3$s">?</button><small class="apo-tip apo-field__desc" id="%1$s" hidden>%2$s</small>',
+			'<small class="apo-tip apo-field__desc" id="%1$s" hidden>%2$s</small>',
 			esc_attr( 'clpo_desc_' . $id ),
-			esc_html( $desc ),
-			esc_attr__( 'More information', 'corelabs-product-options' )
+			esc_html( $desc )
 		);
 	}
 
@@ -211,23 +236,24 @@ final class ProductFormRenderer {
 
 		if ( $group ) {
 			echo '<fieldset class="apo-fieldset"><legend class="apo-field__label"><span class="apo-field__label-text">'
-				. esc_html( $this->label_text( $f ) ) . $this->required_marker( $f ) . '</span>' . self::price_pill( $f ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput
-			echo $this->desc_markup( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
+				. esc_html( $this->label_text( $f ) ) . $this->required_marker( $f ) . $this->tip_toggle( $f, $id ) . '</span>' . self::price_pill( $f ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput
+			echo $this->tip_panel( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
 			$this->render_input( $f );
 			echo '</fieldset>';
 		} elseif ( 'price' === $type ) {
-			echo '<span class="apo-field__label"><span class="apo-field__label-text">' . esc_html( $this->label_text( $f ) ) . '</span>' . self::price_pill( $f ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput
-			echo $this->desc_markup( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
+			echo '<span class="apo-field__label"><span class="apo-field__label-text">' . esc_html( $this->label_text( $f ) ) . $this->tip_toggle( $f, $id ) . '</span>' . self::price_pill( $f ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput
+			echo $this->tip_panel( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
 			$this->render_input( $f );
 		} else {
 			printf(
-				'<label class="apo-field__label" for="%s"><span class="apo-field__label-text">%s%s</span>%s</label>',
+				'<label class="apo-field__label" for="%s"><span class="apo-field__label-text">%s%s%s</span>%s</label>',
 				esc_attr( $fid ),
 				esc_html( $this->label_text( $f ) ),
 				$this->required_marker( $f ), // phpcs:ignore WordPress.Security.EscapeOutput
+				$this->tip_toggle( $f, $id ), // phpcs:ignore WordPress.Security.EscapeOutput
 				self::price_pill( $f ) // phpcs:ignore WordPress.Security.EscapeOutput
 			);
-			echo $this->desc_markup( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
+			echo $this->tip_panel( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
 			$this->render_input( $f );
 		}
 		echo '</div>';
