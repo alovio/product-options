@@ -3,7 +3,7 @@
  * Plugin Name: Alovio Product Options for WooCommerce
  * Plugin URI: https://alovio.org/product-options
  * Description: Add custom product fields with a drag-and-drop builder, conditional logic, and add-on pricing.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Alovio
  * Author URI: https://alovio.org
  * Requires at least: 6.4
@@ -16,7 +16,7 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-define( 'CLPO_VERSION', '2.0.0' );
+define( 'CLPO_VERSION', '2.0.1' );
 define( 'CLPO_FILE', __FILE__ );
 define( 'CLPO_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CLPO_URL', plugin_dir_url( __FILE__ ) );

@@ -4,7 +4,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,12 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 
 == Changelog ==
 
+= 2.0.1 =
+* Fix: the selected option in a button group could render as white text on a white fill on some themes — selected buttons now show clearly.
+* Fix: a field's group label (e.g. a swatch or button title) could sit outside its option card on themes that give fieldset legends a negative margin (such as Storefront); labels now align with the field.
+* Fix: the description "?" toggle rendered on its own line instead of beside the field label.
+* Improve: a single checkbox option is now a styled control that matches the swatch/button design, instead of a raw browser checkbox.
+
 = 2.0.0 =
 * Everything is free: the Pro gate is gone — multi-condition logic, colour swatches, date fields, per-unit and percentage pricing now ship in the plugin.
 * NEW: Global option groups — build once, apply to all products, categories or specific products, with priorities.
@@ -120,6 +126,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+Storefront polish fixes: the selected button option, group-label alignment, the description toggle position, and the single-checkbox style.
 
 = 2.0.0 =
 Major release: everything is now free — global option groups, 18 field types, formula pricing, live price breakdown. 1.x data migrates automatically.
