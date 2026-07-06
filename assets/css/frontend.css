@@ -190,13 +190,17 @@
 	transition: all 0.12s ease;
 }
 .apo-opt.apo-btnopt span:hover { border-color: currentColor; }
+/* Checked fill: a concrete accent, NOT currentColor — the same element sets the
+   text to #fff, and currentColor would resolve to that white, painting a white
+   box with white text (invisible). --apo-fill lets a theme recolor it. */
 .apo-opt.apo-btnopt input:checked + span {
-	border-color: currentColor;
-	background: currentColor;
+	border-color: var(--apo-fill, #2b2b2b);
+	background: var(--apo-fill, #2b2b2b);
+	color: #fff;
+	-webkit-text-fill-color: #fff;
 	font-weight: 600;
 }
-.apo-opt.apo-btnopt input:checked + span { color: #fff; -webkit-text-fill-color: #fff; }
-.apo-opt.apo-btnopt input:focus-visible + span { outline: 2px solid currentColor; outline-offset: 2px; }
+.apo-opt.apo-btnopt input:focus-visible + span { outline: 2px solid var(--apo-fill, #2b2b2b); outline-offset: 2px; }
 
 /* ── Swatches: white-ring dots with labels underneath ─────────────────── */
 .apo-swatches {
