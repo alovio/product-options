@@ -85,7 +85,10 @@
 }
 
 .apo-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-.apo-fieldset legend { padding: 0; }
+/* Reset the legend's box: some themes (e.g. Storefront) give `fieldset legend`
+   a negative margin-left + padding to escape the fieldset border, which pulls
+   our card's group label (Colour / Size) out past the card padding. */
+.apo-fieldset legend { padding: 0; margin-left: 0; margin-right: 0; width: auto; float: none; }
 
 /* ── Inputs ──────────────────────────────────────────────────────────── */
 .apo-field input[type="text"],
