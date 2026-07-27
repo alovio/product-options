@@ -4,7 +4,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.0.1
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ Create an **option group** in the visual builder and apply it to **all products*
 
 = 18 field types =
 
-Text, text area, number, checkbox, multiple choice (radio), dropdown, **button group**, **colour swatch**, **image swatch**, **quantity stepper**, date, time, email, phone, URL, **file upload** (secure, rate-limited, MIME-verified), surcharge, and section heading.
+Text, text area, number, checkbox, multiple choice (radio), dropdown, **button group**, **colour swatch**, **image swatch**, **quantity stepper**, date, time, email, phone, URL, **file upload** (secure, rate-limited, MIME-verified — up to 10 files per field, each removable), surcharge, and section heading.
 
 = Conditional logic — all of it free =
 
@@ -85,7 +85,11 @@ Yes. The breakdown box tracks the selected variation's price, and percentage-mod
 
 = How do file uploads work? =
 
-Files upload immediately on selection to a randomized, listing-protected folder after extension and real MIME checks, with a size cap and per-IP rate limiting. The cart shows the file name; the order stores an admin download link. Abandoned uploads are cleaned up automatically.
+Files upload immediately on selection to a randomized, listing-protected folder after extension and real MIME checks, with a size cap and per-IP rate limiting. The cart shows the file names; the order stores an admin download link per file. Abandoned uploads are cleaned up automatically.
+
+= Can customers upload more than one file? =
+
+Yes — set **Max files** on the file field (up to 10). Customers see each uploaded file as a removable item, so they can delete or replace any file individually before adding to cart. Allowed formats out of the box: JPG, PNG, WEBP and PDF (filterable via `clpo_upload_extensions`).
 
 = Is the plugin compatible with HPOS? =
 
@@ -104,6 +108,14 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.1.0 =
+* NEW: Multi-file upload — file fields get a **Max files** setting (1–10); customers can upload several files to one field, shown as a list with a remove button per file.
+* NEW: WEBP joins the default allowed upload formats (JPG, PNG, WEBP, PDF — still filterable via `clpo_upload_extensions`).
+* Improve: single-file fields get the same removable file item, so a chosen file can be deleted or replaced before add to cart.
+* Improve: every uploaded file gets its own download link in the order details and admin order screen.
+* Fix: an inline "required" message could stick after the file finished uploading; validation now re-runs as soon as the field changes.
+* Fix: the file picker could overflow its option card on themes without a global border-box reset.
 
 = 2.0.1 =
 * Fix: the selected option in a button group could render as white text on a white fill on some themes — selected buttons now show clearly.
@@ -126,6 +138,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Multi-file uploads (up to 10 per field, individually removable), WEBP upload support, per-file order download links, and two small storefront fixes.
 
 = 2.0.1 =
 Storefront polish fixes: the selected button option, group-label alignment, the description toggle position, and the single-checkbox style.
