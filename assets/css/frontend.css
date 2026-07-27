@@ -304,6 +304,8 @@
 	background: #fff;
 	padding: 10px;
 	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 	cursor: pointer;
 	transition: border-color 0.12s ease;
 }
