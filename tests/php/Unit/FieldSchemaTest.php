@@ -145,4 +145,21 @@ class FieldSchemaTest extends TestCase {
 		$this->assertSame( '{x} * 2', $out['fields'][0]['formula'] );
 		$this->assertSame( 'fixed', $out['fields'][1]['priceMode'] );
 	}
+
+	public function test_file_max_files_clamped_to_1_10(): void {
+		$out = FieldSchema::normalize(
+			array(
+				'fields' => array(
+					array( 'id' => 'f1', 'type' => 'file' ),
+					array( 'id' => 'f2', 'type' => 'file', 'maxFiles' => 5 ),
+					array( 'id' => 'f3', 'type' => 'file', 'maxFiles' => 99 ),
+					array( 'id' => 'f4', 'type' => 'file', 'maxFiles' => 0 ),
+				),
+			)
+		);
+		$this->assertSame( 1, $out['fields'][0]['maxFiles'] );
+		$this->assertSame( 5, $out['fields'][1]['maxFiles'] );
+		$this->assertSame( 10, $out['fields'][2]['maxFiles'] );
+		$this->assertSame( 1, $out['fields'][3]['maxFiles'] );
+	}
 }

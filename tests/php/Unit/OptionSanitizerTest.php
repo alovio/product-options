@@ -106,4 +106,29 @@ class OptionSanitizerTest extends TestCase {
 		$this->assertSame( array( 'i' => 'Oak' ), OptionSanitizer::sanitize( $g, array( 'i' => 'Oak' ) ) );
 		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'i' => 'Pine' ) ) );
 	}
+
+	public function test_file_single_token_kept_and_garbage_dropped(): void {
+		$tok = str_repeat( 'ab', 16 );
+		$g   = $this->group( array( array( 'id' => 'f', 'type' => 'file' ) ) );
+		$this->assertSame( array( 'f' => $tok ), OptionSanitizer::sanitize( $g, array( 'f' => $tok ) ) );
+		$this->assertSame( array(), OptionSanitizer::sanitize( $g, array( 'f' => '../etc/passwd' ) ) );
+	}
+
+	public function test_file_multi_tokens_joined_deduped_and_capped(): void {
+		$t1 = str_repeat( 'a1', 16 );
+		$t2 = str_repeat( 'b2', 16 );
+		$t3 = str_repeat( 'c3', 16 );
+		$g  = $this->group( array( array( 'id' => 'f', 'type' => 'file', 'maxFiles' => 2 ) ) );
+
+		// Garbage entries and duplicates are dropped; the list is capped at maxFiles.
+		$raw = implode( ',', array( $t1, 'nope', $t1, $t2, $t3 ) );
+		$this->assertSame( array( 'f' => $t1 . ',' . $t2 ), OptionSanitizer::sanitize( $g, array( 'f' => $raw ) ) );
+	}
+
+	public function test_file_multi_defaults_to_single_cap(): void {
+		$t1 = str_repeat( 'a1', 16 );
+		$t2 = str_repeat( 'b2', 16 );
+		$g  = $this->group( array( array( 'id' => 'f', 'type' => 'file' ) ) );
+		$this->assertSame( array( 'f' => $t1 ), OptionSanitizer::sanitize( $g, array( 'f' => $t1 . ',' . $t2 ) ) );
+	}
 }

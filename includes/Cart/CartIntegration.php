@@ -200,10 +200,14 @@ final class CartIntegration {
 			foreach ( $entry['options'] as $fid => $val ) {
 				$f = $fields[ $fid ] ?? null;
 				if ( $f && 'file' === ( $f['type'] ?? '' ) ) {
-					$resolved = FileUploads::consume( (string) $val );
+					$parts = array();
+					foreach ( FileUploads::parse_tokens( $val ) as $token ) {
+						$resolved = FileUploads::consume( $token );
+						$parts[]  = $resolved ? $resolved['name'] . ' — ' . $resolved['url'] : $token;
+					}
 					$item->add_meta_data(
 						( '' !== $f['label'] ) ? $f['label'] : $fid,
-						$resolved ? $resolved['name'] . ' — ' . $resolved['url'] : (string) $val,
+						array() !== $parts ? implode( ', ', $parts ) : (string) $val,
 						true
 					);
 					continue;
@@ -238,8 +242,8 @@ final class CartIntegration {
 	private static function each_file_token( array $entries, callable $cb ): void {
 		foreach ( $entries as $entry ) {
 			foreach ( (array) ( $entry['options'] ?? array() ) as $val ) {
-				if ( is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
-					$cb( $val );
+				foreach ( FileUploads::parse_tokens( $val ) as $token ) {
+					$cb( $token );
 				}
 			}
 		}
@@ -268,9 +272,15 @@ final class CartIntegration {
 			$val = implode( ', ', $val );
 		}
 		$type = $field['type'] ?? '';
-		if ( 'file' === $type && is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
-			$name = FileUploads::display_name( $val );
-			return '' !== $name ? $name : __( 'Uploaded file', 'corelabs-product-options' );
+		if ( 'file' === $type && is_string( $val ) ) {
+			$names = array();
+			foreach ( FileUploads::parse_tokens( $val ) as $token ) {
+				$name    = FileUploads::display_name( $token );
+				$names[] = '' !== $name ? $name : __( 'Uploaded file', 'corelabs-product-options' );
+			}
+			if ( array() !== $names ) {
+				return implode( ', ', $names );
+			}
 		}
 		if ( 'checkbox' === $type ) {
 			return _x( 'Yes', 'checked option in cart/order', 'corelabs-product-options' );

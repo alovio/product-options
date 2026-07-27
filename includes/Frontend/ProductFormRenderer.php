@@ -368,9 +368,12 @@ final class ProductFormRenderer {
 				echo '</div>';
 				break;
 			case 'file':
+				$maxf = min( 10, max( 1, (int) ( $f['maxFiles'] ?? 1 ) ) );
+				$mult = $maxf > 1 ? sprintf( ' multiple data-apo-max-files="%d"', $maxf ) : '';
 				echo '<span class="apo-file">';
 				printf( '<input type="hidden" name="%s" value="" />', esc_attr( $name ) );
-				printf( '<input type="file" id="%s" class="apo-file-picker"%s%s />', esc_attr( $fid ), $req, $descby ); // phpcs:ignore WordPress.Security.EscapeOutput
+				printf( '<input type="file" id="%s" class="apo-file-picker"%s%s%s />', esc_attr( $fid ), $req, $mult, $descby ); // phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<span class="apo-file-list"></span>';
 				echo '<span class="apo-file-status" aria-live="polite"></span>';
 				echo '</span>';
 				break;

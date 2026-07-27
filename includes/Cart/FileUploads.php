@@ -31,7 +31,29 @@ final class FileUploads {
 
 	/** @return string[] */
 	public static function allowed_extensions(): array {
-		return (array) apply_filters( 'clpo_upload_extensions', array( 'jpg', 'jpeg', 'png', 'pdf' ) );
+		return (array) apply_filters( 'clpo_upload_extensions', array( 'jpg', 'jpeg', 'png', 'webp', 'pdf' ) );
+	}
+
+	/**
+	 * Parse a submitted file value — a single token or a comma-joined list
+	 * (multi-file fields) — into unique, well-formed tokens. Malformed entries
+	 * are dropped silently; existence is checked separately.
+	 *
+	 * @param mixed $val
+	 * @return string[]
+	 */
+	public static function parse_tokens( $val ): array {
+		if ( ! is_string( $val ) || '' === $val ) {
+			return array();
+		}
+		$out = array();
+		foreach ( explode( ',', $val ) as $t ) {
+			$t = trim( $t );
+			if ( preg_match( '/^[a-f0-9]{32}$/', $t ) && ! in_array( $t, $out, true ) ) {
+				$out[] = $t;
+			}
+		}
+		return $out;
 	}
 
 	public static function max_bytes(): int {
@@ -239,8 +261,16 @@ final class FileUploads {
 			if ( '' === $val ) {
 				continue; // required-ness is handled by Validator.
 			}
-			$label = ( '' !== (string) ( $f['label'] ?? '' ) ) ? (string) $f['label'] : $id;
-			if ( ! preg_match( '/^[a-f0-9]{32}$/', $val ) || ! is_array( get_option( 'clpo_upload_' . $val ) ) ) {
+			$label  = ( '' !== (string) ( $f['label'] ?? '' ) ) ? (string) $f['label'] : $id;
+			$tokens = self::parse_tokens( $val );
+			$ok     = array() !== $tokens;
+			foreach ( $tokens as $token ) {
+				if ( ! is_array( get_option( 'clpo_upload_' . $token ) ) ) {
+					$ok = false;
+					break;
+				}
+			}
+			if ( ! $ok ) {
 				/* translators: %s: field label */
 				$errors[] = sprintf( __( 'The file for “%s” could not be verified — please upload it again.', 'corelabs-product-options' ), $label );
 			}

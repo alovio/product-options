@@ -309,6 +309,33 @@
 }
 .apo-file .apo-file-picker:hover { border-color: currentColor; }
 .apo-file-status { font-size: 12px; color: #6b7280; }
+.apo-file-list { display: flex; flex-direction: column; gap: 4px; }
+.apo-file-list:empty { display: none; }
+.apo-file-item {
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	font-size: 13px;
+	padding: 5px 10px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.03);
+}
+.apo-file-item__name { overflow-wrap: anywhere; }
+.apo-file-remove {
+	border: 0;
+	background: none;
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 1;
+	padding: 2px 6px;
+	color: inherit;
+	opacity: 0.55;
+	transition: opacity 0.12s ease;
+}
+.apo-file-remove:hover,
+.apo-file-remove:focus-visible { opacity: 1; }
 
 /* ── Surcharge fee tag ───────────────────────────────────────────────── */
 .apo-fee { font-weight: 600; color: #15803d; }

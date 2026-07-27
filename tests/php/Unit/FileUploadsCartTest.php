@@ -38,4 +38,24 @@ final class FileUploadsCartTest extends TestCase {
 		$row = FileUploads::clear_carted( $row );
 		$this->assertTrue( FileUploads::is_expired( $row, 1000 + 3 * self::DAY ) );
 	}
+
+	public function test_webp_allowed_by_default(): void {
+		$this->assertContains( 'webp', FileUploads::allowed_extensions() );
+	}
+
+	public function test_parse_tokens_single_and_comma_list(): void {
+		$t1 = str_repeat( 'a1', 16 );
+		$t2 = str_repeat( 'b2', 16 );
+		$this->assertSame( array( $t1 ), FileUploads::parse_tokens( $t1 ) );
+		$this->assertSame( array( $t1, $t2 ), FileUploads::parse_tokens( $t1 . ',' . $t2 ) );
+		$this->assertSame( array( $t1, $t2 ), FileUploads::parse_tokens( ' ' . $t1 . ' , ' . $t2 . ' ' ) );
+	}
+
+	public function test_parse_tokens_drops_garbage_dupes_and_non_strings(): void {
+		$t1 = str_repeat( 'a1', 16 );
+		$this->assertSame( array( $t1 ), FileUploads::parse_tokens( $t1 . ',' . $t1 . ',nope,,' . strtoupper( $t1 ) ) );
+		$this->assertSame( array(), FileUploads::parse_tokens( null ) );
+		$this->assertSame( array(), FileUploads::parse_tokens( array( $t1 ) ) );
+		$this->assertSame( array(), FileUploads::parse_tokens( '' ) );
+	}
 }

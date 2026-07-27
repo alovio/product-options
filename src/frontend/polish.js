@@ -123,8 +123,6 @@ export function wirePolish( formEl, groups ) {
 			wrap.classList.toggle( 'is-engaged', engaged );
 		} );
 	};
-	formEl.addEventListener( 'change', refreshEngaged );
-	formEl.addEventListener( 'input', refreshEngaged );
 	refreshEngaged();
 
 	const validateField = ( f ) => {
@@ -137,6 +135,21 @@ export function wirePolish( formEl, groups ) {
 		setError( wrap, input, message );
 		return message ? wrap : null;
 	};
+
+	// Re-validate the changed field so a stale inline error clears as soon as
+	// it is fixed (e.g. a required upload landing after the picker blurred).
+	formEl.addEventListener( 'change', ( e ) => {
+		refreshEngaged();
+		if ( e.target.classList && e.target.classList.contains( 'apo-file-picker' ) ) {
+			return; // uploads settle via the hidden input's change event.
+		}
+		const wrap = e.target.closest && e.target.closest( '[data-apo-field]' );
+		const f = wrap && fields.find( ( x ) => x.id === wrap.dataset.apoField );
+		if ( f ) {
+			validateField( f );
+		}
+	} );
+	formEl.addEventListener( 'input', refreshEngaged );
 
 	// Validate on blur (per field).
 	fields.forEach( ( f ) => {

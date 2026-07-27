@@ -61,8 +61,10 @@ final class OptionSanitizer {
 					}
 					break;
 				case 'file':
-					if ( is_string( $val ) && preg_match( '/^[a-f0-9]{32}$/', $val ) ) {
-						$out[ $id ] = $val;
+					$tokens = FileUploads::parse_tokens( $val );
+					$tokens = array_slice( $tokens, 0, max( 1, (int) ( $f['maxFiles'] ?? 1 ) ) );
+					if ( array() !== $tokens ) {
+						$out[ $id ] = implode( ',', $tokens );
 					}
 					break;
 				case 'phone':
