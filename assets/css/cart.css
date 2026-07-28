@@ -1,0 +1,23 @@
+/**
+ * Cart / checkout / mini-cart presentation of option rows.
+ *
+ * Our options arrive as WooCommerce "product details" item data. The Block
+ * (Store API) cart renders them as inline spans joined by literal " / "
+ * separators — unreadable past a few options. Give each option its own
+ * line and drop the separators. Theme-neutral: colors are inherited.
+ */
+
+.wc-block-components-product-details > span {
+	display: block;
+	margin: 0 0 3px;
+	line-height: 1.5;
+}
+
+/* The literal " / " separator spans (aria-hidden in the markup). */
+.wc-block-components-product-details > span > span[aria-hidden="true"] {
+	display: none;
+}
+
+.wc-block-components-product-details__name {
+	font-weight: 600;
+}

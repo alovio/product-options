@@ -15,6 +15,13 @@ final class FrontendAssets {
 	}
 
 	public function enqueue(): void {
+		// Option rows in the cart, checkout and mini-cart drawer (which can
+		// render on any page): one option per line instead of the Block cart's
+		// inline " / " soup. Tiny, so it loads site-wide.
+		if ( apply_filters( 'clpo_cart_option_styles', true ) ) {
+			wp_enqueue_style( 'clpo-cart', CLPO_URL . 'assets/css/cart.css', array(), CLPO_VERSION );
+		}
+
 		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 			return;
 		}

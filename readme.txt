@@ -112,7 +112,8 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 = 2.2.0 =
 * NEW: The cart and checkout now show each option's price on the line item — "Gift wrap: Yes (+$5.00)" — with per-unit, per-character, percentage and formula modes all resolving to their real amounts.
 * NEW: Surcharge fields get their own cart row (e.g. "Board fee: +$48.00"), so the whole line price is explained — no more silent fees.
-* Both work on the classic and the Block (Store API) cart; disable via the `clpo_cart_option_prices` filter.
+* Improve: the Block cart squeezed every option into one long slash-separated line; options now render one per line with bold labels, in the cart, checkout and mini-cart.
+* Both work on the classic and the Block (Store API) cart; disable via the `clpo_cart_option_prices` and `clpo_cart_option_styles` filters.
 
 = 2.1.0 =
 * NEW: Multi-file upload — file fields get a **Max files** setting (1–10); customers can upload several files to one field, shown as a list with a remove button per file.
