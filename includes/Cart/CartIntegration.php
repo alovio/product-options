@@ -169,18 +169,52 @@ final class CartIntegration {
 		if ( array() === $entries ) {
 			return $item_data;
 		}
-		$groups = GroupResolver::for_product( (int) ( $cart_item['product_id'] ?? 0 ) );
+		$show_prices = (bool) apply_filters( 'clpo_cart_option_prices', true );
+		$groups      = GroupResolver::for_product( (int) ( $cart_item['product_id'] ?? 0 ) );
 		foreach ( $entries as $entry ) {
-			$fields = self::fields_by_id( CartItemShape::pick_group( $groups, $entry['group_id'] ) );
+			$group   = CartItemShape::pick_group( $groups, $entry['group_id'] );
+			$fields  = self::fields_by_id( $group );
+			$amounts = array();
+			if ( $show_prices && null !== $group ) {
+				foreach ( PriceCalculator::breakdown( $group, (array) $entry['options'], wc_get_price_decimals(), (float) $entry['base_price'] ) as $row ) {
+					$amounts[ $row['field_id'] ] = $row['amount'];
+				}
+			}
 			foreach ( $entry['options'] as $fid => $val ) {
 				$f           = $fields[ $fid ] ?? null;
 				$item_data[] = array(
 					'key'   => ( $f && '' !== $f['label'] ) ? $f['label'] : $fid,
-					'value' => wc_clean( self::format_value( $f, $val ) ),
+					'value' => wc_clean( self::with_price( self::format_value( $f, $val ), $amounts[ $fid ] ?? 0.0 ) ),
 				);
+			}
+			// Surcharge fields have no submitted value but do charge — list them
+			// too, so the cart explains the whole line price.
+			foreach ( $amounts as $fid => $amount ) {
+				$f = $fields[ $fid ] ?? null;
+				if ( $f && 'price' === ( $f['type'] ?? '' ) ) {
+					$item_data[] = array(
+						'key'   => ( '' !== $f['label'] ) ? $f['label'] : $fid,
+						'value' => wc_clean( self::with_price( '', $amount ) ),
+					);
+				}
 			}
 		}
 		return $item_data;
+	}
+
+	/**
+	 * Append a field's price contribution to its display value: "Oak (+$5.00)".
+	 * Plain text on purpose — survives both the classic cart and the Block
+	 * (Store API) cart, which renders item data as text.
+	 */
+	public static function with_price( string $display, float $amount ): string {
+		if ( $amount <= 0 ) {
+			return $display;
+		}
+		$price = function_exists( 'wc_price' )
+			? html_entity_decode( wp_strip_all_tags( wc_price( $amount ) ), ENT_QUOTES, 'UTF-8' )
+			: number_format( $amount, 2 );
+		return '' === $display ? '+' . $price : $display . ' (+' . $price . ')';
 	}
 
 	/**
