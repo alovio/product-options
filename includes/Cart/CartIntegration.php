@@ -184,7 +184,7 @@ final class CartIntegration {
 				$f           = $fields[ $fid ] ?? null;
 				$item_data[] = array(
 					'key'   => ( $f && '' !== $f['label'] ) ? $f['label'] : $fid,
-					'value' => wc_clean( self::with_price( self::format_value( $f, $val ), $amounts[ $fid ] ?? 0.0 ) ),
+					'value' => self::with_price( esc_html( self::format_value( $f, $val ) ), $amounts[ $fid ] ?? 0.0 ),
 				);
 			}
 			// Surcharge fields have no submitted value but do charge — list them
@@ -194,7 +194,7 @@ final class CartIntegration {
 				if ( $f && 'price' === ( $f['type'] ?? '' ) ) {
 					$item_data[] = array(
 						'key'   => ( '' !== $f['label'] ) ? $f['label'] : $fid,
-						'value' => wc_clean( self::with_price( '', $amount ) ),
+						'value' => self::with_price( '', $amount ),
 					);
 				}
 			}
@@ -203,9 +203,10 @@ final class CartIntegration {
 	}
 
 	/**
-	 * Append a field's price contribution to its display value: "Oak (+$5.00)".
-	 * Plain text on purpose — survives both the classic cart and the Block
-	 * (Store API) cart, which renders item data as text.
+	 * Append a field's price contribution to its display value as a chip:
+	 * 'Oak <span class="apo-cart-fee">+$5.00</span>'. $display must arrive
+	 * escaped — the chip is the only markup added. Both carts keep the span
+	 * (the Block cart's sanitizer allows class but strips inline styles).
 	 */
 	public static function with_price( string $display, float $amount ): string {
 		if ( $amount <= 0 ) {
@@ -214,7 +215,8 @@ final class CartIntegration {
 		$price = function_exists( 'wc_price' )
 			? html_entity_decode( wp_strip_all_tags( wc_price( $amount ) ), ENT_QUOTES, 'UTF-8' )
 			: number_format( $amount, 2 );
-		return '' === $display ? '+' . $price : $display . ' (+' . $price . ')';
+		$chip  = '<span class="apo-cart-fee">+' . esc_html( $price ) . '</span>';
+		return '' === $display ? $chip : $display . ' ' . $chip;
 	}
 
 	/**
