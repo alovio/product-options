@@ -74,8 +74,8 @@ function TokSelect( { kind, value, valueLabel, options, onChange } ) {
 		<span className={ `clpo-tok${ kind ? ` clpo-tok--${ kind }` : '' }` }>
 			{ valueLabel } <span className="clpo-car"></span>
 			<select value={ value } onChange={ ( e ) => onChange( e.target.value ) }>
-				{ options.map( ( o ) => (
-					<option key={ o.value } value={ o.value }>{ o.label }</option>
+				{ options.map( ( o, i ) => (
+					<option key={ i } value={ o.value }>{ o.label }</option>
 				) ) }
 			</select>
 		</span>

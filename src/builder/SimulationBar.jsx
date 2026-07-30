@@ -21,8 +21,8 @@ function Pick( { field, value, onChange } ) {
 			<span className={ `clpo-sim${ isActive ? ' is-active' : '' }` }>
 				{ label }: { value === 'yes' ? __( 'On', T ) : __( 'Off', T ) } <span className="clpo-car"></span>
 				<select value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } aria-label={ label }>
-					{ opts.map( ( o ) => (
-						<option key={ o.value } value={ o.value }>{ o.label }</option>
+					{ opts.map( ( o, i ) => (
+						<option key={ i } value={ o.value }>{ o.label }</option>
 					) ) }
 				</select>
 			</span>
@@ -40,8 +40,8 @@ function Pick( { field, value, onChange } ) {
 				{ label }: { current ? current.label : __( 'Any', T ) } <span className="clpo-car"></span>
 				<select value={ value || '' } onChange={ ( e ) => onChange( e.target.value ) } aria-label={ label }>
 					<option value="">{ __( 'Any', T ) }</option>
-					{ opts.map( ( o ) => (
-						<option key={ o.value } value={ o.value }>{ o.label }</option>
+					{ opts.map( ( o, i ) => (
+						<option key={ i } value={ o.value }>{ o.label }</option>
 					) ) }
 				</select>
 			</span>
