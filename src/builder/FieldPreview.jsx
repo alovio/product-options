@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { describeCondition, conditionAction } from './describe';
 import { optionLabel, effectivePrice, hasPricedOptions } from '../shared/options';
+import FieldIcon from '../shared/FieldIcon';
 import { formatMoney } from '../frontend/price-update';
 
 const T = 'corelabs-product-options';
@@ -48,11 +49,11 @@ function Control( { field } ) {
 		case 'url':
 			return <div className="clpo-input">{ ph || 'https://…' }</div>;
 		case 'date':
-			return <div className="clpo-input">{ __( 'Select date', T ) } 📅</div>;
+			return <div className="clpo-input clpo-input--icon">{ __( 'Select date', T ) } <FieldIcon type="date" size={ 15 } /></div>;
 		case 'time':
-			return <div className="clpo-input">{ __( 'Select time', T ) } 🕐</div>;
+			return <div className="clpo-input clpo-input--icon">{ __( 'Select time', T ) } <FieldIcon type="time" size={ 15 } /></div>;
 		case 'file':
-			return <div className="clpo-input">📎 { __( 'Choose file…', T ) }</div>;
+			return <div className="clpo-input clpo-input--icon"><FieldIcon type="file" size={ 15 } /> { __( 'Choose file…', T ) }</div>;
 		case 'swatch':
 			return (
 				<div className="clpo-opts">
@@ -79,7 +80,7 @@ function Control( { field } ) {
 					{ ( field.options || [] ).slice( 0, 5 ).map( ( o, i ) => (
 						o && o.image
 							? <img key={ i } className="clpo-swimg" src={ o.image } alt={ optionLabel( o ) } title={ optionText( field, o ) } />
-							: <span key={ i } className="clpo-swimg clpo-swimg--empty" title={ optionText( field, o ) }>🖼</span>
+							: <span key={ i } className="clpo-swimg clpo-swimg--empty" title={ optionText( field, o ) }><FieldIcon type="image_swatch" size={ 15 } /></span>
 					) ) }
 				</div>
 			);

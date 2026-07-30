@@ -7,10 +7,10 @@ import Logic from './panels/Logic';
 import Pricing from './panels/Pricing';
 import Options, { HAS_OPTIONS_TYPES } from './panels/Options';
 import Assignment from './panels/Assignment';
+import FieldIcon from '../shared/FieldIcon';
 
 const T = 'corelabs-product-options';
 
-const TYPE_IC = { text: 'Aa', textarea: '¶', number: '#', checkbox: '☑', radio: '◉', select: '▾', heading: 'H', price: '＄', swatch: '🎨', quantity: '±', buttons: '⬚', image_swatch: '🖼', email: '@', phone: '☎', url: '🔗', date: '📅', time: '🕐', file: '📎' };
 
 export default function SettingsPanel() {
 	const field = useSelect( ( select ) => select( STORE ).getSelected(), [] );
@@ -47,7 +47,7 @@ export default function SettingsPanel() {
 		<div className="clpo-settings">
 			<div className="clpo-sp-head">
 				<div className="clpo-sp-title">
-					<span className="clpo-ic">{ TYPE_IC[ field.type ] || '·' }</span>
+					<span className="clpo-ic"><FieldIcon type={ field.type } /></span>
 					<div>
 						<h3>{ field.label || field.type }</h3>
 						<small>{ meta }</small>

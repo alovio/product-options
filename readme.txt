@@ -122,6 +122,7 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 * NEW: Option prices show beside each choice on the product page automatically ("50x70 (+$799.00)"), and the field's pill summarises the span ("+$399.00 – $799.00").
 * Improve: option prices run through the field's pricing mode, so "10% Express / 20% Overnight" works exactly like flat amounts.
 * Improve: a field that mixes priced and unpriced options now shows each option's real cost — an unpriced choice displays the field price it falls back to, and the summary pill spans both.
+* Improve: the builder's field palette now uses one drawn icon set instead of a mix of emoji and typographic stand-ins, so it looks the same on every operating system.
 * Developers: `clpo_option_price_suffix` filters the text appended to an option label (return an empty string to hide it).
 
 = 2.2.0 =
