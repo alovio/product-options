@@ -4,11 +4,11 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-18 field types, conditional logic, formula pricing, global option groups and a live price breakdown — a complete product configurator, 100% free.
+18 field types, conditional logic, a price per option, formula pricing and a live price breakdown — a complete product configurator, 100% free.
 
 == Description ==
 
@@ -27,6 +27,10 @@ Text, text area, number, checkbox, multiple choice (radio), dropdown, **button g
 = Conditional logic — all of it free =
 
 Show, hide or require any field based on other fields, with **multi-condition AND/OR rules** and five operators (*is, is not, contains, greater than, less than*). The builder previews rules live: set a value in the simulation bar and watch fields appear and disappear exactly as they will on the product page.
+
+= A price per option =
+
+Selling sizes, materials or finishes? Give **every choice its own price** — *21x30 +399, 30x40 +499, 50x70 +799* — in dropdowns, radio buttons, button groups, colour and image swatches. Prices appear beside each choice automatically, so shoppers compare before they pick.
 
 = Five pricing modes =
 
@@ -75,6 +79,10 @@ Yes. WooCommerce must be installed and active.
 
 Yes — that's the core of 2.0. Assign a group to all products, one or more categories (child categories included), or specific products. Multiple groups can apply to one product.
 
+= Can each choice in a dropdown have a different price? =
+
+Yes. In the builder's **Options** tab every choice has its own **Price** box — leave it empty to fall back to the field price. Works for dropdowns, radio buttons, button groups, and colour and image swatches, and the amount shows beside the choice on the product page.
+
 = Can I charge based on a calculation? =
 
 Yes. The formula pricing mode evaluates decimal-safe expressions over your number and quantity fields, e.g. `round({width} * {height} * 0.02, 2)`.
@@ -108,6 +116,12 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.3.0 =
+* NEW: Per-option pricing — each choice in a dropdown, radio, button group, colour or image swatch can charge its own amount (21x30 +399, 30x40 +499, 50x70 +799). Set it in the builder's Options tab.
+* NEW: Option prices show beside each choice on the product page automatically ("50x70 (+$799.00)"), and the field's pill summarises the span ("+$399.00 – $799.00").
+* Improve: option prices run through the field's pricing mode, so "10% Express / 20% Overnight" works exactly like flat amounts.
+* Fix: currency markup could leak a literal "&#36;" into option labels on themes that skip wptexturize.
 
 = 2.2.0 =
 * NEW: The cart and checkout now show each option's price on the line item as a price chip — "Gift wrap: Yes  +$5.00" — with per-unit, per-character, percentage and formula modes all resolving to their real amounts.
@@ -144,6 +158,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+Per-option pricing: every choice in a dropdown, radio, button group or swatch can now charge its own amount, shown beside the option and in the cart.
 
 = 2.2.0 =
 The cart now shows each option's price on the line item ("Gift wrap: Yes (+$5.00)") and lists surcharges explicitly — on both classic and Block carts.

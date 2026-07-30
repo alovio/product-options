@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Alovio Product Options for WooCommerce 2.2.0\n"
+"Project-Id-Version: Alovio Product Options for WooCommerce 2.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/corelabs-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-28T16:40:52+00:00\n"
+"POT-Creation-Date: 2026-07-30T15:07:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: corelabs-product-options\n"
@@ -128,11 +128,11 @@ msgstr ""
 msgid "Unknown product."
 msgstr ""
 
-#: includes/Cart/CartIntegration.php:313
+#: includes/Cart/CartIntegration.php:315
 msgid "Uploaded file"
 msgstr ""
 
-#: includes/Cart/CartIntegration.php:320
+#: includes/Cart/CartIntegration.php:322
 msgctxt "checked option in cart/order"
 msgid "Yes"
 msgstr ""
@@ -165,149 +165,167 @@ msgid "The file for “%s” could not be verified — please upload it again."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:44
-#: includes/Frontend/FrontendAssets.php:43
+#: includes/Cart/Validator.php:45
+#: includes/Frontend/FrontendAssets.php:50
 #, php-format
 msgid "“%s” is required."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:53
-#: includes/Cart/Validator.php:79
-#: includes/Frontend/FrontendAssets.php:45
+#: includes/Cart/Validator.php:54
+#: includes/Cart/Validator.php:80
+#: includes/Frontend/FrontendAssets.php:52
 #, php-format
 msgid "“%s” must be a number."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:58
+#: includes/Cart/Validator.php:59
 #, php-format
 msgid "“%s” must be a valid email address."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:63
+#: includes/Cart/Validator.php:64
 #, php-format
 msgid "“%s” must be a valid time (HH:MM)."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:68
+#: includes/Cart/Validator.php:69
 #, php-format
 msgid "“%s” must be a valid phone number."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:73
+#: includes/Cart/Validator.php:74
 #, php-format
 msgid "“%s” must be a valid link (https://…)."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:83
+#: includes/Cart/Validator.php:84
 #, php-format
 msgid "“%s” is below the minimum quantity."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:87
+#: includes/Cart/Validator.php:88
 #, php-format
 msgid "“%s” is above the maximum quantity."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:98
+#: includes/Cart/Validator.php:97
 #, php-format
 msgid "“%s” has an invalid selection."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:106
+#: includes/Cart/Validator.php:105
 #, php-format
 msgid "“%s” is not a valid date."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:110
+#: includes/Cart/Validator.php:109
 #, php-format
 msgid "“%s” is before the earliest allowed date."
 msgstr ""
 
 #. translators: %s: field label
-#: includes/Cart/Validator.php:114
+#: includes/Cart/Validator.php:113
 #, php-format
 msgid "“%s” is after the latest allowed date."
 msgstr ""
 
-#: includes/Frontend/FrontendAssets.php:38
-#: includes/Frontend/ProductFormRenderer.php:77
+#: includes/Frontend/FrontendAssets.php:45
+#: includes/Frontend/ProductFormRenderer.php:80
 msgid "Base price"
 msgstr ""
 
-#: includes/Frontend/FrontendAssets.php:39
-#: includes/Frontend/ProductFormRenderer.php:82
+#: includes/Frontend/FrontendAssets.php:46
+#: includes/Frontend/ProductFormRenderer.php:85
 msgid "Total"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:129
+#. translators: 1: lowest formatted price, 2: highest formatted price
+#: includes/Frontend/ProductFormRenderer.php:136
+#, php-format
+msgid "+%1$s – %2$s"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:140
 msgid "price varies"
 msgstr ""
 
 #. translators: %s: percentage number
-#: includes/Frontend/ProductFormRenderer.php:134
+#: includes/Frontend/ProductFormRenderer.php:145
 #, php-format
 msgid "+%s%%"
 msgstr ""
 
 #. translators: %s: formatted price
-#: includes/Frontend/ProductFormRenderer.php:137
+#: includes/Frontend/ProductFormRenderer.php:148
 #, php-format
 msgid "+%s each"
 msgstr ""
 
 #. translators: %s: formatted price
-#: includes/Frontend/ProductFormRenderer.php:140
+#: includes/Frontend/ProductFormRenderer.php:151
 #, php-format
 msgid "+%s / character"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:151
+#. translators: 1: option label, 2: percentage number
+#: includes/Frontend/ProductFormRenderer.php:187
+#, php-format
+msgid "%1$s (+%2$s%%)"
+msgstr ""
+
+#. translators: 1: option label, 2: formatted price
+#: includes/Frontend/ProductFormRenderer.php:190
+#, php-format
+msgid "%1$s (+%2$s)"
+msgstr ""
+
+#: includes/Frontend/ProductFormRenderer.php:196
 msgid "Text area"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:153
+#: includes/Frontend/ProductFormRenderer.php:198
 msgid "Number"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:155
+#: includes/Frontend/ProductFormRenderer.php:200
 msgid "Checkbox"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:159
-#: includes/Frontend/ProductFormRenderer.php:315
+#: includes/Frontend/ProductFormRenderer.php:204
+#: includes/Frontend/ProductFormRenderer.php:361
 msgid "Choose an option"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:161
+#: includes/Frontend/ProductFormRenderer.php:206
 msgid "Surcharge"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:163
+#: includes/Frontend/ProductFormRenderer.php:208
 msgid "Date"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:165
+#: includes/Frontend/ProductFormRenderer.php:210
 msgid "Text"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:167
+#: includes/Frontend/ProductFormRenderer.php:212
 msgid "Option"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:176
+#: includes/Frontend/ProductFormRenderer.php:221
 msgid "(required)"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:198
+#: includes/Frontend/ProductFormRenderer.php:243
 msgid "More information"
 msgstr ""
