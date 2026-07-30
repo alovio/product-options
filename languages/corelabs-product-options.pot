@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-30T15:07:35+00:00\n"
+"POT-Creation-Date: 2026-07-30T17:17:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: corelabs-product-options\n"
@@ -40,7 +40,7 @@ msgid "https://alovio.org"
 msgstr ""
 
 #. translators: %d: number of categories
-#: includes/Admin/GroupsRestController.php:170
+#: includes/Admin/GroupsRestController.php:177
 #, php-format
 msgid "%d category"
 msgid_plural "%d categories"
@@ -48,29 +48,29 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of products
-#: includes/Admin/GroupsRestController.php:173
+#: includes/Admin/GroupsRestController.php:180
 #, php-format
 msgid "%d product"
 msgid_plural "%d products"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Admin/GroupsRestController.php:175
+#: includes/Admin/GroupsRestController.php:182
 msgid "All products"
 msgstr ""
 
-#: includes/Admin/GroupsRestController.php:203
-#: includes/Admin/GroupsRestController.php:212
-#: includes/Admin/GroupsRestController.php:221
-#: includes/Admin/GroupsRestController.php:230
+#: includes/Admin/GroupsRestController.php:210
+#: includes/Admin/GroupsRestController.php:219
+#: includes/Admin/GroupsRestController.php:228
+#: includes/Admin/GroupsRestController.php:237
 msgid "Group not found."
 msgstr ""
 
-#: includes/Admin/GroupsRestController.php:350
+#: includes/Admin/GroupsRestController.php:357
 msgid "Template not found."
 msgstr ""
 
-#: includes/Admin/GroupsRestController.php:355
+#: includes/Admin/GroupsRestController.php:362
 msgid "Template could not be loaded."
 msgstr ""
 
@@ -240,92 +240,88 @@ msgid "“%s” is after the latest allowed date."
 msgstr ""
 
 #: includes/Frontend/FrontendAssets.php:45
-#: includes/Frontend/ProductFormRenderer.php:80
+#: includes/Frontend/ProductFormRenderer.php:82
 msgid "Base price"
 msgstr ""
 
 #: includes/Frontend/FrontendAssets.php:46
-#: includes/Frontend/ProductFormRenderer.php:85
+#: includes/Frontend/ProductFormRenderer.php:87
 msgid "Total"
 msgstr ""
 
-#. translators: 1: lowest formatted price, 2: highest formatted price
-#: includes/Frontend/ProductFormRenderer.php:136
-#, php-format
-msgid "+%1$s – %2$s"
-msgstr ""
-
-#: includes/Frontend/ProductFormRenderer.php:140
+#: includes/Frontend/ProductFormRenderer.php:154
 msgid "price varies"
 msgstr ""
 
 #. translators: %s: percentage number
-#: includes/Frontend/ProductFormRenderer.php:145
+#: includes/Frontend/ProductFormRenderer.php:166
+#: includes/Frontend/ProductFormRenderer.php:178
+#: includes/Frontend/ProductFormRenderer.php:231
 #, php-format
 msgid "+%s%%"
 msgstr ""
 
+#. translators: 1: lowest price, 2: highest price
+#: includes/Frontend/ProductFormRenderer.php:171
+#, php-format
+msgid "%1$s – %2$s"
+msgstr ""
+
 #. translators: %s: formatted price
-#: includes/Frontend/ProductFormRenderer.php:148
+#: includes/Frontend/ProductFormRenderer.php:181
 #, php-format
 msgid "+%s each"
 msgstr ""
 
 #. translators: %s: formatted price
-#: includes/Frontend/ProductFormRenderer.php:151
+#: includes/Frontend/ProductFormRenderer.php:184
 #, php-format
 msgid "+%s / character"
 msgstr ""
 
-#. translators: 1: option label, 2: percentage number
-#: includes/Frontend/ProductFormRenderer.php:187
+#. translators: 1: option label, 2: price suffix, e.g. "+$399.00"
+#: includes/Frontend/ProductFormRenderer.php:249
 #, php-format
-msgid "%1$s (+%2$s%%)"
+msgid "%1$s (%2$s)"
 msgstr ""
 
-#. translators: 1: option label, 2: formatted price
-#: includes/Frontend/ProductFormRenderer.php:190
-#, php-format
-msgid "%1$s (+%2$s)"
-msgstr ""
-
-#: includes/Frontend/ProductFormRenderer.php:196
+#: includes/Frontend/ProductFormRenderer.php:255
 msgid "Text area"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:198
+#: includes/Frontend/ProductFormRenderer.php:257
 msgid "Number"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:200
+#: includes/Frontend/ProductFormRenderer.php:259
 msgid "Checkbox"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:204
-#: includes/Frontend/ProductFormRenderer.php:361
+#: includes/Frontend/ProductFormRenderer.php:263
+#: includes/Frontend/ProductFormRenderer.php:420
 msgid "Choose an option"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:206
+#: includes/Frontend/ProductFormRenderer.php:265
 msgid "Surcharge"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:208
+#: includes/Frontend/ProductFormRenderer.php:267
 msgid "Date"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:210
+#: includes/Frontend/ProductFormRenderer.php:269
 msgid "Text"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:212
+#: includes/Frontend/ProductFormRenderer.php:271
 msgid "Option"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:221
+#: includes/Frontend/ProductFormRenderer.php:280
 msgid "(required)"
 msgstr ""
 
-#: includes/Frontend/ProductFormRenderer.php:243
+#: includes/Frontend/ProductFormRenderer.php:302
 msgid "More information"
 msgstr ""
