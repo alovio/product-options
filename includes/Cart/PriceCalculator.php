@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace CoreLabs\ProductOptions\Cart;
 
+use CoreLabs\ProductOptions\Fields\FieldOptions;
 use CoreLabs\ProductOptions\Formula\FormulaPrice;
 use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
@@ -51,12 +52,13 @@ final class PriceCalculator {
 				continue;
 			}
 			$mode  = (string) ( $f['priceMode'] ?? 'fixed' );
-			$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
+			$type  = (string) ( $f['type'] ?? '' );
+			$value = $submitted[ $id ] ?? null;
+			// A priced option lifts a field that carries no price of its own.
+			$price = self::effective_price( $f, $value );
 			if ( $price <= 0 && 'formula' !== $mode ) {
 				continue;
 			}
-			$type  = (string) ( $f['type'] ?? '' );
-			$value = $submitted[ $id ] ?? null;
 			if ( ! self::is_engaged( $type, $value ) ) {
 				continue;
 			}
@@ -82,7 +84,7 @@ final class PriceCalculator {
 	 */
 	private static function field_amount( array $f, $value, float $base, array $numeric ): float {
 		$mode  = (string) ( $f['priceMode'] ?? 'fixed' );
-		$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
+		$price = self::effective_price( $f, $value );
 		$type  = (string) ( $f['type'] ?? '' );
 
 		if ( 'formula' === $mode ) {
@@ -98,6 +100,23 @@ final class PriceCalculator {
 			return $base * $price / 100;
 		}
 		return $price;
+	}
+
+	/**
+	 * The price a field charges for THIS value: the picked option's own price
+	 * when it has one, else the field-level price. The chosen amount still
+	 * runs through the field's price mode, so "10% for Express / 20% for
+	 * Overnight" works as naturally as flat per-option amounts.
+	 *
+	 * @param array<string,mixed> $f
+	 * @param mixed               $value
+	 */
+	private static function effective_price( array $f, $value ): float {
+		$option_price = FieldOptions::price_for_value( $f, $value );
+		if ( $option_price > 0 ) {
+			return $option_price;
+		}
+		return isset( $f['price'] ) ? (float) $f['price'] : 0.0;
 	}
 
 	/**

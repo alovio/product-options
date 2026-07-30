@@ -116,4 +116,26 @@ class ValidatorTest extends TestCase {
 		$this->assertSame( array(), Validator::validate( $g, array( 'b' => 'Classic', 'i' => 'Oak' ) ) );
 		$this->assertCount( 2, Validator::validate( $g, array( 'b' => 'X', 'i' => 'Y' ) ) );
 	}
+
+	public function test_priced_options_are_accepted_by_their_label(): void {
+		$g = $this->group(
+			array(
+				array(
+					'id'        => 'size',
+					'type'      => 'select',
+					'label'     => 'Frame size',
+					'required'  => true,
+					'condition' => null,
+					'options'   => array(
+						'Standard',
+						array( 'label' => '50x70', 'price' => 799 ),
+					),
+				),
+			)
+		);
+		// Both shapes validate on the bare label; the price never rides along.
+		$this->assertSame( array(), Validator::validate( $g, array( 'size' => 'Standard' ) ) );
+		$this->assertSame( array(), Validator::validate( $g, array( 'size' => '50x70' ) ) );
+		$this->assertCount( 1, Validator::validate( $g, array( 'size' => '50x70 (+$799.00)' ) ) );
+	}
 }

@@ -3,6 +3,8 @@ declare( strict_types=1 );
 
 namespace CoreLabs\ProductOptions\Cart;
 
+use CoreLabs\ProductOptions\Fields\FieldOptions;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -100,18 +102,10 @@ final class OptionSanitizer {
 				case 'select':
 				case 'radio':
 				case 'buttons':
-					$opts = array_map( 'strval', (array) ( $f['options'] ?? array() ) );
-					if ( null !== $val && in_array( (string) $val, $opts, true ) ) {
-						$out[ $id ] = (string) $val;
-					}
-					break;
 				case 'swatch':
 				case 'image_swatch':
-					$labels = array_map(
-						static fn( $o ) => (string) ( is_array( $o ) ? ( $o['label'] ?? '' ) : $o ),
-						(array) ( $f['options'] ?? array() )
-					);
-					if ( null !== $val && in_array( (string) $val, $labels, true ) ) {
+					// Options may be bare strings or {label, price, colour, image}.
+					if ( null !== $val && in_array( (string) $val, FieldOptions::labels( $f ), true ) ) {
 						$out[ $id ] = (string) $val;
 					}
 					break;

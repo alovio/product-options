@@ -213,42 +213,52 @@ final class FieldSchema {
 		return array();
 	}
 
+	/**
+	 * Options keep the leanest shape that carries their data: a plain string
+	 * when a choice is just a label, an object once it needs a price, colour
+	 * or image. Groups saved before per-option pricing therefore normalize to
+	 * exactly what they already were.
+	 *
+	 * @param array<string,mixed> $f
+	 * @return array<int,mixed>
+	 */
 	private static function normalize_options( array $f ): array {
-		$raw = ( isset( $f['options'] ) && is_array( $f['options'] ) ) ? $f['options'] : array();
+		$raw  = ( isset( $f['options'] ) && is_array( $f['options'] ) ) ? $f['options'] : array();
+		$type = (string) ( $f['type'] ?? '' );
+		$out  = array();
 
-		if ( 'image_swatch' === ( $f['type'] ?? '' ) ) {
-			$out = array();
-			foreach ( $raw as $o ) {
-				$label = is_array( $o ) ? sanitize_text_field( (string) ( $o['label'] ?? '' ) ) : sanitize_text_field( (string) $o );
-				if ( '' === $label ) {
-					continue;
-				}
-				$image = is_array( $o ) ? esc_url_raw( (string) ( $o['image'] ?? '' ) ) : '';
-				$out[] = array(
-					'label' => $label,
-					'image' => $image,
-				);
+		foreach ( $raw as $o ) {
+			$label = sanitize_text_field( FieldOptions::label( $o ) );
+			if ( '' === $label ) {
+				continue;
 			}
-			return $out;
-		}
+			$price = FieldOptions::price( $o );
 
-		if ( 'swatch' === ( $f['type'] ?? '' ) ) {
-			$out = array();
-			foreach ( $raw as $o ) {
-				$label = is_array( $o ) ? sanitize_text_field( (string) ( $o['label'] ?? '' ) ) : sanitize_text_field( (string) $o );
-				if ( '' === $label ) {
-					continue;
-				}
+			if ( 'image_swatch' === $type ) {
+				$entry = array(
+					'label' => $label,
+					'image' => is_array( $o ) ? esc_url_raw( (string) ( $o['image'] ?? '' ) ) : '',
+				);
+			} elseif ( 'swatch' === $type ) {
 				$color = is_array( $o ) ? sanitize_hex_color( (string) ( $o['color'] ?? '' ) ) : '';
-				$out[] = array(
+				$entry = array(
 					'label' => $label,
 					'color' => $color ? $color : '#cccccc',
 				);
+			} elseif ( $price > 0 ) {
+				$entry = array( 'label' => $label );
+			} else {
+				$out[] = $label; // plain, unpriced: stays a bare string.
+				continue;
 			}
-			return $out;
+
+			if ( $price > 0 ) {
+				$entry['price'] = $price;
+			}
+			$out[] = $entry;
 		}
 
-		return array_values( array_map( static fn( $o ) => sanitize_text_field( (string) $o ), $raw ) );
+		return $out;
 	}
 
 	private static function normalize_rule( array $rule, array $ids, string $self_id, array $ops ): ?array {

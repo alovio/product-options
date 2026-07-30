@@ -3,6 +3,7 @@ import { TextControl, TextareaControl, SelectControl, Button, Notice } from '@wo
 import { __ } from '@wordpress/i18n';
 import { STORE } from '../store';
 import { validateFormula } from '../../shared/formula';
+import { hasPricedOptions } from '../../shared/options';
 
 const T = 'corelabs-product-options';
 
@@ -77,8 +78,15 @@ export default function Pricing( { field } ) {
 		);
 	}
 
+	const priced = hasPricedOptions( field );
+
 	return (
 		<>
+			{ priced && (
+				<Notice status="info" isDismissible={ false }>
+					{ __( 'This field prices each option separately (set in the Options tab). The amount below only applies to options with no price of their own.', T ) }
+				</Notice>
+			) }
 			<TextControl
 				type="number"
 				min={ 0 }
@@ -94,7 +102,7 @@ export default function Pricing( { field } ) {
 				options={ modeOptions }
 				onChange={ ( v ) => set( { priceMode: v } ) }
 			/>
-			{ price > 0 && (
+			{ price > 0 && ! priced && (
 				<p style={ { fontSize: 12, color: '#57606a' } }>
 					{ mode === 'percent'
 						? `${ __( 'Charges', T ) } ${ price }% ${ __( 'of the product price.', T ) }`

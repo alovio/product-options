@@ -2,6 +2,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { STORE } from '../store';
+import { optionLabel } from '../../shared/options';
 
 const T = 'corelabs-product-options';
 
@@ -88,9 +89,9 @@ function SiblingValue( { siblings, controllerId, value, onChange } ) {
 		const opts = [ { label: __( 'Checked', T ), value: 'yes' }, { label: __( 'Unchecked', T ), value: '' } ];
 		return <TokSelect kind="val" value={ value } valueLabel={ value === 'yes' ? __( 'Checked', T ) : __( 'Unchecked', T ) } options={ opts } onChange={ onChange } />;
 	}
-	if ( t === 'select' || t === 'radio' || t === 'swatch' ) {
+	if ( t === 'select' || t === 'radio' || t === 'swatch' || t === 'buttons' || t === 'image_swatch' ) {
 		const opts = ( ctrl.options || [] ).map( ( o ) => {
-			const v = typeof o === 'object' ? o.label : o;
+			const v = optionLabel( o );
 			return { label: v, value: v };
 		} );
 		return <TokSelect kind="val" value={ value } valueLabel={ value || '—' } options={ opts.length ? opts : [ { label: '—', value: '' } ] } onChange={ onChange } />;

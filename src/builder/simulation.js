@@ -3,6 +3,7 @@
  * `sim` overrides to the store; merged over these defaults they feed the SAME
  * activeMap/computeAddonTotal engines the live product page runs.
  */
+import { hasPricedOptions } from '../shared/options';
 
 /**
  * Default submitted values for preview: each field's default (checkbox default
@@ -51,6 +52,8 @@ export function simTargets( fields ) {
 		} );
 	} );
 	return all.filter(
-		( f ) => f.type !== 'heading' && ( controllers.has( f.id ) || parseFloat( f.price ) > 0 )
+		( f ) =>
+			f.type !== 'heading' &&
+			( controllers.has( f.id ) || parseFloat( f.price ) > 0 || hasPricedOptions( f ) )
 	);
 }

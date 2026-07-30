@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE } from './store';
 import { previewValues, simTargets } from './simulation';
 import { computeAddonTotal, formatMoney } from '../frontend/price-update';
+import { optionLabel } from '../shared/options';
 
 const T = 'corelabs-product-options';
 
@@ -28,9 +29,9 @@ function Pick( { field, value, onChange } ) {
 		);
 	}
 
-	if ( [ 'radio', 'select', 'swatch' ].includes( field.type ) ) {
+	if ( [ 'radio', 'select', 'swatch', 'buttons', 'image_swatch' ].includes( field.type ) ) {
 		const opts = ( field.options || [] ).map( ( o ) => {
-			const v = typeof o === 'object' ? o.label : o;
+			const v = optionLabel( o );
 			return { value: v, label: v };
 		} );
 		const current = opts.find( ( o ) => o.value === value );

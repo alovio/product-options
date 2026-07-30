@@ -1,7 +1,18 @@
 import { __ } from '@wordpress/i18n';
 import { describeCondition, conditionAction } from './describe';
+import { optionLabel, optionPrice } from '../shared/options';
 
 const T = 'corelabs-product-options';
+
+/** Label plus its own price, matching what the storefront prints. */
+function optionText( field, option ) {
+	const price = optionPrice( option );
+	if ( price <= 0 ) {
+		return optionLabel( option );
+	}
+	const suffix = field.priceMode === 'percent' ? `+${ price }%` : `+${ price }`;
+	return `${ optionLabel( option ) } (${ suffix })`;
+}
 
 function Control( { field } ) {
 	const ph = field.placeholder || '';
@@ -15,13 +26,17 @@ function Control( { field } ) {
 		case 'radio':
 			return (
 				<div className="clpo-opts">
-					{ ( field.options || [] ).slice( 0, 4 ).map( ( o ) => (
-						<span key={ o }><span className="clpo-radio"></span>{ o }</span>
+					{ ( field.options || [] ).slice( 0, 4 ).map( ( o, i ) => (
+						<span key={ i }><span className="clpo-radio"></span>{ optionText( field, o ) }</span>
 					) ) }
 				</div>
 			);
 		case 'select':
-			return <div className="clpo-input">{ ( field.options && field.options[ 0 ] ) || __( 'Choose…', T ) } ▾</div>;
+			return (
+				<div className="clpo-input">
+					{ field.options && field.options.length ? optionText( field, field.options[ 0 ] ) : __( 'Choose…', T ) } ▾
+				</div>
+			);
 		case 'email':
 			return <div className="clpo-input">{ ph || 'name@example.com' }</div>;
 		case 'phone':
@@ -37,8 +52,8 @@ function Control( { field } ) {
 		case 'swatch':
 			return (
 				<div className="clpo-opts">
-					{ ( field.options || [] ).slice( 0, 6 ).map( ( o ) => (
-						<span key={ o.label } className="clpo-swdot" style={ { background: o.color || '#ccc' } } title={ o.label }></span>
+					{ ( field.options || [] ).slice( 0, 6 ).map( ( o, i ) => (
+						<span key={ i } className="clpo-swdot" style={ { background: ( o && o.color ) || '#ccc' } } title={ optionText( field, o ) }></span>
 					) ) }
 				</div>
 			);
@@ -49,18 +64,18 @@ function Control( { field } ) {
 		case 'buttons':
 			return (
 				<div className="clpo-opts">
-					{ ( field.options || [] ).slice( 0, 4 ).map( ( o ) => (
-						<span key={ o } className="clpo-pillopt">{ o }</span>
+					{ ( field.options || [] ).slice( 0, 4 ).map( ( o, i ) => (
+						<span key={ i } className="clpo-pillopt">{ optionText( field, o ) }</span>
 					) ) }
 				</div>
 			);
 		case 'image_swatch':
 			return (
 				<div className="clpo-opts">
-					{ ( field.options || [] ).slice( 0, 5 ).map( ( o ) => (
-						o.image
-							? <img key={ o.label } className="clpo-swimg" src={ o.image } alt={ o.label } title={ o.label } />
-							: <span key={ o.label } className="clpo-swimg clpo-swimg--empty" title={ o.label }>🖼</span>
+					{ ( field.options || [] ).slice( 0, 5 ).map( ( o, i ) => (
+						o && o.image
+							? <img key={ i } className="clpo-swimg" src={ o.image } alt={ optionLabel( o ) } title={ optionText( field, o ) } />
+							: <span key={ i } className="clpo-swimg clpo-swimg--empty" title={ optionText( field, o ) }>🖼</span>
 					) ) }
 				</div>
 			);

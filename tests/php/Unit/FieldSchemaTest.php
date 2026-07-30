@@ -146,6 +146,57 @@ class FieldSchemaTest extends TestCase {
 		$this->assertSame( 'fixed', $out['fields'][1]['priceMode'] );
 	}
 
+	public function test_option_prices_survive_normalization_and_shapes_stay_lean(): void {
+		$out = FieldSchema::normalize(
+			array(
+				'fields' => array(
+					array(
+						'id'      => 'size',
+						'type'    => 'select',
+						'options' => array(
+							'Free choice',
+							array( 'label' => '21x30', 'price' => 399 ),
+							array( 'label' => 'Zero', 'price' => 0 ),
+						),
+					),
+					array(
+						'id'      => 'colour',
+						'type'    => 'swatch',
+						'options' => array( array( 'label' => 'Ember', 'color' => '#f97316', 'price' => 12.5 ) ),
+					),
+				),
+			)
+		);
+		$select = $out['fields'][0]['options'];
+		// Unpriced plain choices stay bare strings; priced ones become objects.
+		$this->assertSame( 'Free choice', $select[0] );
+		$this->assertSame( array( 'label' => '21x30', 'price' => 399.0 ), $select[1] );
+		$this->assertSame( 'Zero', $select[2] );
+
+		$swatch = $out['fields'][1]['options'][0];
+		$this->assertSame( 'Ember', $swatch['label'] );
+		$this->assertSame( '#f97316', $swatch['color'] );
+		$this->assertSame( 12.5, $swatch['price'] );
+	}
+
+	public function test_negative_and_non_numeric_option_prices_are_dropped(): void {
+		$out = FieldSchema::normalize(
+			array(
+				'fields' => array(
+					array(
+						'id'      => 'size',
+						'type'    => 'radio',
+						'options' => array(
+							array( 'label' => 'A', 'price' => -5 ),
+							array( 'label' => 'B', 'price' => 'free' ),
+						),
+					),
+				),
+			)
+		);
+		$this->assertSame( array( 'A', 'B' ), $out['fields'][0]['options'] );
+	}
+
 	public function test_file_max_files_clamped_to_1_10(): void {
 		$out = FieldSchema::normalize(
 			array(

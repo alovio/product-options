@@ -33,6 +33,13 @@ function pickImage( onSelect ) {
  * radio/select/buttons, label+colour rows for swatch, label+image rows for
  * image swatch.
  */
+/** Options are strings until they carry extras; edit them as objects either way. */
+const asObject = ( o ) => ( o && typeof o === 'object' ? { ...o } : { label: String( o ?? '' ) } );
+const priceOf = ( o ) => {
+	const p = parseFloat( asObject( o ).price );
+	return isNaN( p ) || p <= 0 ? '' : String( p );
+};
+
 export default function Options( { field } ) {
 	const { updateField } = useDispatch( STORE );
 	const opts = field.options || [];
@@ -41,7 +48,20 @@ export default function Options( { field } ) {
 	const plain = PLAIN_OPTION_TYPES.includes( field.type );
 
 	const row = ( i, patch ) => {
-		const next = opts.map( ( o, j ) => ( j === i ? ( plain ? patch : { ...o, ...patch } ) : o ) );
+		const next = opts.map( ( o, j ) => {
+			if ( j !== i ) {
+				return o;
+			}
+			const merged = { ...asObject( o ), ...patch };
+			const price = parseFloat( merged.price );
+			if ( isNaN( price ) || price <= 0 ) {
+				delete merged.price;
+				// A plain choice with nothing extra collapses back to a string.
+				return plain ? merged.label : merged;
+			}
+			merged.price = price;
+			return merged;
+		} );
 		set( next );
 	};
 	const removeRow = ( i ) => set( opts.filter( ( _, j ) => j !== i ) );
@@ -61,14 +81,14 @@ export default function Options( { field } ) {
 				<div key={ i } className="clpo-optrow">
 					<TextControl
 						label={ 0 === i ? __( 'Options', T ) : undefined }
-						value={ plain ? o : o.label || '' }
-						onChange={ ( v ) => row( i, plain ? v : { label: v } ) }
+						value={ asObject( o ).label }
+						onChange={ ( v ) => row( i, { label: v } ) }
 					/>
 					{ field.type === 'swatch' && (
 						<input
 							type="color"
 							className="clpo-optcolor"
-							value={ o.color || '#cccccc' }
+							value={ asObject( o ).color || '#cccccc' }
 							aria-label={ __( 'Colour', T ) }
 							onChange={ ( e ) => row( i, { color: e.target.value } ) }
 						/>
@@ -79,9 +99,21 @@ export default function Options( { field } ) {
 							className="clpo-optimg"
 							onClick={ () => pickImage( ( url ) => row( i, { image: url } ) ) }
 						>
-							{ o.image ? <img src={ o.image } alt="" /> : __( 'Image…', T ) }
+							{ asObject( o ).image ? <img src={ asObject( o ).image } alt="" /> : __( 'Image…', T ) }
 						</Button>
 					) }
+					<div className="clpo-optprice">
+						<TextControl
+							type="number"
+							min={ 0 }
+							step="any"
+							label={ 0 === i ? __( 'Price', T ) : undefined }
+							placeholder="0"
+							value={ priceOf( o ) }
+							aria-label={ __( 'Price for this option', T ) }
+							onChange={ ( v ) => row( i, { price: v } ) }
+						/>
+					</div>
 					<Button
 						isDestructive
 						variant="tertiary"
@@ -95,13 +127,18 @@ export default function Options( { field } ) {
 			{ field.type === 'image_swatch' && (
 				<TextControl
 					label={ __( 'Or paste an image URL for the last option', T ) }
-					value={ ( opts[ opts.length - 1 ] || {} ).image || '' }
+					value={ asObject( opts[ opts.length - 1 ] ).image || '' }
 					onChange={ ( v ) => opts.length && row( opts.length - 1, { image: v } ) }
 				/>
 			) }
 			<Button variant="secondary" onClick={ addRow }>＋ { __( 'Add option', T ) }</Button>
 			{ ! opts.length && (
 				<Notice status="warning" isDismissible={ false }>{ __( 'Add at least one option.', T ) }</Notice>
+			) }
+			{ !! opts.length && (
+				<p className="clpo-opthelp">
+					{ __( 'Give an option its own price to charge a different amount per choice — e.g. 21x30 +399, 50x70 +799. Leave it empty to fall back to the field price in the Pricing tab.', T ) }
+				</p>
 			) }
 		</>
 	);

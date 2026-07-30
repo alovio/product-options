@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace CoreLabs\ProductOptions\Cart;
 
+use CoreLabs\ProductOptions\Fields\FieldOptions;
 use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 defined( 'ABSPATH' ) || exit;
@@ -90,10 +91,8 @@ final class Validator {
 			}
 
 			if ( in_array( $type, array( 'select', 'radio', 'buttons', 'swatch', 'image_swatch' ), true ) && ! empty( $f['options'] ) ) {
-				$valid = in_array( $type, array( 'swatch', 'image_swatch' ), true )
-					? array_map( static fn( $o ) => (string) ( $o['label'] ?? '' ), (array) $f['options'] )
-					: array_map( 'strval', (array) $f['options'] );
-				if ( ! in_array( (string) $value, $valid, true ) ) {
+				// Options may be bare strings or {label, price, colour, image}.
+				if ( ! in_array( (string) $value, FieldOptions::labels( $f ), true ) ) {
 					/* translators: %s: field label */
 					$errors[] = sprintf( __( '“%s” has an invalid selection.', 'corelabs-product-options' ), $label );
 				}

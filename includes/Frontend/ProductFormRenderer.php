@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace CoreLabs\ProductOptions\Frontend;
 
+use CoreLabs\ProductOptions\Fields\FieldOptions;
 use CoreLabs\ProductOptions\Groups\GroupResolver;
 use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
@@ -52,7 +53,11 @@ final class ProductFormRenderer {
 		$rows       = array();
 		foreach ( $groups as $group ) {
 			foreach ( (array) ( $group['fields'] ?? array() ) as $f ) {
-				if ( ( isset( $f['price'] ) && (float) $f['price'] > 0 ) || 'price' === ( $f['type'] ?? '' ) || 'formula' === ( $f['priceMode'] ?? '' ) ) {
+				if ( ( isset( $f['price'] ) && (float) $f['price'] > 0 )
+					|| 'price' === ( $f['type'] ?? '' )
+					|| 'formula' === ( $f['priceMode'] ?? '' )
+					|| FieldOptions::has_priced_options( $f ) // prices may live on the options alone.
+				) {
 					$has_priced = true;
 					break 2;
 				}
@@ -67,9 +72,7 @@ final class ProductFormRenderer {
 			$rows = array_merge( $rows, \CoreLabs\ProductOptions\Cart\PriceCalculator::breakdown( $group, array(), $decimals, $base ) );
 		}
 
-		$fmt = static function ( float $amount ): string {
-			return function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( $amount ) ) : number_format( $amount, 2 );
-		};
+		$fmt = static fn( float $amount ): string => self::money( $amount );
 
 		printf( '<div class="apo-breakdown" data-apo-breakdown aria-live="polite" aria-atomic="true"%s><ul>', empty( $rows ) ? ' hidden' : '' ); // phpcs:ignore WordPress.Security.EscapeOutput
 		if ( ! empty( $rows ) ) {
@@ -122,9 +125,17 @@ final class ProductFormRenderer {
 		$price = isset( $f['price'] ) ? (float) $f['price'] : 0.0;
 
 		$text = '';
-		$fmt  = static function ( float $amount ): string {
-			return function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( $amount ) ) : number_format( $amount, 2 );
-		};
+		$fmt  = static fn( float $amount ): string => self::money( $amount );
+		// Options priced individually: summarise the span instead of one number
+		// (each option already prints its own price beside its label).
+		if ( FieldOptions::has_priced_options( $f ) && 'percent' !== $mode ) {
+			list( $min, $max ) = FieldOptions::price_range( $f );
+			$text              = $min === $max
+				? '+' . $fmt( $min )
+				/* translators: 1: lowest formatted price, 2: highest formatted price */
+				: sprintf( __( '+%1$s – %2$s', 'corelabs-product-options' ), $fmt( $min ), $fmt( $max ) );
+			return '<span class="apo-price-pill">' . esc_html( $text ) . '</span>';
+		}
 		if ( 'formula' === $mode ) {
 			$text = __( 'price varies', 'corelabs-product-options' );
 		} elseif ( $price <= 0 || 'price' === ( $f['type'] ?? '' ) ) {
@@ -143,6 +154,40 @@ final class ProductFormRenderer {
 		}
 
 		return '' === $text ? '' : '<span class="apo-price-pill">' . esc_html( $text ) . '</span>';
+	}
+
+	/**
+	 * Formatted money as PLAIN text. wc_price() returns markup whose currency
+	 * symbol is an HTML entity, so strip the tags and decode — otherwise a
+	 * theme that skips wptexturize would print a literal "&#36;".
+	 */
+	private static function money( float $amount ): string {
+		if ( ! function_exists( 'wc_price' ) ) {
+			return number_format( $amount, 2 );
+		}
+		return html_entity_decode( wp_strip_all_tags( wc_price( $amount ) ), ENT_QUOTES, 'UTF-8' );
+	}
+
+	/**
+	 * What a single choice reads as: its label, plus its own price when it has
+	 * one ("21x30 (+£399.00)") so shoppers compare without opening the cart.
+	 * The submitted value stays the bare label — only the display changes.
+	 *
+	 * @param array<string,mixed> $f
+	 * @param mixed               $option
+	 */
+	private static function option_text( array $f, $option ): string {
+		$label = FieldOptions::label( $option );
+		$price = FieldOptions::price( $option );
+		if ( $price <= 0 || ! apply_filters( 'clpo_option_price_suffix', true, $f ) ) {
+			return $label;
+		}
+		if ( 'percent' === (string) ( $f['priceMode'] ?? 'fixed' ) ) {
+			/* translators: 1: option label, 2: percentage number */
+			return sprintf( __( '%1$s (+%2$s%%)', 'corelabs-product-options' ), $label, (string) ( $price + 0 ) );
+		}
+		/* translators: 1: option label, 2: formatted price */
+		return sprintf( __( '%1$s (+%2$s)', 'corelabs-product-options' ), $label, self::money( $price ) );
 	}
 
 	private static function type_label( string $type ): string {
@@ -307,32 +352,37 @@ final class ProductFormRenderer {
 			case 'radio':
 			case 'buttons':
 				foreach ( (array) $f['options'] as $opt ) {
-					$chk = ( (string) $opt === $default ) ? ' checked' : '';
-					printf( '<label class="apo-opt%s"><input type="radio" name="%s" value="%s"%s%s /> <span>%s</span></label>', 'buttons' === $type ? ' apo-btnopt' : '', esc_attr( $name ), esc_attr( $opt ), $rreq, $chk, esc_html( $opt ) ); // phpcs:ignore WordPress.Security.EscapeOutput
+					$opt_label = FieldOptions::label( $opt );
+					$chk       = ( $opt_label === $default ) ? ' checked' : '';
+					printf( '<label class="apo-opt%s"><input type="radio" name="%s" value="%s"%s%s /> <span>%s</span></label>', 'buttons' === $type ? ' apo-btnopt' : '', esc_attr( $name ), esc_attr( $opt_label ), $rreq, $chk, esc_html( self::option_text( $f, $opt ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput
 				}
 				break;
 			case 'select':
 				printf( '<select id="%s" name="%s"%s%s><option value="">%s</option>', esc_attr( $fid ), esc_attr( $name ), $req, $descby, esc_html__( 'Choose an option', 'corelabs-product-options' ) ); // phpcs:ignore WordPress.Security.EscapeOutput
 				foreach ( (array) $f['options'] as $opt ) {
-					$sel = ( (string) $opt === $default ) ? ' selected' : '';
-					printf( '<option value="%s"%s>%s</option>', esc_attr( $opt ), $sel, esc_html( $opt ) ); // phpcs:ignore WordPress.Security.EscapeOutput
+					$opt_label = FieldOptions::label( $opt );
+					$sel       = ( $opt_label === $default ) ? ' selected' : '';
+					printf( '<option value="%s"%s>%s</option>', esc_attr( $opt_label ), $sel, esc_html( self::option_text( $f, $opt ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput
 				}
 				echo '</select>';
 				break;
 			case 'swatch':
 				echo '<div class="apo-swatches">';
 				foreach ( (array) $f['options'] as $opt ) {
-					$opt_label = is_array( $opt ) ? (string) ( $opt['label'] ?? '' ) : (string) $opt;
+					$opt_label = FieldOptions::label( $opt );
+					$opt_text  = self::option_text( $f, $opt );
 					$opt_color = is_array( $opt ) ? (string) ( $opt['color'] ?? '#cccccc' ) : '#cccccc';
 					$chk       = ( $opt_label === $default ) ? ' checked' : '';
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- label/name/color escaped via esc_attr; $rreq/$chk are internal constant attribute fragments.
 					printf(
-						'<label class="apo-swatch" title="%1$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%1$s" /><span class="apo-swatch__dot" style="background-color:%4$s"></span><span class="apo-swatch__label">%1$s</span></label>',
+						'<label class="apo-swatch" title="%6$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%6$s" /><span class="apo-swatch__dot" style="background-color:%4$s"></span><span class="apo-swatch__label">%7$s</span></label>',
 						esc_attr( $opt_label ),
 						esc_attr( $name ),
 						$rreq,
 						esc_attr( $opt_color ),
-						$chk
+						$chk,
+						esc_attr( $opt_text ),
+						esc_html( $opt_text )
 					);
 					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
@@ -351,17 +401,20 @@ final class ProductFormRenderer {
 			case 'image_swatch':
 				echo '<div class="apo-swatches apo-swatches--image">';
 				foreach ( (array) $f['options'] as $opt ) {
-					$opt_label = is_array( $opt ) ? (string) ( $opt['label'] ?? '' ) : (string) $opt;
+					$opt_label = FieldOptions::label( $opt );
+					$opt_text  = self::option_text( $f, $opt );
 					$opt_image = is_array( $opt ) ? (string) ( $opt['image'] ?? '' ) : '';
 					$chk       = ( $opt_label === $default ) ? ' checked' : '';
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- all parts escaped below; $rreq/$chk internal fragments.
 					printf(
-						'<label class="apo-swatch apo-swatch--image" title="%1$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%1$s" />%4$s<span class="apo-swatch__label">%1$s</span></label>',
+						'<label class="apo-swatch apo-swatch--image" title="%6$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%6$s" />%4$s<span class="apo-swatch__label">%7$s</span></label>',
 						esc_attr( $opt_label ),
 						esc_attr( $name ),
 						$rreq,
 						'' !== $opt_image ? '<img class="apo-swatch__img" src="' . esc_url( $opt_image ) . '" alt="" />' : '<span class="apo-swatch__dot"></span>',
-						$chk
+						$chk,
+						esc_attr( $opt_text ),
+						esc_html( $opt_text )
 					);
 					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}

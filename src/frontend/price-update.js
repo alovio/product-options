@@ -4,6 +4,7 @@
  */
 import { activeMap, readValues } from './conditional-logic';
 import { evaluateFormula } from '../shared/formula';
+import { effectivePrice } from '../shared/options';
 
 /**
  * Per-field engaged amounts — the JS twin of PriceCalculator::breakdown.
@@ -23,11 +24,12 @@ export function computeBreakdown( fields, values, base = 0 ) {
 		if ( ! map[ f.id ] ) {
 			return;
 		}
-		const price = parseFloat( f.price ) || 0;
+		const v = values[ f.id ];
+		// A priced option lifts a field that carries no price of its own.
+		const price = effectivePrice( f, v );
 		if ( price <= 0 && f.priceMode !== 'formula' ) {
 			return;
 		}
-		const v = values[ f.id ];
 		const num = parseFloat( v );
 		let engaged;
 		if ( f.type === 'price' ) {

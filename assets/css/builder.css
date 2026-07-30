@@ -393,6 +393,9 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 /* Options panel rows */
 .clpo-optrow { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 6px; }
 .clpo-optrow .components-base-control { flex: 1; margin-bottom: 0 !important; }
+.clpo-optrow .clpo-optprice { flex: 0 0 84px; }
+.clpo-optrow .clpo-optprice .components-base-control { flex: none; }
+.clpo-opthelp { margin: 8px 0 0; font-size: 12px; color: #646970; }
 .clpo-optcolor { width: 34px; height: 34px; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px; background: #fff; }
 .clpo-optimg img { width: 28px; height: 28px; object-fit: cover; border-radius: 4px; }
 .clpo-pillopt { display: inline-block; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px 10px; margin-right: 6px; font-size: 12px; }
