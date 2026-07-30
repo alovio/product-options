@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace CoreLabs\ProductOptions\Admin;
 
+use CoreLabs\ProductOptions\Fields\FieldOptions;
 use CoreLabs\ProductOptions\Groups\GroupRepository;
 
 defined( 'ABSPATH' ) || exit;
@@ -158,7 +159,13 @@ final class GroupsRestController {
 		$fields = isset( $group['fields'] ) && is_array( $group['fields'] ) ? $group['fields'] : array();
 		$priced = 0;
 		foreach ( $fields as $f ) {
-			if ( ( isset( $f['price'] ) && (float) $f['price'] > 0 ) || 'price' === ( $f['type'] ?? '' ) ) {
+			// A field charges if it has a price, is a surcharge, computes one
+			// with a formula, or prices its options individually.
+			if ( ( isset( $f['price'] ) && (float) $f['price'] > 0 )
+				|| 'price' === ( $f['type'] ?? '' )
+				|| 'formula' === ( $f['priceMode'] ?? '' )
+				|| FieldOptions::has_priced_options( $f )
+			) {
 				++$priced;
 			}
 		}

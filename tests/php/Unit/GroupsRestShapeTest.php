@@ -32,6 +32,19 @@ final class GroupsRestShapeTest extends TestCase {
 		$this->assertSame( 'publish', $s['status'] );
 		$this->assertSame( 3, $s['field_count'] );
 		$this->assertSame( 2, $s['priced_count'] ); // price>0 (a) + type price (c)
+	}
+
+	public function test_priced_count_includes_option_priced_and_formula_fields(): void {
+		$s = GroupsRestController::summarize(
+			array(
+				'fields' => array(
+					array( 'id' => 'plain', 'type' => 'select', 'price' => 0, 'options' => array( 'S', 'M' ) ),
+					array( 'id' => 'sizes', 'type' => 'select', 'price' => 0, 'options' => array( array( 'label' => '50x70', 'price' => 799 ) ) ),
+					array( 'id' => 'calc', 'type' => 'number', 'price' => 0, 'priceMode' => 'formula', 'formula' => '{a}*2' ),
+				),
+			)
+		);
+		$this->assertSame( 2, $s['priced_count'] );
 		$this->assertSame( 'All products', $s['assignment_summary'] );
 		$this->assertSame( 10, $s['priority'] );
 	}

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { navigate } from '../router';
+import FlameMark from '../../shared/FlameMark';
 
 const T = 'corelabs-product-options';
 
@@ -102,7 +103,7 @@ export default function GroupsList() {
 		<div className="clpo-app">
 			<div className="clpo-hdr">
 				<div className="clpo-logo">
-					<span className="clpo-mark">▲</span>
+					<span className="clpo-mark"><FlameMark /></span>
 					Alovio <span className="clpo-sub">{ __( 'Product Options', T ) }</span>
 				</div>
 				<nav className="clpo-hubnav">

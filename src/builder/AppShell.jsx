@@ -7,6 +7,7 @@ import Palette from './Palette';
 import SimulationBar from './SimulationBar';
 import PreviewCanvas from './PreviewCanvas';
 import SettingsPanel from './SettingsPanel';
+import FlameMark from '../shared/FlameMark';
 
 const T = 'corelabs-product-options';
 
@@ -110,7 +111,7 @@ export default function AppShell( { groupId, onBack } ) {
 			<div className="clpo-hdr">
 				<button className="clpo-btn-ghost" onClick={ onBack } aria-label={ __( 'Back to groups', T ) }>← { __( 'Groups', T ) }</button>
 				<div className="clpo-logo">
-					<span className="clpo-mark">▲</span>
+					<span className="clpo-mark"><FlameMark /></span>
 					Alovio <span className="clpo-sub">{ __( 'Product Options', T ) }</span>
 				</div>
 				<input
