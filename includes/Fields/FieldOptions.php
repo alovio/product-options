@@ -18,6 +18,9 @@ defined( 'ABSPATH' ) || exit;
  */
 final class FieldOptions {
 
+	/** @var string[] Field types whose value is one of a fixed list of options. */
+	public const CHOICE_TYPES = array( 'select', 'radio', 'buttons', 'swatch', 'image_swatch' );
+
 	/** @param mixed $option */
 	public static function label( $option ): string {
 		return is_array( $option ) ? (string) ( $option['label'] ?? '' ) : (string) $option;
@@ -55,8 +58,11 @@ final class FieldOptions {
 	 * @param mixed               $value submitted label.
 	 */
 	public static function price_for_value( array $field, $value ): float {
-		if ( null === $value || '' === $value ) {
+		if ( ! is_scalar( $value ) || '' === $value ) {
 			return 0.0;
+		}
+		if ( ! in_array( (string) ( $field['type'] ?? '' ), self::CHOICE_TYPES, true ) ) {
+			return 0.0; // only a real choice field can price by option.
 		}
 		foreach ( (array) ( $field['options'] ?? array() ) as $option ) {
 			if ( self::label( $option ) === (string) $value ) {
@@ -64,6 +70,26 @@ final class FieldOptions {
 			}
 		}
 		return 0.0;
+	}
+
+	/**
+	 * What the field charges for THIS value — the single source of truth for
+	 * both the amount billed (PriceCalculator) and the amount advertised
+	 * (ProductFormRenderer). An option's own price wins; otherwise the
+	 * field-level price applies. The caller still applies the price mode.
+	 *
+	 * Duplicate labels resolve to the FIRST match, exactly as pricing does, so
+	 * a repeated label can never advertise one amount and charge another.
+	 *
+	 * @param array<string,mixed> $field
+	 * @param mixed               $value
+	 */
+	public static function effective_price( array $field, $value ): float {
+		$own = self::price_for_value( $field, $value );
+		if ( $own > 0 ) {
+			return $own;
+		}
+		return isset( $field['price'] ) ? (float) $field['price'] : 0.0;
 	}
 
 	/**
@@ -82,15 +108,18 @@ final class FieldOptions {
 	}
 
 	/**
-	 * Min/max of the priced options, for a "from … to …" summary pill.
+	 * Min/max of what this field can actually charge, for the summary pill.
+	 * Every option contributes what picking it would cost — its own price, or
+	 * the field price it falls back to — so a field that mixes priced and
+	 * unpriced options summarises honestly.
 	 *
 	 * @param array<string,mixed> $field
-	 * @return array{0:float,1:float} [min, max]; [0,0] when nothing is priced.
+	 * @return array{0:float,1:float} [min, max]; [0,0] when nothing can charge.
 	 */
 	public static function price_range( array $field ): array {
 		$prices = array();
 		foreach ( (array) ( $field['options'] ?? array() ) as $option ) {
-			$price = self::price( $option );
+			$price = self::effective_price( $field, self::label( $option ) );
 			if ( $price > 0 ) {
 				$prices[] = $price;
 			}

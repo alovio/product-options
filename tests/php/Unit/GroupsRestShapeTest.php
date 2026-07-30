@@ -32,6 +32,8 @@ final class GroupsRestShapeTest extends TestCase {
 		$this->assertSame( 'publish', $s['status'] );
 		$this->assertSame( 3, $s['field_count'] );
 		$this->assertSame( 2, $s['priced_count'] ); // price>0 (a) + type price (c)
+		$this->assertSame( 'All products', $s['assignment_summary'] );
+		$this->assertSame( 10, $s['priority'] );
 	}
 
 	public function test_priced_count_includes_option_priced_and_formula_fields(): void {
@@ -44,9 +46,8 @@ final class GroupsRestShapeTest extends TestCase {
 				),
 			)
 		);
+		// 'plain' has neither a field price nor priced options; the other two do.
 		$this->assertSame( 2, $s['priced_count'] );
-		$this->assertSame( 'All products', $s['assignment_summary'] );
-		$this->assertSame( 10, $s['priority'] );
 	}
 
 	public function test_summarize_categories_and_products(): void {

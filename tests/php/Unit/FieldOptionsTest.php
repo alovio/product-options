@@ -58,7 +58,45 @@ final class FieldOptionsTest extends TestCase {
 	}
 
 	public function test_single_priced_option_range_collapses(): void {
-		$f = array( 'options' => array( 'S', array( 'label' => 'M', 'price' => 12 ) ) );
+		// The unpriced 'S' contributes nothing (no field price to fall back to).
+		$f = array( 'type' => 'select', 'options' => array( 'S', array( 'label' => 'M', 'price' => 12 ) ) );
 		$this->assertSame( array( 12.0, 12.0 ), FieldOptions::price_range( $f ) );
+	}
+
+	public function test_price_range_covers_the_field_price_fallback(): void {
+		// Mixed field: 'Standard' charges the field price, 'Oversized' its own.
+		$f = array(
+			'type'    => 'radio',
+			'price'   => 25,
+			'options' => array( 'Standard', array( 'label' => 'Oversized', 'price' => 90 ) ),
+		);
+		$this->assertSame( array( 25.0, 90.0 ), FieldOptions::price_range( $f ) );
+	}
+
+	public function test_effective_price_prefers_the_option_then_the_field(): void {
+		$f = array( 'type' => 'radio', 'price' => 25, 'options' => array( 'Standard', array( 'label' => 'Oversized', 'price' => 90 ) ) );
+		$this->assertSame( 25.0, FieldOptions::effective_price( $f, 'Standard' ) );
+		$this->assertSame( 90.0, FieldOptions::effective_price( $f, 'Oversized' ) );
+		$this->assertSame( 25.0, FieldOptions::effective_price( $f, 'Unknown' ) );
+	}
+
+	public function test_options_never_price_a_non_choice_field(): void {
+		// Only reachable via hand-crafted import JSON, but it must not charge.
+		$f = array( 'type' => 'text', 'price' => 5, 'options' => array( array( 'label' => 'gold', 'price' => 500 ) ) );
+		$this->assertSame( 0.0, FieldOptions::price_for_value( $f, 'gold' ) );
+		$this->assertSame( 5.0, FieldOptions::effective_price( $f, 'gold' ) );
+	}
+
+	public function test_array_value_does_not_warn_or_match(): void {
+		$f = array( 'type' => 'select', 'options' => array( array( 'label' => 'A', 'price' => 9 ) ) );
+		$this->assertSame( 0.0, FieldOptions::price_for_value( $f, array( 'A' ) ) );
+	}
+
+	public function test_duplicate_labels_resolve_to_the_first_match(): void {
+		$f = array(
+			'type'    => 'select',
+			'options' => array( array( 'label' => 'Large', 'price' => 399 ), array( 'label' => 'Large', 'price' => 799 ) ),
+		);
+		$this->assertSame( 399.0, FieldOptions::effective_price( $f, 'Large' ) );
 	}
 }

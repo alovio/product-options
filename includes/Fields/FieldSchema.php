@@ -169,13 +169,6 @@ final class FieldSchema {
 	 * @return array<string,mixed>|null
 	 */
 	/**
-	 * Normalize a field's options. Swatch options are objects {label, color};
-	 * all other option-bearing types are plain strings.
-	 *
-	 * @param array<string,mixed> $f
-	 * @return array<int,mixed>
-	 */
-	/**
 	 * Type-specific constraints. Date fields get optional min/max bounds.
 	 *
 	 * @param array<string,mixed> $f

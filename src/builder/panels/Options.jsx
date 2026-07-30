@@ -1,7 +1,8 @@
 import { useDispatch } from '@wordpress/data';
 import { Button, TextControl, Notice } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { STORE } from '../store';
+import { optionLabel, optionPrice } from '../../shared/options';
 
 const T = 'corelabs-product-options';
 
@@ -34,11 +35,28 @@ function pickImage( onSelect ) {
  * image swatch.
  */
 /** Options are strings until they carry extras; edit them as objects either way. */
-const asObject = ( o ) => ( o && typeof o === 'object' ? { ...o } : { label: String( o ?? '' ) } );
+const asObject = ( o ) => ( o && typeof o === 'object' ? { ...o, label: optionLabel( o ) } : { label: optionLabel( o ) } );
 const priceOf = ( o ) => {
-	const p = parseFloat( asObject( o ).price );
-	return isNaN( p ) || p <= 0 ? '' : String( p );
+	const p = optionPrice( o );
+	return p > 0 ? String( p ) : '';
 };
+
+/** Labels that appear more than once — they are one value to the cart. */
+function duplicateLabels( opts ) {
+	const seen = new Set();
+	const dupes = new Set();
+	opts.forEach( ( o ) => {
+		const l = optionLabel( o ).trim();
+		if ( ! l ) {
+			return;
+		}
+		if ( seen.has( l ) ) {
+			dupes.add( l );
+		}
+		seen.add( l );
+	} );
+	return [ ...dupes ];
+}
 
 export default function Options( { field } ) {
 	const { updateField } = useDispatch( STORE );
@@ -134,6 +152,15 @@ export default function Options( { field } ) {
 			<Button variant="secondary" onClick={ addRow }>＋ { __( 'Add option', T ) }</Button>
 			{ ! opts.length && (
 				<Notice status="warning" isDismissible={ false }>{ __( 'Add at least one option.', T ) }</Notice>
+			) }
+			{ duplicateLabels( opts ).length > 0 && (
+				<Notice status="warning" isDismissible={ false }>
+					{ sprintf(
+						/* translators: %s: comma-separated option labels */
+						__( 'Two options share the same label (%s). The cart cannot tell them apart, so both charge the first one’s price — rename one.', T ),
+						duplicateLabels( opts ).join( ', ' )
+					) }
+				</Notice>
 			) }
 			{ !! opts.length && (
 				<p className="clpo-opthelp">

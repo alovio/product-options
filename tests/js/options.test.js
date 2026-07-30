@@ -5,8 +5,10 @@ import {
 	optionPriceForValue,
 	hasPricedOptions,
 	effectivePrice,
+	priceRange,
 } from '../../src/shared/options';
 import { computeBreakdown, computeAddonTotal } from '../../src/frontend/price-update';
+import fixture from '../fixtures/option-pricing-cases.json';
 
 const SIZES = {
 	id: 'size',
@@ -53,9 +55,27 @@ describe( 'option shape helpers', () => {
 	} );
 
 	it( 'prefers the option price over the field price', () => {
-		const field = { price: 25, options: [ 'Standard', { label: 'Oversized', price: 90 } ] };
+		const field = { type: 'radio', price: 25, options: [ 'Standard', { label: 'Oversized', price: 90 } ] };
 		expect( effectivePrice( field, 'Standard' ) ).toBe( 25 );
 		expect( effectivePrice( field, 'Oversized' ) ).toBe( 90 );
+	} );
+
+	it( 'never lets options price a non-choice field', () => {
+		const field = { type: 'text', price: 5, options: [ { label: 'gold', price: 500 } ] };
+		expect( optionPriceForValue( field, 'gold' ) ).toBe( 0 );
+		expect( effectivePrice( field, 'gold' ) ).toBe( 5 );
+	} );
+
+	it( 'ignores a half-numeric price exactly as PHP is_numeric does', () => {
+		expect( optionPrice( { label: 'a', price: '399abc' } ) ).toBe( 0 );
+		expect( optionPrice( { label: 'a', price: '399' } ) ).toBe( 399 );
+		expect( optionPrice( { label: 'a', price: ' ' } ) ).toBe( 0 );
+	} );
+
+	it( 'spans what the field can charge, including the fallback', () => {
+		const field = { type: 'radio', price: 25, options: [ 'Standard', { label: 'Oversized', price: 90 } ] };
+		expect( priceRange( field ) ).toEqual( [ 25, 90 ] );
+		expect( priceRange( { type: 'select', options: [ 'A', 'B' ] } ) ).toEqual( [ 0, 0 ] );
 	} );
 } );
 
@@ -88,6 +108,15 @@ describe( 'per-option pricing in the breakdown (PHP parity)', () => {
 		};
 		expect( computeAddonTotal( [ speed ], { speed: 'Express' }, 200 ) ).toBe( 20 );
 		expect( computeAddonTotal( [ speed ], { speed: 'Overnight' }, 200 ) ).toBe( 40 );
+	} );
+
+	// The same file PriceCalculatorTest.php runs — the two engines must agree.
+	describe( 'shared fixtures', () => {
+		fixture.cases.forEach( ( c ) => {
+			it( c.name, () => {
+				expect( computeAddonTotal( [ c.field ], { [ c.field.id ]: c.value }, c.base ) ).toBe( c.expected );
+			} );
+		} );
 	} );
 
 	it( 'falls back to the field price for unpriced options', () => {

@@ -121,7 +121,8 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 * NEW: Per-option pricing — each choice in a dropdown, radio, button group, colour or image swatch can charge its own amount (21x30 +399, 30x40 +499, 50x70 +799). Set it in the builder's Options tab.
 * NEW: Option prices show beside each choice on the product page automatically ("50x70 (+$799.00)"), and the field's pill summarises the span ("+$399.00 – $799.00").
 * Improve: option prices run through the field's pricing mode, so "10% Express / 20% Overnight" works exactly like flat amounts.
-* Fix: currency markup could leak a literal "&#36;" into option labels on themes that skip wptexturize.
+* Improve: a field that mixes priced and unpriced options now shows each option's real cost — an unpriced choice displays the field price it falls back to, and the summary pill spans both.
+* Developers: `clpo_option_price_suffix` filters the text appended to an option label (return an empty string to hide it).
 
 = 2.2.0 =
 * NEW: The cart and checkout now show each option's price on the line item as a price chip — "Gift wrap: Yes  +$5.00" — with per-unit, per-character, percentage and formula modes all resolving to their real amounts.

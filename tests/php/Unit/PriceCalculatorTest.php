@@ -207,6 +207,35 @@ class PriceCalculatorTest extends TestCase {
 		$this->assertSame( 40.0, PriceCalculator::addon_total( $g, array( 'speed' => 'Overnight' ), 2, 200.0 ) );
 	}
 
+	/**
+	 * The shared PHP↔JS fixture — the same file options.test.js runs, so the
+	 * two pricing engines cannot drift apart.
+	 *
+	 * @return array<string,array{0:array}>
+	 */
+	public function optionPricingProvider(): array {
+		$raw   = json_decode( (string) file_get_contents( dirname( __DIR__, 2 ) . '/fixtures/option-pricing-cases.json' ), true );
+		$cases = array();
+		foreach ( $raw['cases'] as $case ) {
+			$cases[ $case['name'] ] = array( $case );
+		}
+		return $cases;
+	}
+
+	/**
+	 * @dataProvider optionPricingProvider
+	 * @param array<string,mixed> $case
+	 */
+	public function test_shared_option_pricing_fixtures( array $case ): void {
+		$field = $case['field'];
+		$group = $this->group( array( $field + array( 'condition' => null ) ) );
+		$this->assertSame(
+			(float) $case['expected'],
+			PriceCalculator::addon_total( $group, array( $field['id'] => $case['value'] ), 2, (float) $case['base'] ),
+			$case['name']
+		);
+	}
+
 	public function test_priced_options_still_obey_conditional_logic(): void {
 		$g = $this->group(
 			array(

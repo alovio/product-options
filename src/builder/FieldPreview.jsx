@@ -1,17 +1,21 @@
 import { __ } from '@wordpress/i18n';
 import { describeCondition, conditionAction } from './describe';
-import { optionLabel, optionPrice } from '../shared/options';
+import { optionLabel, effectivePrice, hasPricedOptions } from '../shared/options';
+import { formatMoney } from '../frontend/price-update';
 
 const T = 'corelabs-product-options';
 
-/** Label plus its own price, matching what the storefront prints. */
+/** Label plus what picking it costs — the same rule the storefront prints. */
 function optionText( field, option ) {
-	const price = optionPrice( option );
-	if ( price <= 0 ) {
-		return optionLabel( option );
+	const label = optionLabel( option );
+	if ( field.priceMode === 'formula' || ! hasPricedOptions( field ) ) {
+		return label;
 	}
-	const suffix = field.priceMode === 'percent' ? `+${ price }%` : `+${ price }`;
-	return `${ optionLabel( option ) } (${ suffix })`;
+	const price = effectivePrice( field, label );
+	if ( price <= 0 ) {
+		return label;
+	}
+	return `${ label } (${ field.priceMode === 'percent' ? `+${ price }%` : `+${ formatMoney( price ) }` })`;
 }
 
 function Control( { field } ) {

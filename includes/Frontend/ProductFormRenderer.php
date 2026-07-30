@@ -69,7 +69,9 @@ final class ProductFormRenderer {
 
 		$decimals = function_exists( 'wc_get_price_decimals' ) ? wc_get_price_decimals() : 2;
 		foreach ( $groups as $group ) {
-			$rows = array_merge( $rows, \CoreLabs\ProductOptions\Cart\PriceCalculator::breakdown( $group, array(), $decimals, $base ) );
+			// Seed with the fields' defaults, the same values the form renders
+			// with, so a priced default is in the total before JS takes over.
+			$rows = array_merge( $rows, \CoreLabs\ProductOptions\Cart\PriceCalculator::breakdown( $group, self::default_values( $group ), $decimals, $base ) );
 		}
 
 		$fmt = static fn( float $amount ): string => self::money( $amount );
@@ -116,6 +118,25 @@ final class ProductFormRenderer {
 	}
 
 	/**
+	 * The values the form starts with — each field's default. Mirrors the JS
+	 * previewFieldValues() so the first paint and the first live update agree.
+	 *
+	 * @param array<string,mixed> $group
+	 * @return array<string,mixed> field id => default value
+	 */
+	private static function default_values( array $group ): array {
+		$out = array();
+		foreach ( (array) ( $group['fields'] ?? array() ) as $f ) {
+			$id      = (string) ( $f['id'] ?? '' );
+			$default = (string) ( $f['default'] ?? '' );
+			if ( '' !== $id && '' !== $default ) {
+				$out[ $id ] = $default;
+			}
+		}
+		return $out;
+	}
+
+	/**
 	 * The price pill shown at the right edge of a field-card header:
 	 * "+$8.00" / "+$2.00 each" / "+$0.50 / character" / "+10%" /
 	 * "price varies" (formula). Empty when the field carries no charge.
@@ -126,19 +147,31 @@ final class ProductFormRenderer {
 
 		$text = '';
 		$fmt  = static fn( float $amount ): string => self::money( $amount );
-		// Options priced individually: summarise the span instead of one number
-		// (each option already prints its own price beside its label).
-		if ( FieldOptions::has_priced_options( $f ) && 'percent' !== $mode ) {
+
+		// A formula decides the amount at runtime, so no per-option summary can
+		// be honest here — say so before anything else.
+		if ( 'formula' === $mode ) {
+			return '<span class="apo-price-pill">' . esc_html__( 'price varies', 'corelabs-product-options' ) . '</span>';
+		}
+		// Options priced individually: summarise what the field can charge —
+		// unpriced options fall back to the field price, so the span covers
+		// them too (each option also prints its own price beside its label).
+		if ( FieldOptions::has_priced_options( $f ) && 'price' !== ( $f['type'] ?? '' ) ) {
 			list( $min, $max ) = FieldOptions::price_range( $f );
-			$text              = $min === $max
-				? '+' . $fmt( $min )
-				/* translators: 1: lowest formatted price, 2: highest formatted price */
-				: sprintf( __( '+%1$s – %2$s', 'corelabs-product-options' ), $fmt( $min ), $fmt( $max ) );
+			if ( $max <= 0 ) {
+				return '';
+			}
+			$one = static fn( float $amount ): string => 'percent' === $mode
+				/* translators: %s: percentage number */
+				? sprintf( __( '+%s%%', 'corelabs-product-options' ), (string) ( $amount + 0 ) )
+				: '+' . $fmt( $amount );
+			$text = $min === $max
+				? $one( $min )
+				/* translators: 1: lowest price, 2: highest price */
+				: sprintf( __( '%1$s – %2$s', 'corelabs-product-options' ), $one( $min ), $one( $max ) );
 			return '<span class="apo-price-pill">' . esc_html( $text ) . '</span>';
 		}
-		if ( 'formula' === $mode ) {
-			$text = __( 'price varies', 'corelabs-product-options' );
-		} elseif ( $price <= 0 || 'price' === ( $f['type'] ?? '' ) ) {
+		if ( $price <= 0 || 'price' === ( $f['type'] ?? '' ) ) {
 			$text = ''; // surcharge fields already print their own +fee row.
 		} elseif ( 'percent' === $mode ) {
 			/* translators: %s: percentage number */
@@ -158,8 +191,8 @@ final class ProductFormRenderer {
 
 	/**
 	 * Formatted money as PLAIN text. wc_price() returns markup whose currency
-	 * symbol is an HTML entity, so strip the tags and decode — otherwise a
-	 * theme that skips wptexturize would print a literal "&#36;".
+	 * symbol is an HTML entity, so strip the tags and decode it — callers can
+	 * then escape once, and comparisons/tests see real characters.
 	 */
 	private static function money( float $amount ): string {
 		if ( ! function_exists( 'wc_price' ) ) {
@@ -169,8 +202,16 @@ final class ProductFormRenderer {
 	}
 
 	/**
-	 * What a single choice reads as: its label, plus its own price when it has
-	 * one ("21x30 (+£399.00)") so shoppers compare without opening the cart.
+	 * What a single choice reads as: its label, plus what picking it costs
+	 * ("21x30 (+£399.00)") so shoppers compare without opening the cart.
+	 *
+	 * The amount comes from the same helper pricing uses, so an unpriced
+	 * option shows the field price it falls back to and a repeated label shows
+	 * the price that label will actually be charged. Only fields that price
+	 * options individually get suffixes — otherwise the field's own pill
+	 * already says it once. Formula fields never do: their amount is only
+	 * known once the customer fills the form.
+	 *
 	 * The submitted value stays the bare label — only the display changes.
 	 *
 	 * @param array<string,mixed> $f
@@ -178,16 +219,34 @@ final class ProductFormRenderer {
 	 */
 	private static function option_text( array $f, $option ): string {
 		$label = FieldOptions::label( $option );
-		$price = FieldOptions::price( $option );
-		if ( $price <= 0 || ! apply_filters( 'clpo_option_price_suffix', true, $f ) ) {
+		if ( 'formula' === (string) ( $f['priceMode'] ?? 'fixed' ) || ! FieldOptions::has_priced_options( $f ) ) {
+			return $label;
+		}
+		$price = FieldOptions::effective_price( $f, $label );
+		if ( $price <= 0 ) {
 			return $label;
 		}
 		if ( 'percent' === (string) ( $f['priceMode'] ?? 'fixed' ) ) {
-			/* translators: 1: option label, 2: percentage number */
-			return sprintf( __( '%1$s (+%2$s%%)', 'corelabs-product-options' ), $label, (string) ( $price + 0 ) );
+			/* translators: %s: percentage number */
+			$suffix = sprintf( __( '+%s%%', 'corelabs-product-options' ), (string) ( $price + 0 ) );
+		} else {
+			$suffix = '+' . self::money( $price );
 		}
-		/* translators: 1: option label, 2: formatted price */
-		return sprintf( __( '%1$s (+%2$s)', 'corelabs-product-options' ), $label, self::money( $price ) );
+
+		/**
+		 * Filter the price suffix appended to an option label. Return an empty
+		 * string to print the bare label.
+		 *
+		 * @param string $suffix e.g. "+$399.00".
+		 * @param mixed  $option the option (string or {label, price, …}).
+		 * @param array  $f      the field definition.
+		 */
+		$suffix = (string) apply_filters( 'clpo_option_price_suffix', $suffix, $option, $f );
+		if ( '' === $suffix ) {
+			return $label;
+		}
+		/* translators: 1: option label, 2: price suffix, e.g. "+$399.00" */
+		return sprintf( __( '%1$s (%2$s)', 'corelabs-product-options' ), $label, $suffix );
 	}
 
 	private static function type_label( string $type ): string {
@@ -434,8 +493,7 @@ final class ProductFormRenderer {
 				printf( '<input type="hidden" name="%s" value="yes" />', esc_attr( $name ) );
 				if ( 'formula' !== ( $f['priceMode'] ?? 'fixed' ) && (float) ( $f['price'] ?? 0 ) > 0 ) {
 					// Formula surcharges show live in the breakdown box instead.
-					$fee = function_exists( 'wc_price' ) ? wp_strip_all_tags( wc_price( (float) $f['price'] ) ) : number_format( (float) $f['price'], 2 );
-					printf( '<span class="apo-fee">+%s</span>', esc_html( $fee ) );
+					printf( '<span class="apo-fee">+%s</span>', esc_html( self::money( (float) $f['price'] ) ) );
 				}
 				break;
 			default: // text

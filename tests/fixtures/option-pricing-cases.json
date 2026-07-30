@@ -1,0 +1,153 @@
+{
+  "_comment": "Shared PHP<->JS parity cases for per-option pricing. PHP: PriceCalculatorTest::test_shared_option_pricing_fixtures. JS: options.test.js 'shared fixtures'. Each case: a single field, a submitted value, the base price, and the amount that field must charge.",
+  "cases": [
+    {
+      "name": "option price wins over an absent field price",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 0,
+        "priceMode": "fixed",
+        "options": [
+          { "label": "21x30", "price": 399 },
+          { "label": "30x40", "price": 499 },
+          { "label": "50x70", "price": 799 }
+        ]
+      },
+      "value": "50x70",
+      "base": 0,
+      "expected": 799
+    },
+    {
+      "name": "unpriced option falls back to the field price",
+      "field": {
+        "id": "size",
+        "type": "radio",
+        "price": 25,
+        "priceMode": "fixed",
+        "options": [ "Standard", { "label": "Oversized", "price": 90 } ]
+      },
+      "value": "Standard",
+      "base": 0,
+      "expected": 25
+    },
+    {
+      "name": "priced option wins over a non-zero field price",
+      "field": {
+        "id": "size",
+        "type": "radio",
+        "price": 25,
+        "priceMode": "fixed",
+        "options": [ "Standard", { "label": "Oversized", "price": 90 } ]
+      },
+      "value": "Oversized",
+      "base": 0,
+      "expected": 90
+    },
+    {
+      "name": "option price runs through percent mode",
+      "field": {
+        "id": "speed",
+        "type": "buttons",
+        "price": 0,
+        "priceMode": "percent",
+        "options": [ { "label": "Express", "price": 10 }, { "label": "Overnight", "price": 20 } ]
+      },
+      "value": "Overnight",
+      "base": 200,
+      "expected": 40
+    },
+    {
+      "name": "a value matching no option charges nothing",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 0,
+        "priceMode": "fixed",
+        "options": [ { "label": "21x30", "price": 399 } ]
+      },
+      "value": "21x30 (+$399.00)",
+      "base": 0,
+      "expected": 0
+    },
+    {
+      "name": "duplicate labels both charge the first match",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 0,
+        "priceMode": "fixed",
+        "options": [ { "label": "Large", "price": 399 }, { "label": "Large", "price": 799 } ]
+      },
+      "value": "Large",
+      "base": 0,
+      "expected": 399
+    },
+    {
+      "name": "a non-numeric option price is ignored, field price applies",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 12,
+        "priceMode": "fixed",
+        "options": [ { "label": "Odd", "price": "399abc" } ]
+      },
+      "value": "Odd",
+      "base": 0,
+      "expected": 12
+    },
+    {
+      "name": "a negative option price is ignored, field price applies",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 12,
+        "priceMode": "fixed",
+        "options": [ { "label": "Odd", "price": -5 } ]
+      },
+      "value": "Odd",
+      "base": 0,
+      "expected": 12
+    },
+    {
+      "name": "options on a non-choice field never price it",
+      "field": {
+        "id": "note",
+        "type": "text",
+        "price": 5,
+        "priceMode": "fixed",
+        "options": [ { "label": "gold", "price": 500 } ]
+      },
+      "value": "gold",
+      "base": 0,
+      "expected": 5
+    },
+    {
+      "name": "formula mode ignores option prices entirely",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 0,
+        "priceMode": "formula",
+        "formula": "2 * 3",
+        "options": [ { "label": "50x70", "price": 799 } ]
+      },
+      "value": "50x70",
+      "base": 0,
+      "expected": 6
+    },
+    {
+      "name": "an empty selection charges nothing",
+      "field": {
+        "id": "size",
+        "type": "select",
+        "price": 0,
+        "priceMode": "fixed",
+        "options": [ { "label": "21x30", "price": 399 } ]
+      },
+      "value": "",
+      "base": 0,
+      "expected": 0
+    }
+  ]
+}
