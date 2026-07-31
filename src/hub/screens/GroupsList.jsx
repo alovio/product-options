@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { navigate } from '../router';
 import FlameMark from '../../shared/FlameMark';
+import SupportButton from '../../shared/SupportButton';
 
 const T = 'corelabs-product-options';
 
@@ -112,9 +113,6 @@ export default function GroupsList() {
 					<a href="#/settings">{ __( 'Settings', T ) }</a>
 				</nav>
 				<div className="clpo-grow"></div>
-				<a className="clpo-more" href="https://alovio.org/calculator" target="_blank" rel="noopener noreferrer">
-					{ __( 'Try Alovio Calculator', T ) } ↗
-				</a>
 				<button className="clpo-btn-ghost" disabled={ busy } onClick={ () => exportGroups( null ) }>
 					{ __( 'Export all', T ) }
 				</button>
@@ -125,6 +123,7 @@ export default function GroupsList() {
 				<button className="clpo-btn-primary" disabled={ busy } onClick={ createGroup }>
 					＋ { __( 'New group', T ) }
 				</button>
+				<SupportButton />
 			</div>
 
 			<div className="clpo-list-wrap">

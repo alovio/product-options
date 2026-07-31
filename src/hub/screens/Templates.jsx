@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { navigate } from '../router';
 import FlameMark from '../../shared/FlameMark';
+import SupportButton from '../../shared/SupportButton';
 
 const T = 'corelabs-product-options';
 
@@ -36,6 +37,7 @@ export default function Templates() {
 					<a href="#/settings">{ __( 'Settings', T ) }</a>
 				</nav>
 				<div className="clpo-grow"></div>
+				<SupportButton />
 			</div>
 			<div className="clpo-list-wrap">
 				<h2 className="clpo-h2">{ __( 'Start from a template', T ) }</h2>

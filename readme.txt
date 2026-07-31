@@ -1,5 +1,6 @@
 === Alovio Product Options – Extra Product Fields & Add-Ons for WooCommerce ===
 Contributors: 74h1r
+Donate link: https://alovio.org/donate
 Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0

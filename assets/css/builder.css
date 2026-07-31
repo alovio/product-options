@@ -102,7 +102,6 @@ body.clpo-hub-page #wpbody-content > .error { display: none; }
 .clpo-hdr > * { flex: none; }
 .clpo-hdr button,
 .clpo-hdr .clpo-logo,
-.clpo-hdr .clpo-more,
 .clpo-hdr .clpo-status,
 .clpo-hdr .clpo-draft-pill { white-space: nowrap; }
 /* The group name is the one thing allowed to give: it is free text, so it
@@ -120,8 +119,6 @@ body.clpo-hub-page #wpbody-content > .error { display: none; }
 .clpo-logo .clpo-flame { display: block; }
 .clpo-logo .clpo-sub { color: #a8a29e; font-weight: var(--clpo-fw-med); font-size: var(--clpo-fs-md); margin-left: 2px; }
 .clpo-hdr .clpo-grow { flex: 1; }
-.clpo-more { color: #a8a29e; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); text-decoration: none; margin-right: 4px; }
-.clpo-more:hover { color: #fdba74; }
 .clpo-status { display: flex; align-items: center; gap: 7px; color: #a8a29e; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-med); }
 .clpo-status .clpo-dot { width: 7px; height: 7px; border-radius: 50%; background: #57534e; }
 .clpo-status.is-dirty .clpo-dot { background: #f59e0b; }
@@ -156,10 +153,6 @@ body.clpo-hub-page #wpbody-content > .error { display: none; }
 	/* "Alovio" and the group name already say where we are. */
 	.clpo-logo .clpo-sub { display: none; }
 }
-@container clpo-hdr (max-width: 1160px) {
-	/* Cross-promo — the first thing to go once the header is working hard. */
-	.clpo-more { display: none; }
-}
 @container clpo-hdr (max-width: 1000px) {
 	/* The dot carries saved/dirty/error on its own; the span keeps a title. */
 	.clpo-status .clpo-lbl-wide { display: none; }
@@ -170,6 +163,25 @@ body.clpo-hub-page #wpbody-content > .error { display: none; }
 	.clpo-hdr button .clpo-lbl-wide { display: none; }
 	.clpo-hdr .clpo-btn-ghost { padding: 0 11px; }
 }
+
+/* ── Support ──────────────────────────────────────────────────
+   Sits last in the header, deliberately quieter than the primary action
+   beside it: a request for money must never out-shout Save & publish. */
+.clpo-hdr .clpo-support .clpo-uic { color: #fb7185; }
+.clpo-hdr .clpo-support:hover { border-color: #fb7185; color: #fff; }
+
+.clpo-support-modal { max-width: 540px; }
+.clpo-support-modal p {
+	font-size: var(--clpo-fs-md); line-height: 1.65;
+	color: var(--clpo-ink-2); margin: 0 0 14px;
+}
+.clpo-support-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.clpo-support-actions a { text-decoration: none; }
+/* .clpo-btn-ghost is dressed for the dark header; on the modal's white
+   background it needs its own skin rather than a second component. */
+.clpo-btn-ghost.is-light { border-color: var(--clpo-line-2); color: var(--clpo-ink-2); background: #fff; }
+.clpo-btn-ghost.is-light:hover { border-color: var(--clpo-ink-3); color: var(--clpo-ink); }
+.clpo-support-actions .clpo-linkbtn { margin-left: auto; color: var(--clpo-ink-3); }
 
 /* ── Workspace ──────────────────────────────────────────────── */
 .clpo-work {

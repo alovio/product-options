@@ -3,6 +3,7 @@ import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import FlameMark from '../../shared/FlameMark';
+import SupportButton from '../../shared/SupportButton';
 
 const T = 'corelabs-product-options';
 
@@ -33,6 +34,7 @@ export default function Settings() {
 					<a className="is-on" href="#/settings">{ __( 'Settings', T ) }</a>
 				</nav>
 				<div className="clpo-grow"></div>
+				<SupportButton />
 			</div>
 			<div className="clpo-list-wrap" style={ { maxWidth: 560 } }>
 				<h2 className="clpo-h2">{ __( 'Settings', T ) }</h2>

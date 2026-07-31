@@ -9,6 +9,7 @@ import PreviewCanvas from './PreviewCanvas';
 import SettingsPanel from './SettingsPanel';
 import FlameMark from '../shared/FlameMark';
 import UiIcon from '../shared/UiIcon';
+import SupportButton from '../shared/SupportButton';
 
 const T = 'corelabs-product-options';
 
@@ -127,10 +128,6 @@ export default function AppShell( { groupId, onBack } ) {
 				/>
 				{ isDraft && <span className="clpo-draft-pill">{ __( 'Draft', T ) }</span> }
 				<div className="clpo-grow"></div>
-				{ /* Alovio family cross-promo — the Calculator is the flagship. */ }
-				<a className="clpo-more" href="https://alovio.org/calculator" target="_blank" rel="noopener noreferrer">
-					{ __( 'Try Alovio Calculator', T ) } ↗
-				</a>
 				<span className={ statusCls } title={ statusTxt }>
 					<span className="clpo-dot"></span>
 					<span className="clpo-lbl-wide">{ statusTxt }</span>
@@ -153,6 +150,7 @@ export default function AppShell( { groupId, onBack } ) {
 						{ saving ? __( 'Saving…', T ) : __( 'Save', T ) }
 					</button>
 				) }
+				<SupportButton />
 			</div>
 			<div className="clpo-work">
 				<Palette />
