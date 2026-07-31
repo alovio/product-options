@@ -106,7 +106,10 @@ body.clpo-hub-page #wpbody-content > .error { display: none; }
 .clpo-hdr .clpo-draft-pill { white-space: nowrap; }
 /* The group name is the one thing allowed to give: it is free text, so it
    truncates rather than pushing the controls off the row. */
-.clpo-hdr .clpo-title-input { flex: 0 1 auto; min-width: 90px; text-overflow: ellipsis; }
+/* Wide enough for a real group name ("Made-to-measure blinds" truncated at the
+   old 180px even with 400px of header to spare), and still the first thing to
+   give up room when the header runs out. */
+.clpo-hdr .clpo-title-input { flex: 0 1 auto; width: 260px; min-width: 90px; text-overflow: ellipsis; }
 .clpo-uic { display: block; flex: none; }
 
 .clpo-logo { display: flex; align-items: center; gap: 10px; font-weight: var(--clpo-fw-bold); font-size: var(--clpo-fs-lg); }
