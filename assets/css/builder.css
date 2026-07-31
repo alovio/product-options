@@ -384,7 +384,38 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-title-input { background: transparent; border: 1px solid transparent; border-radius: 6px; color: #f5f5f4; font-size: var(--clpo-fs-lg); font-weight: var(--clpo-fw-med); padding: 4px 8px; min-width: 180px; }
 .clpo-title-input:hover, .clpo-title-input:focus { border-color: #57534e; outline: none; background: rgba(255,255,255,0.04); }
 .clpo-draft-pill { font-size: var(--clpo-fs-xs); text-transform: uppercase; letter-spacing: .04em; color: #fdba74; border: 1px solid #9a3412; border-radius: 999px; padding: 2px 8px; }
-.clpo-sim-input { width: 90px; border: 1px solid #e2e4e7; border-radius: 4px; font-size: var(--clpo-fs-xs); padding: 1px 6px; margin-left: 4px; }
+/* Editable chip inside a .clpo-sim pill. It was styled for a light surface —
+   white fill, light-grey border, 4px corners — while sitting on the dark
+   simulation bar, and wp-admin's min-height:30px made it taller than the 30px
+   pill containing it. Dress it as part of the pill instead: it should read as
+   the editable slot of the chip, not a form control dropped on top of one. */
+.clpo-sim input.clpo-sim-input {
+	width: 84px;
+	height: 22px;
+	min-height: 0;
+	margin-left: 2px;
+	padding: 0 8px;
+	box-sizing: border-box;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.09);
+	box-shadow: none;
+	color: inherit;   /* follows .is-active's amber */
+	font-size: var(--clpo-fs-xs);
+	font-weight: var(--clpo-fw-med);
+	line-height: 20px;
+}
+.clpo-sim input.clpo-sim-input::placeholder { color: rgba(255, 255, 255, 0.34); font-weight: 400; }
+.clpo-sim input.clpo-sim-input:focus {
+	outline: none;
+	border-color: rgba(249, 115, 22, 0.75);
+	background: rgba(255, 255, 255, 0.14);
+	box-shadow: none;
+}
+/* Spinners render as light-on-light arrows here and add width we don't have. */
+.clpo-sim input.clpo-sim-input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+.clpo-sim input.clpo-sim-input[type="number"]::-webkit-outer-spin-button,
+.clpo-sim input.clpo-sim-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .clpo-swdot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 5px; border: 1px solid rgba(0,0,0,.15); vertical-align: middle; }
 .clpo-fee-badge { margin-left: 8px; font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-med); color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 999px; padding: 0 7px; }
 .clpo-input--fee { color: #15803d; font-weight: var(--clpo-fw-med); max-width: 110px; }
