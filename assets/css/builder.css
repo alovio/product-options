@@ -42,13 +42,13 @@
 }
 
 /* ── Full-bleed app inside wp-admin ─────────────────────────── */
-body.clpo-builder-page #wpcontent { padding-left: 0; }
-body.clpo-builder-page #wpbody-content { padding-bottom: 0; }
-body.clpo-builder-page #wpfooter { display: none; }
+body.clpo-hub-page #wpcontent { padding-left: 0; }
+body.clpo-hub-page #wpbody-content { padding-bottom: 0; }
+body.clpo-hub-page #wpfooter { display: none; }
 /* Admin notices would push the full-height app down and break its layout. */
-body.clpo-builder-page #wpbody-content > .notice,
-body.clpo-builder-page #wpbody-content > .update-nag,
-body.clpo-builder-page #wpbody-content > .error { display: none; }
+body.clpo-hub-page #wpbody-content > .notice,
+body.clpo-hub-page #wpbody-content > .update-nag,
+body.clpo-hub-page #wpbody-content > .error { display: none; }
 
 /* Invisible overlay selects (chips/tags disguise a native select): neutralise
    wp-admin's global select styling (min-height 40px etc.) so the overlay matches
@@ -147,24 +147,25 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-btn-primary:hover { filter: brightness(1.06); }
 .clpo-btn-primary:disabled { opacity: 0.6; cursor: default; }
 
-/* Progressive shedding, least useful first. Laid out in full the header needs
+/* Progressive shedding, least useful first. Widths are CONTENT box: a
+   container query measures inside the header's 20px side padding. Laid out in full the header needs
    ~1280px; on a 1440px laptop wp-admin's sidebar leaves it ~1280, so this is
    the common case, not an edge case. Save/publish and the group name survive
    to the narrowest width — they are why anyone is on this screen. */
-@container clpo-hdr (max-width: 1240px) {
+@container clpo-hdr (max-width: 1290px) {
 	/* "Alovio" and the group name already say where we are. */
 	.clpo-logo .clpo-sub { display: none; }
 }
-@container clpo-hdr (max-width: 1120px) {
+@container clpo-hdr (max-width: 1160px) {
 	/* Cross-promo — the first thing to go once the header is working hard. */
 	.clpo-more { display: none; }
 }
-@container clpo-hdr (max-width: 980px) {
+@container clpo-hdr (max-width: 1000px) {
 	/* The dot carries saved/dirty/error on its own; the span keeps a title. */
 	.clpo-status .clpo-lbl-wide { display: none; }
 	.clpo-status { gap: 0; }
 }
-@container clpo-hdr (max-width: 860px) {
+@container clpo-hdr (max-width: 890px) {
 	/* Icon-only Groups and Undo. Both keep an aria-label. */
 	.clpo-hdr button .clpo-lbl-wide { display: none; }
 	.clpo-hdr .clpo-btn-ghost { padding: 0 11px; }
