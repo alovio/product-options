@@ -5,7 +5,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,14 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.4.0 =
+* NEW: A "Donate" button in the builder header. It opens a short note explaining that the plugin is free and stays free — no paid tier, no locked field types — and offers a coffee or a review for anyone who wants to support it. It replaces the cross-promo link that used to sit in the header.
+* Improve: every font size on the product page now scales with your theme. Help text, swatch captions, file names and error messages were fixed pixel sizes, so on a theme with a large base font (Twenty Twenty-Five uses 22px) a 12px description sat under a 22px label. Sizes are relative now, and text inputs, selects and file pickers match the surrounding text instead of the browser's ~13px default.
+* Improve: the builder's own typography runs on one scale instead of twelve near-identical sizes (10, 10.5, 11, 11.5, 12, 12.5px…), so labels, hints and headings read as a hierarchy.
+* Fix: the builder now sits flush against the admin menu and fills the screen. Its full-bleed rules were keyed to a CSS class the page never had, so the layout kept wp-admin's padding, showed the footer under a full-height app, and let admin notices push the whole builder down.
+* Fix: the builder header no longer wraps its labels into two lines ("Save & / publish") on laptop screens. It stays one row and hides its least important items as space runs out.
+* Fix: the text and number inputs in the builder's PREVIEW AS bar were styled for a light background and overflowed the dark chip holding them.
 
 = 2.3.0 =
 * NEW: Per-option pricing — each choice in a dropdown, radio, button group, colour or image swatch can charge its own amount (21x30 +399, 30x40 +499, 50x70 +799). Set it in the builder's Options tab.
