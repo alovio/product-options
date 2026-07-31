@@ -144,6 +144,28 @@ body.clpo-hub-page #wpbody-content > .error { display: none; }
 .clpo-btn-primary:hover { filter: brightness(1.06); }
 .clpo-btn-primary:disabled { opacity: 0.6; cursor: default; }
 
+/* An anchor dressed as a button. wp-admin styles bare `a:hover` and `a:focus`
+   (0,1,1), which outranks the class rules above (0,1,0), so the label turned
+   wp-admin blue on hover and picked up a blue focus glow — over an orange
+   fill. These restate the button's own colours for every link state. */
+a.clpo-btn-primary,
+a.clpo-btn-primary:hover,
+a.clpo-btn-primary:focus,
+a.clpo-btn-primary:active { color: #fff; text-decoration: none; }
+a.clpo-btn-primary:focus { box-shadow: 0 4px 14px -4px rgba(234, 88, 12, 0.6); }
+
+a.clpo-btn-ghost,
+a.clpo-btn-ghost:hover,
+a.clpo-btn-ghost:focus,
+a.clpo-btn-ghost:active { text-decoration: none; box-shadow: none; }
+a.clpo-btn-ghost.is-light,
+a.clpo-btn-ghost.is-light:focus { color: var(--clpo-ink-2); }
+a.clpo-btn-ghost.is-light:hover,
+a.clpo-btn-ghost.is-light:active { color: var(--clpo-ink); border-color: var(--clpo-ink-3); }
+
+a.clpo-btn-primary:focus-visible,
+a.clpo-btn-ghost:focus-visible { outline: 2px solid var(--clpo-flame); outline-offset: 2px; }
+
 /* Progressive shedding, least useful first. Widths are CONTENT box: a
    container query measures inside the header's 20px side padding. Laid out in full the header needs
    ~1280px; on a 1440px laptop wp-admin's sidebar leaves it ~1280, so this is
