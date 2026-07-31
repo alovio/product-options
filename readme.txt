@@ -170,6 +170,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 
 == Upgrade Notice ==
 
+= 2.4.0 =
+Storefront text now scales with your theme instead of sitting at fixed pixel sizes, so option cards look right on themes with a large base font. The builder gets a proper full-screen layout, a header that stays on one row, and a Donate button explaining that this plugin stays free.
+
 = 2.3.0 =
 Per-option pricing: every choice in a dropdown, radio, button group or swatch can now charge its own amount, shown beside the option and in the cart.
 
