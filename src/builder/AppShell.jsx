@@ -8,6 +8,7 @@ import SimulationBar from './SimulationBar';
 import PreviewCanvas from './PreviewCanvas';
 import SettingsPanel from './SettingsPanel';
 import FlameMark from '../shared/FlameMark';
+import UiIcon from '../shared/UiIcon';
 
 const T = 'corelabs-product-options';
 
@@ -109,7 +110,10 @@ export default function AppShell( { groupId, onBack } ) {
 	return (
 		<div className="clpo-app">
 			<div className="clpo-hdr">
-				<button className="clpo-btn-ghost" onClick={ onBack } aria-label={ __( 'Back to groups', T ) }>← { __( 'Groups', T ) }</button>
+				<button className="clpo-btn-ghost" onClick={ onBack } aria-label={ __( 'Back to groups', T ) }>
+					<UiIcon name="back" />
+					<span className="clpo-lbl-wide">{ __( 'Groups', T ) }</span>
+				</button>
 				<div className="clpo-logo">
 					<span className="clpo-mark"><FlameMark /></span>
 					Alovio <span className="clpo-sub">{ __( 'Product Options', T ) }</span>
@@ -127,8 +131,14 @@ export default function AppShell( { groupId, onBack } ) {
 				<a className="clpo-more" href="https://alovio.org/calculator" target="_blank" rel="noopener noreferrer">
 					{ __( 'Try Alovio Calculator', T ) } ↗
 				</a>
-				<span className={ statusCls }><span className="clpo-dot"></span>{ statusTxt }</span>
-				<button className="clpo-btn-ghost" disabled={ ! canUndo } onClick={ undo }>⟲ { __( 'Undo', T ) }</button>
+				<span className={ statusCls } title={ statusTxt }>
+					<span className="clpo-dot"></span>
+					<span className="clpo-lbl-wide">{ statusTxt }</span>
+				</span>
+				<button className="clpo-btn-ghost" disabled={ ! canUndo } onClick={ undo } aria-label={ __( 'Undo', T ) }>
+					<UiIcon name="undo" />
+					<span className="clpo-lbl-wide">{ __( 'Undo', T ) }</span>
+				</button>
 				{ isDraft ? (
 					<>
 						<button className="clpo-btn-ghost" disabled={ saving } onClick={ () => save( false ) }>

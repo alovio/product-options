@@ -86,9 +86,30 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 	color: #fff;
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 14px;
 	padding: 0 20px;
+	/* Queried below, so the header sheds items on its OWN width. A viewport
+	   media query would be wrong here: wp-admin's sidebar is 160px wide, or
+	   36px folded, so the same viewport gives the header two different widths. */
+	container-type: inline-size;
+	container-name: clpo-hdr;
 }
+
+/* The header is a single row, always. Everything it holds is a label that
+   means nothing broken in half ("Save & / publish", "All changes / saved"),
+   so nothing may wrap or shrink — when the row runs out of room the rules at
+   the end of this block DROP the least useful items instead. */
+.clpo-hdr > * { flex: none; }
+.clpo-hdr button,
+.clpo-hdr .clpo-logo,
+.clpo-hdr .clpo-more,
+.clpo-hdr .clpo-status,
+.clpo-hdr .clpo-draft-pill { white-space: nowrap; }
+/* The group name is the one thing allowed to give: it is free text, so it
+   truncates rather than pushing the controls off the row. */
+.clpo-hdr .clpo-title-input { flex: 0 1 auto; min-width: 90px; text-overflow: ellipsis; }
+.clpo-uic { display: block; flex: none; }
+
 .clpo-logo { display: flex; align-items: center; gap: 10px; font-weight: var(--clpo-fw-bold); font-size: var(--clpo-fs-lg); }
 .clpo-logo .clpo-mark {
 	width: 28px; height: 28px; border-radius: 8px;
@@ -125,6 +146,29 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 }
 .clpo-btn-primary:hover { filter: brightness(1.06); }
 .clpo-btn-primary:disabled { opacity: 0.6; cursor: default; }
+
+/* Progressive shedding, least useful first. Laid out in full the header needs
+   ~1280px; on a 1440px laptop wp-admin's sidebar leaves it ~1280, so this is
+   the common case, not an edge case. Save/publish and the group name survive
+   to the narrowest width — they are why anyone is on this screen. */
+@container clpo-hdr (max-width: 1240px) {
+	/* "Alovio" and the group name already say where we are. */
+	.clpo-logo .clpo-sub { display: none; }
+}
+@container clpo-hdr (max-width: 1120px) {
+	/* Cross-promo — the first thing to go once the header is working hard. */
+	.clpo-more { display: none; }
+}
+@container clpo-hdr (max-width: 980px) {
+	/* The dot carries saved/dirty/error on its own; the span keeps a title. */
+	.clpo-status .clpo-lbl-wide { display: none; }
+	.clpo-status { gap: 0; }
+}
+@container clpo-hdr (max-width: 860px) {
+	/* Icon-only Groups and Undo. Both keep an aria-label. */
+	.clpo-hdr button .clpo-lbl-wide { display: none; }
+	.clpo-hdr .clpo-btn-ghost { padding: 0 11px; }
+}
 
 /* ── Workspace ──────────────────────────────────────────────── */
 .clpo-work {
