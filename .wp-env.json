@@ -1,8 +1,7 @@
 {
 	"plugins": [ "https://downloads.wordpress.org/plugin/woocommerce.zip" ],
 	"mappings": {
-		"wp-content/plugins/corelabs-product-options": ".",
-		"wp-content/plugins/corelabs-product-options-pro": "./corelabs-product-options-pro"
+		"wp-content/plugins/corelabs-product-options": "."
 	},
 	"config": {
 		"WP_DEBUG": true,

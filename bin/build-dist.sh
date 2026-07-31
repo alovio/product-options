@@ -23,6 +23,7 @@ rsync -a \
 	--exclude='package-lock.json' \
 	--exclude='phpunit.xml.dist' --exclude='.phpunit.result.cache' --exclude='dist' \
 	--exclude='vendor' \
+	--exclude='corelabs-product-options-pro' \
 	"$ROOT/" "$DEST/"
 
 # Production Composer autoloader (no dev deps). composer.json is kept in the zip
