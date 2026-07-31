@@ -1,4 +1,21 @@
 /**
+ * Typography scale. Sizes are relative (em) so option cards inherit the
+ * theme's body size and only the relationships between them are ours —
+ * a hard-coded 12px reads fine on a 16px theme and tiny on a 22px one.
+ *
+ * Rule: apply a token only where the parent sets no font-size. Inside an
+ * element that already carries one (e.g. .apo-file-item), inherit instead —
+ * em multiplies down the tree.
+ */
+:root {
+	--apo-fs-xs: 0.78em;   /* price pills, counters, tooltips */
+	--apo-fs-sm: 0.85em;   /* help text, errors, file names, swatch labels */
+	--apo-fs-md: 1em;      /* controls — the theme's own size */
+	--apo-fs-lg: 1.05em;   /* section headings, breakdown total */
+	--apo-fw-strong: 600;
+}
+
+/**
  * Storefront — "field cards" design (2.0): every option lives in a soft card
  * that lights up when engaged. Theme-neutral: colors derive from currentColor
  * and rgba() grays so the plugin blends with any properly built theme.
@@ -41,7 +58,7 @@
 
 .apo-heading {
 	margin: 0 0 2px;
-	font-size: 1.05em;
+	font-size: var(--apo-fs-lg);
 }
 
 /* ── Card header: label left, price pill right ──────────────────────── */
@@ -50,7 +67,11 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 10px;
-	font-weight: 600;
+	/* Pinned rather than inherited: many themes size `label` independently of
+	   body text (Twenty Twenty-One: 18px label on a 20px base), which would
+	   desync our label from our own input. The card's hierarchy is ours. */
+	font-size: var(--apo-fs-md);
+	font-weight: var(--apo-fw-strong);
 	margin-bottom: 7px;
 	width: 100%;
 }
@@ -63,8 +84,8 @@
 
 .apo-price-pill {
 	flex-shrink: 0;
-	font-size: 0.78em;
-	font-weight: 600;
+	font-size: var(--apo-fs-xs);
+	font-weight: var(--apo-fw-strong);
 	line-height: 1.6;
 	color: #15803d;
 	background: #f0fdf4;
@@ -80,7 +101,7 @@
 .apo-field__desc {
 	display: block;
 	color: #6b7280;
-	font-size: 12px;
+	font-size: var(--apo-fs-sm);
 	margin: -2px 0 8px;
 }
 
@@ -102,6 +123,14 @@
 .apo-field select {
 	width: 100%;
 	max-width: 100%;
+	/* Form controls do NOT inherit typography by default — a browser renders
+	   them at ~13.3px regardless of the theme, so a 22px-base theme showed a
+	   22px label above a 13px input. Match the surrounding text instead.
+	   (Side benefit: >=16px on mobile stops iOS zooming on focus.) */
+	font-family: inherit;
+	font-size: var(--apo-fs-md);
+	line-height: inherit;
+	color: inherit;
 	background: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.16);
 	border-radius: 7px;
@@ -157,6 +186,16 @@
 }
 
 /* ── Choice rows (radio) ─────────────────────────────────────────────── */
+/* Our choice rows and swatches ARE <label> elements, and plenty of themes size
+   `label` independently of body text (Twenty Twenty-One: 0.9em). Left alone,
+   that theme size becomes the base our child tokens multiply against — the
+   swatch caption resolved to 0.70x instead of 0.78x. Normalise the container
+   so child tokens always resolve against a base we control. */
+.apo-opt,
+.apo-swatch {
+	font-size: var(--apo-fs-md);
+}
+
 .apo-opt {
 	display: inline-flex;
 	align-items: center;
@@ -198,7 +237,7 @@
 	background: var(--apo-fill, #2b2b2b);
 	color: #fff;
 	-webkit-text-fill-color: #fff;
-	font-weight: 600;
+	font-weight: var(--apo-fw-strong);
 }
 .apo-opt.apo-btnopt input:focus-visible + span { outline: 2px solid var(--apo-fill, #2b2b2b); outline-offset: 2px; }
 
@@ -232,7 +271,7 @@
 	transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-.apo-swatch__label { font-size: 11px; color: #6b7280; }
+.apo-swatch__label { font-size: var(--apo-fs-xs); color: #6b7280; }
 
 .apo-swatch:hover .apo-swatch__dot,
 .apo-swatch:hover .apo-swatch__img { transform: scale(1.07); }
@@ -241,7 +280,7 @@
 	box-shadow: 0 0 0 2px currentColor;
 	transform: scale(1.05);
 }
-.apo-swatch input:checked ~ .apo-swatch__label { color: inherit; font-weight: 600; }
+.apo-swatch input:checked ~ .apo-swatch__label { color: inherit; font-weight: var(--apo-fw-strong); }
 .apo-swatch input:focus-visible ~ .apo-swatch__dot,
 .apo-swatch input:focus-visible ~ .apo-swatch__img { outline: 2px solid currentColor; outline-offset: 3px; }
 
@@ -279,7 +318,7 @@
 	border-right: 1px solid rgba(0, 0, 0, 0.1);
 	border-radius: 0;
 	min-height: 2.1em;
-	font-weight: 600;
+	font-weight: var(--apo-fw-strong);
 	-moz-appearance: textfield;
 }
 .apo-qty input::-webkit-outer-spin-button,
@@ -290,7 +329,7 @@
 	background: rgba(0, 0, 0, 0.03);
 	width: 36px;
 	cursor: pointer;
-	font-size: 15px;
+	font-size: var(--apo-fs-md);
 	line-height: 1;
 	transition: background 0.12s ease;
 }
@@ -307,10 +346,14 @@
 	max-width: 100%;
 	box-sizing: border-box;
 	cursor: pointer;
+	/* Same reason as the text inputs: a file input keeps the UA's ~13px font
+	   otherwise, so the "No file chosen" text ignored the theme entirely. */
+	font-family: inherit;
+	font-size: var(--apo-fs-sm);
 	transition: border-color 0.12s ease;
 }
 .apo-file .apo-file-picker:hover { border-color: currentColor; }
-.apo-file-status { font-size: 12px; color: #6b7280; }
+.apo-file-status { font-size: var(--apo-fs-sm); color: #6b7280; }
 .apo-file-list { display: flex; flex-direction: column; gap: 4px; }
 .apo-file-list:empty { display: none; }
 .apo-file-item {
@@ -318,7 +361,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 8px;
-	font-size: 13px;
+	font-size: var(--apo-fs-sm);
 	padding: 5px 10px;
 	border: 1px solid rgba(0, 0, 0, 0.12);
 	border-radius: 6px;
@@ -329,7 +372,9 @@
 	border: 0;
 	background: none;
 	cursor: pointer;
-	font-size: 16px;
+	/* Inherits: this sits inside .apo-file-item, which already sets a size —
+	   an em token here would multiply. */
+	font-size: inherit;
 	line-height: 1;
 	padding: 2px 6px;
 	color: inherit;
@@ -340,7 +385,7 @@
 .apo-file-remove:focus-visible { opacity: 1; }
 
 /* ── Surcharge fee tag ───────────────────────────────────────────────── */
-.apo-fee { font-weight: 600; color: #15803d; }
+.apo-fee { font-weight: var(--apo-fw-strong); color: #15803d; }
 
 /* ── Price breakdown box (matches the cards) ─────────────────────────── */
 .apo-breakdown {
@@ -357,15 +402,15 @@
 	justify-content: space-between;
 	gap: 16px;
 	padding: 2.5px 0;
-	font-size: 0.9em;
+	font-size: var(--apo-fs-sm);
 	opacity: 0.72;
 }
 .apo-breakdown__row--total {
 	border-top: 1px dashed rgba(0, 0, 0, 0.25);
 	margin-top: 7px;
 	padding-top: 8px;
-	font-weight: 700;
-	font-size: 1.05em;
+	font-weight: var(--apo-fw-strong);
+	font-size: var(--apo-fs-lg);
 	opacity: 1;
 }
 
@@ -380,7 +425,7 @@
 	border-radius: 50%;
 	border: 1px solid currentColor;
 	background: transparent;
-	font-size: 11px;
+	font-size: var(--apo-fs-xs);
 	line-height: 1;
 	cursor: pointer;
 	opacity: 0.55;
@@ -391,9 +436,9 @@
 .apo-tip-toggle[aria-expanded="true"] { opacity: 1; }
 .apo-tip { display: block; margin: 2px 0 8px; }
 
-.apo-counter { display: block; font-size: 11px; opacity: 0.6; text-align: right; margin-top: 3px; }
+.apo-counter { display: block; font-size: var(--apo-fs-xs); opacity: 0.6; text-align: right; margin-top: 3px; }
 
-.apo-error { display: block; color: #b32d2e; font-size: 12px; margin-top: 5px; }
+.apo-error { display: block; color: #b32d2e; font-size: var(--apo-fs-sm); margin-top: 5px; }
 .apo-field input[aria-invalid="true"],
 .apo-field textarea[aria-invalid="true"],
 .apo-field select[aria-invalid="true"] { border-color: #b32d2e; }

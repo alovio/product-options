@@ -1,3 +1,22 @@
+/**
+ * Builder typography scale. Absolute px here (unlike the storefront's em):
+ * wp-admin sets its own 13px base and we style admin chrome, not the theme's
+ * content — tracking a theme that isn't present would be meaningless.
+ *
+ * Six steps, deliberately far enough apart to read as hierarchy. Half-pixel
+ * neighbours (10.5 vs 11, 12 vs 12.5) look like a mistake, not a level.
+ */
+:root {
+	--clpo-fs-xs: 11px;    /* pills, chips, tags, section labels */
+	--clpo-fs-sm: 12px;    /* hints, field descriptions, secondary UI */
+	--clpo-fs-md: 13px;    /* body: inputs, buttons, field labels */
+	--clpo-fs-lg: 15px;    /* panel and section headings */
+	--clpo-fs-xl: 17px;    /* empty-state headings */
+	--clpo-fs-2xl: 26px;   /* decorative empty-state glyph */
+	--clpo-fw-med: 600;
+	--clpo-fw-bold: 700;
+}
+
 /* Alovio Product Options — builder v2. Visual contract: docs/mockups/builder-v2.html */
 
 :root {
@@ -48,7 +67,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 }
 
 .clpo-app {
-	font-size: 13px;
+	font-size: var(--clpo-fs-md);
 	color: var(--clpo-ink);
 	background: var(--clpo-bg);
 	display: flex;
@@ -70,7 +89,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 	gap: 16px;
 	padding: 0 20px;
 }
-.clpo-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; }
+.clpo-logo { display: flex; align-items: center; gap: 10px; font-weight: var(--clpo-fw-bold); font-size: var(--clpo-fs-lg); }
 .clpo-logo .clpo-mark {
 	width: 28px; height: 28px; border-radius: 8px;
 	background: linear-gradient(135deg, var(--clpo-flame), var(--clpo-flame-deep));
@@ -78,11 +97,11 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 	color: #fff; /* the flame inherits this */
 }
 .clpo-logo .clpo-flame { display: block; }
-.clpo-logo .clpo-sub { color: #a8a29e; font-weight: 600; font-size: 13px; margin-left: 2px; }
+.clpo-logo .clpo-sub { color: #a8a29e; font-weight: var(--clpo-fw-med); font-size: var(--clpo-fs-md); margin-left: 2px; }
 .clpo-hdr .clpo-grow { flex: 1; }
-.clpo-more { color: #a8a29e; font-size: 12.5px; font-weight: 700; text-decoration: none; margin-right: 4px; }
+.clpo-more { color: #a8a29e; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); text-decoration: none; margin-right: 4px; }
 .clpo-more:hover { color: #fdba74; }
-.clpo-status { display: flex; align-items: center; gap: 7px; color: #a8a29e; font-size: 12.5px; font-weight: 600; }
+.clpo-status { display: flex; align-items: center; gap: 7px; color: #a8a29e; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-med); }
 .clpo-status .clpo-dot { width: 7px; height: 7px; border-radius: 50%; background: #57534e; }
 .clpo-status.is-dirty .clpo-dot { background: #f59e0b; }
 .clpo-status.is-saved .clpo-dot { background: var(--clpo-green); }
@@ -92,7 +111,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-btn-ghost {
 	height: 34px; padding: 0 14px; border-radius: var(--clpo-r-sm);
 	border: 1px solid #44403c; background: transparent; color: #d6d3d1;
-	font-size: 13px; font-weight: 700; cursor: pointer;
+	font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); cursor: pointer;
 	display: inline-flex; align-items: center; gap: 7px;
 }
 .clpo-btn-ghost:hover:not(:disabled) { border-color: #78716c; color: #fff; }
@@ -100,7 +119,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-btn-primary {
 	height: 34px; padding: 0 18px; border-radius: var(--clpo-r-sm); border: none;
 	background: linear-gradient(135deg, var(--clpo-flame), var(--clpo-flame-deep));
-	color: #fff; font-size: 13px; font-weight: 800; cursor: pointer;
+	color: #fff; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); cursor: pointer;
 	box-shadow: 0 4px 14px -4px rgba(234, 88, 12, 0.6);
 	display: inline-flex; align-items: center; gap: 7px;
 }
@@ -117,7 +136,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 @media (max-width: 1100px) { .clpo-work { grid-template-columns: 220px 1fr 300px; } }
 
 .clpo-sec-label {
-	font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+	font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); letter-spacing: 0.08em; text-transform: uppercase;
 	color: var(--clpo-ink-3); margin: 4px 6px 10px;
 }
 
@@ -130,7 +149,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-ptype {
 	height: 72px; border: 1px solid var(--clpo-line); border-radius: var(--clpo-r);
 	display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
-	background: #fff; font-size: 12px; font-weight: 700; color: var(--clpo-ink-2); cursor: pointer;
+	background: #fff; font-size: var(--clpo-fs-sm); font-weight: var(--clpo-fw-bold); color: var(--clpo-ink-2); cursor: pointer;
 }
 .clpo-ptype:hover { border-color: var(--clpo-flame-border); box-shadow: var(--clpo-shadow); }
 .clpo-ptype .clpo-ic {
@@ -141,11 +160,11 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 /* Drawn field icons: one stroked set, coloured by the parent. */
 .clpo-fic { display: block; }
 .clpo-tpl { border: 1px dashed var(--clpo-line-2); border-radius: var(--clpo-r); padding: 12px; }
-.clpo-tpl h4 { font-size: 12.5px; margin: 0 0 4px; }
-.clpo-tpl p { font-size: 11.5px; color: var(--clpo-ink-3); line-height: 1.45; margin: 0 0 9px; }
+.clpo-tpl h4 { font-size: var(--clpo-fs-md); margin: 0 0 4px; }
+.clpo-tpl p { font-size: var(--clpo-fs-sm); color: var(--clpo-ink-3); line-height: 1.45; margin: 0 0 9px; }
 .clpo-tpl .clpo-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .clpo-chip {
-	font-size: 11px; font-weight: 700; color: var(--clpo-flame-deep);
+	font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); color: var(--clpo-flame-deep);
 	background: var(--clpo-flame-soft); border: 1px solid var(--clpo-flame-border);
 	padding: 4px 9px; border-radius: 999px; cursor: pointer;
 }
@@ -161,7 +180,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 	display: flex; align-items: center; gap: 10px; color: #d6d3d1; flex-wrap: wrap;
 }
 .clpo-simbar .clpo-lbl {
-	font-size: 12px; font-weight: 800; letter-spacing: 0.04em; color: #a8a29e;
+	font-size: var(--clpo-fs-sm); font-weight: var(--clpo-fw-bold); letter-spacing: 0.04em; color: #a8a29e;
 	display: flex; align-items: center; gap: 7px;
 }
 .clpo-simbar .clpo-lbl .clpo-eye { width: 16px; height: 16px; border-radius: 5px; background: var(--clpo-flame); }
@@ -169,14 +188,14 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 	position: relative; display: inline-flex; align-items: center; gap: 7px;
 	height: 30px; padding: 0 11px; border-radius: 999px;
 	background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14);
-	font-size: 12px; font-weight: 700; color: #e7e5e4;
+	font-size: var(--clpo-fs-sm); font-weight: var(--clpo-fw-bold); color: #e7e5e4;
 }
 .clpo-sim select {
 	position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
 }
 .clpo-sim.is-active { background: rgba(249, 115, 22, 0.18); border-color: rgba(249, 115, 22, 0.55); color: #fdba74; }
 .clpo-sim .clpo-car { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid currentColor; opacity: 0.7; }
-.clpo-simbar .clpo-hint { margin-left: auto; font-size: 11.5px; color: #78716c; }
+.clpo-simbar .clpo-hint { margin-left: auto; font-size: var(--clpo-fs-sm); color: #78716c; }
 
 /* Checkout preview canvas */
 .clpo-canvas { flex: 1; overflow-y: auto; padding: 16px 22px 22px; }
@@ -186,9 +205,9 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 	padding: 26px 30px;
 }
 .clpo-shead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.clpo-shead h2 { font-size: 15px; font-weight: 800; margin: 0; }
+.clpo-shead h2 { font-size: var(--clpo-fs-lg); font-weight: var(--clpo-fw-bold); margin: 0; }
 .clpo-region-tag {
-	position: relative; font-size: 11px; font-weight: 700; color: var(--clpo-ink-3);
+	position: relative; font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); color: var(--clpo-ink-3);
 	border: 1px dashed var(--clpo-line-2); border-radius: 999px; padding: 4px 11px; cursor: pointer;
 }
 .clpo-region-tag select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
@@ -213,38 +232,38 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 }
 .clpo-fld.is-dragging { opacity: 0.45; }
 .clpo-fld.is-drop-target { outline: 2px dashed var(--clpo-flame-border); outline-offset: 3px; }
-.clpo-fld .clpo-flabel { font-size: 12.5px; font-weight: 700; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+.clpo-fld .clpo-flabel { font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
 .clpo-fld .clpo-req { color: #dc2626; }
-.clpo-fld .clpo-fdesc { font-size: 11.5px; color: var(--clpo-ink-3); margin: -3px 0 7px; }
+.clpo-fld .clpo-fdesc { font-size: var(--clpo-fs-sm); color: var(--clpo-ink-3); margin: -3px 0 7px; }
 .clpo-fld .clpo-input {
 	min-height: 36px; border-radius: 9px; border: 1px solid var(--clpo-line-2); background: #fff;
-	display: flex; align-items: center; padding: 6px 12px; color: var(--clpo-ink-3); font-size: 13px;
+	display: flex; align-items: center; padding: 6px 12px; color: var(--clpo-ink-3); font-size: var(--clpo-fs-md);
 }
 .clpo-fld .clpo-input--area { min-height: 58px; align-items: flex-start; }
 .clpo-fld .clpo-input--check { width: 36px; justify-content: center; }
-.clpo-fld .clpo-opts { display: flex; flex-wrap: wrap; gap: 10px; color: var(--clpo-ink-2); font-size: 12.5px; }
+.clpo-fld .clpo-opts { display: flex; flex-wrap: wrap; gap: 10px; color: var(--clpo-ink-2); font-size: var(--clpo-fs-md); }
 .clpo-fld .clpo-opts .clpo-radio {
 	width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--clpo-line-2);
 	display: inline-block; vertical-align: -3px; margin-right: 5px;
 }
-.clpo-fld .clpo-heading-preview { font-size: 15px; font-weight: 800; }
+.clpo-fld .clpo-heading-preview { font-size: var(--clpo-fs-lg); font-weight: var(--clpo-fw-bold); }
 .clpo-fld .clpo-grip {
 	position: absolute; left: -13px; top: 50%; transform: translateY(-50%);
 	width: 22px; height: 30px; border-radius: 7px; background: #fff; border: 1px solid var(--clpo-line);
 	display: flex; align-items: center; justify-content: center;
-	color: var(--clpo-ink-3); font-size: 12px; box-shadow: var(--clpo-shadow); cursor: grab;
+	color: var(--clpo-ink-3); font-size: var(--clpo-fs-sm); box-shadow: var(--clpo-shadow); cursor: grab;
 }
 .clpo-fld .clpo-ops { position: absolute; top: -13px; right: 10px; display: flex; gap: 4px; }
 .clpo-op {
 	width: 26px; height: 26px; border-radius: 7px; background: var(--clpo-coal); color: #fff;
 	border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-	font-size: 12px; box-shadow: 0 4px 10px -2px rgba(28, 25, 23, 0.4);
+	font-size: var(--clpo-fs-sm); box-shadow: 0 4px 10px -2px rgba(28, 25, 23, 0.4);
 }
 .clpo-op:hover { background: var(--clpo-flame-deep); }
 .clpo-logic-flag {
 	position: absolute; bottom: -11px; left: 12px; z-index: 1;
 	display: inline-flex; align-items: center; gap: 6px;
-	font-size: 10.5px; font-weight: 800; letter-spacing: 0.03em;
+	font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); letter-spacing: 0.03em;
 	background: var(--clpo-flame-soft); color: var(--clpo-flame-deep);
 	border: 1px solid var(--clpo-flame-border); border-radius: 999px; padding: 3px 9px;
 	white-space: nowrap; max-width: 90%; overflow: hidden; text-overflow: ellipsis;
@@ -253,7 +272,7 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 /* Ghost / hidden-by-preview section */
 .clpo-hiddenbar {
 	margin-top: 18px; display: flex; align-items: center; gap: 9px;
-	font-size: 12px; color: var(--clpo-ink-3); font-weight: 600;
+	font-size: var(--clpo-fs-sm); color: var(--clpo-ink-3); font-weight: var(--clpo-fw-med);
 }
 .clpo-hiddenbar .clpo-line { flex: 1; height: 1px; background: var(--clpo-line); }
 .clpo-fld.is-ghost { border: 1.5px dashed var(--clpo-line-2); background: #fafaf9; opacity: 0.75; }
@@ -267,11 +286,11 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-empty .clpo-empty-ic {
 	width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 18px;
 	background: linear-gradient(135deg, var(--clpo-flame), var(--clpo-flame-deep));
-	display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px; font-weight: 800;
+	display: flex; align-items: center; justify-content: center; color: #fff; font-size: var(--clpo-fs-2xl); font-weight: var(--clpo-fw-bold);
 	box-shadow: 0 14px 30px -10px rgba(234, 88, 12, 0.5);
 }
-.clpo-empty h3 { font-size: 17px; color: var(--clpo-ink); margin: 0 0 8px; }
-.clpo-empty p { font-size: 13px; line-height: 1.55; margin: 0; }
+.clpo-empty h3 { font-size: var(--clpo-fs-xl); color: var(--clpo-ink); margin: 0 0 8px; }
+.clpo-empty p { font-size: var(--clpo-fs-md); line-height: 1.55; margin: 0; }
 
 /* ── Settings panel ─────────────────────────────────────────── */
 .clpo-settings {
@@ -288,28 +307,28 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 /* Preview controls that carry a leading/trailing icon. */
 .clpo-input--icon { display: flex; align-items: center; gap: 7px; }
 .clpo-swimg--empty .clpo-fic { opacity: 0.55; }
-.clpo-sp-title h3 { font-size: 14px; font-weight: 800; margin: 0; line-height: 1.25; }
-.clpo-sp-title small { display: block; font-size: 11px; color: var(--clpo-ink-3); font-weight: 600; }
+.clpo-sp-title h3 { font-size: var(--clpo-fs-lg); font-weight: var(--clpo-fw-bold); margin: 0; line-height: 1.25; }
+.clpo-sp-title small { display: block; font-size: var(--clpo-fs-xs); color: var(--clpo-ink-3); font-weight: var(--clpo-fw-med); }
 .clpo-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--clpo-line); }
 .clpo-tab {
-	padding: 9px 13px; font-size: 12.5px; font-weight: 700; color: var(--clpo-ink-3);
+	padding: 9px 13px; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); color: var(--clpo-ink-3);
 	border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent;
 }
 .clpo-tab.is-on { color: var(--clpo-flame-deep); border-bottom-color: var(--clpo-flame); }
 .clpo-sp-body { padding: 16px 18px; overflow-y: auto; flex: 1; }
-.clpo-sp-empty { padding: 40px 24px; text-align: center; color: var(--clpo-ink-3); font-size: 13px; line-height: 1.6; }
+.clpo-sp-empty { padding: 40px 24px; text-align: center; color: var(--clpo-ink-3); font-size: var(--clpo-fs-md); line-height: 1.6; }
 .clpo-sp-foot {
 	padding: 13px 18px; border-top: 1px solid var(--clpo-line); flex: none;
-	display: flex; align-items: center; gap: 8px; color: var(--clpo-ink-3); font-size: 11.5px;
+	display: flex; align-items: center; gap: 8px; color: var(--clpo-ink-3); font-size: var(--clpo-fs-sm);
 }
 .clpo-kbd {
 	border: 1px solid var(--clpo-line-2); border-radius: 5px; padding: 2px 6px;
-	font-size: 10.5px; font-weight: 700; background: #fff;
+	font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); background: #fff;
 }
 
 /* Settings form controls (restyle WP components lightly within our panel) */
 .clpo-sp-body .components-base-control { margin-bottom: 14px; }
-.clpo-sp-body .components-base-control__label { font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--clpo-ink-2); }
+.clpo-sp-body .components-base-control__label { font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); letter-spacing: 0.05em; text-transform: uppercase; color: var(--clpo-ink-2); }
 .clpo-sp-body .components-text-control__input,
 .clpo-sp-body .components-select-control__input,
 .clpo-sp-body .components-textarea-control__input {
@@ -322,39 +341,39 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 
 /* Logic tab — sentence tokens */
 .clpo-rule-card { border: 1px solid var(--clpo-line); border-radius: var(--clpo-r); padding: 13px 14px; background: #fafaf9; }
-.clpo-rule-when { font-size: 11px; font-weight: 800; letter-spacing: 0.07em; color: var(--clpo-ink-3); text-transform: uppercase; margin-bottom: 9px; }
-.clpo-sentence { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: var(--clpo-ink-2); }
+.clpo-rule-when { font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); letter-spacing: 0.07em; color: var(--clpo-ink-3); text-transform: uppercase; margin-bottom: 9px; }
+.clpo-sentence { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: var(--clpo-fs-md); color: var(--clpo-ink-2); }
 .clpo-sentence + .clpo-sentence { margin-top: 8px; }
 .clpo-tok {
 	position: relative; display: inline-flex; align-items: center; gap: 6px;
 	border: 1px solid var(--clpo-line-2); background: #fff; border-radius: 8px;
-	padding: 5px 10px; font-weight: 700; color: var(--clpo-ink); font-size: 12px; cursor: pointer;
+	padding: 5px 10px; font-weight: var(--clpo-fw-bold); color: var(--clpo-ink); font-size: var(--clpo-fs-sm); cursor: pointer;
 }
 .clpo-tok select { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
 .clpo-tok input { border: none; outline: none; width: 72px; font: inherit; color: inherit; background: transparent; padding: 0; }
 .clpo-tok.clpo-tok--src { border-color: var(--clpo-flame-border); background: var(--clpo-flame-soft); color: var(--clpo-flame-deep); }
 .clpo-tok.clpo-tok--val { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
 .clpo-tok .clpo-car { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid currentColor; opacity: 0.55; }
-.clpo-rule-x { border: none; background: none; color: var(--clpo-ink-3); cursor: pointer; font-size: 13px; padding: 2px 4px; }
+.clpo-rule-x { border: none; background: none; color: var(--clpo-ink-3); cursor: pointer; font-size: var(--clpo-fs-md); padding: 2px 4px; }
 .clpo-rule-x:hover { color: #dc2626; }
 .clpo-andor { display: inline-flex; border: 1px solid var(--clpo-line-2); border-radius: 8px; overflow: hidden; margin: 10px 0; }
-.clpo-andor button { padding: 5px 13px; font-size: 11.5px; font-weight: 800; color: var(--clpo-ink-3); background: #fff; border: none; cursor: pointer; }
+.clpo-andor button { padding: 5px 13px; font-size: var(--clpo-fs-sm); font-weight: var(--clpo-fw-bold); color: var(--clpo-ink-3); background: #fff; border: none; cursor: pointer; }
 .clpo-andor button.is-on { background: var(--clpo-coal); color: #fff; }
 .clpo-addrule {
 	margin-top: 11px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
-	font-size: 12.5px; font-weight: 800; color: var(--clpo-flame-deep); border: none; background: none; padding: 0;
+	font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); color: var(--clpo-flame-deep); border: none; background: none; padding: 0;
 }
 .clpo-then { margin-top: 16px; }
-.clpo-then-lbl { font-size: 11px; font-weight: 800; letter-spacing: 0.07em; color: var(--clpo-ink-3); text-transform: uppercase; margin-bottom: 9px; }
+.clpo-then-lbl { font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-bold); letter-spacing: 0.07em; color: var(--clpo-ink-3); text-transform: uppercase; margin-bottom: 9px; }
 .clpo-seg { display: flex; border: 1px solid var(--clpo-line-2); border-radius: 9px; overflow: hidden; }
-.clpo-seg button { flex: 1; text-align: center; padding: 8px 0; font-size: 12.5px; font-weight: 800; color: var(--clpo-ink-3); background: #fff; border: none; cursor: pointer; }
+.clpo-seg button { flex: 1; text-align: center; padding: 8px 0; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-bold); color: var(--clpo-ink-3); background: #fff; border: none; cursor: pointer; }
 .clpo-seg button.is-on { background: linear-gradient(135deg, var(--clpo-flame), var(--clpo-flame-deep)); color: #fff; }
 
 /* Layout tab */
 .clpo-widthpick { display: flex; gap: 10px; margin-bottom: 16px; }
 .clpo-widthpick button {
 	flex: 1; border: 1px solid var(--clpo-line-2); border-radius: var(--clpo-r); background: #fff;
-	padding: 10px; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--clpo-ink-2);
+	padding: 10px; cursor: pointer; font-size: var(--clpo-fs-sm); font-weight: var(--clpo-fw-bold); color: var(--clpo-ink-2);
 }
 .clpo-widthpick button.is-on { border-color: var(--clpo-flame); box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12); color: var(--clpo-flame-deep); }
 .clpo-widthpick .clpo-diagram { display: flex; gap: 4px; margin-bottom: 7px; }
@@ -362,61 +381,61 @@ body.clpo-builder-page #wpbody-content > .error { display: none; }
 .clpo-widthpick .clpo-diagram span.is-hl { background: var(--clpo-flame); }
 
 /* ── Product Options additions (group editor) ───────────────────────── */
-.clpo-title-input { background: transparent; border: 1px solid transparent; border-radius: 6px; color: #f5f5f4; font-size: 14px; font-weight: 600; padding: 4px 8px; min-width: 180px; }
+.clpo-title-input { background: transparent; border: 1px solid transparent; border-radius: 6px; color: #f5f5f4; font-size: var(--clpo-fs-lg); font-weight: var(--clpo-fw-med); padding: 4px 8px; min-width: 180px; }
 .clpo-title-input:hover, .clpo-title-input:focus { border-color: #57534e; outline: none; background: rgba(255,255,255,0.04); }
-.clpo-draft-pill { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #fdba74; border: 1px solid #9a3412; border-radius: 999px; padding: 2px 8px; }
-.clpo-sim-input { width: 90px; border: 1px solid #e2e4e7; border-radius: 4px; font-size: 11px; padding: 1px 6px; margin-left: 4px; }
+.clpo-draft-pill { font-size: var(--clpo-fs-xs); text-transform: uppercase; letter-spacing: .04em; color: #fdba74; border: 1px solid #9a3412; border-radius: 999px; padding: 2px 8px; }
+.clpo-sim-input { width: 90px; border: 1px solid #e2e4e7; border-radius: 4px; font-size: var(--clpo-fs-xs); padding: 1px 6px; margin-left: 4px; }
 .clpo-swdot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 5px; border: 1px solid rgba(0,0,0,.15); vertical-align: middle; }
-.clpo-fee-badge { margin-left: 8px; font-size: 11px; font-weight: 600; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 999px; padding: 0 7px; }
-.clpo-input--fee { color: #15803d; font-weight: 600; max-width: 110px; }
+.clpo-fee-badge { margin-left: 8px; font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-med); color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 999px; padding: 0 7px; }
+.clpo-input--fee { color: #15803d; font-weight: var(--clpo-fw-med); max-width: 110px; }
 
 /* ── Hub screens (groups list / templates / settings) ────────────────── */
 .clpo-hubnav { display: flex; gap: 4px; margin-left: 18px; }
-.clpo-hubnav a { color: #a8a29e; text-decoration: none; font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 6px; }
+.clpo-hubnav a { color: #a8a29e; text-decoration: none; font-size: var(--clpo-fs-md); font-weight: var(--clpo-fw-med); padding: 5px 10px; border-radius: 6px; }
 .clpo-hubnav a:hover { color: #f5f5f4; background: rgba(255,255,255,0.06); }
 .clpo-hubnav a.is-on { color: #fdba74; background: rgba(249,115,22,0.12); }
 .clpo-list-wrap { max-width: 960px; margin: 28px auto; padding: 0 24px; }
-.clpo-h2 { font-size: 18px; margin: 0 0 16px; }
-.clpo-list-note { color: #787f87; font-size: 13px; }
+.clpo-h2 { font-size: var(--clpo-fs-xl); margin: 0 0 16px; }
+.clpo-list-note { color: #787f87; font-size: var(--clpo-fs-md); }
 .clpo-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e2e4e7; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-.clpo-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #787f87; padding: 10px 14px; border-bottom: 1px solid #e2e4e7; background: #fafafa; }
-.clpo-table td { padding: 12px 14px; border-bottom: 1px solid #f0f0f1; font-size: 13px; vertical-align: middle; }
+.clpo-table th { text-align: left; font-size: var(--clpo-fs-xs); text-transform: uppercase; letter-spacing: .04em; color: #787f87; padding: 10px 14px; border-bottom: 1px solid #e2e4e7; background: #fafafa; }
+.clpo-table td { padding: 12px 14px; border-bottom: 1px solid #f0f0f1; font-size: var(--clpo-fs-md); vertical-align: middle; }
 .clpo-table tr:last-child td { border-bottom: 0; }
-.clpo-row-title { font-weight: 600; color: #1d2327; text-decoration: none; }
+.clpo-row-title { font-weight: var(--clpo-fw-med); color: #1d2327; text-decoration: none; }
 .clpo-row-title:hover { color: #c2410c; }
-.clpo-pill { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; color: #646970; background: #f0f0f1; border-radius: 999px; padding: 2px 9px; }
+.clpo-pill { font-size: var(--clpo-fs-xs); font-weight: var(--clpo-fw-med); text-transform: uppercase; letter-spacing: .03em; color: #646970; background: #f0f0f1; border-radius: 999px; padding: 2px 9px; }
 .clpo-pill.is-live { color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; }
 .clpo-muted { color: #787f87; }
 .clpo-row-ops { text-align: right; white-space: nowrap; }
-.clpo-linkbtn { background: none; border: 0; color: #2271b1; cursor: pointer; font-size: 12.5px; padding: 2px 6px; }
+.clpo-linkbtn { background: none; border: 0; color: #2271b1; cursor: pointer; font-size: var(--clpo-fs-md); padding: 2px 6px; }
 .clpo-linkbtn:hover { text-decoration: underline; }
 .clpo-linkbtn.is-danger { color: #b32d2e; }
 
 /* Assignment panel */
-.clpo-sp-subtitle { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: #787f87; margin: 2px 0 10px; }
-.clpo-chip.is-static { display: inline-flex; align-items: center; gap: 6px; background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 999px; padding: 2px 10px; font-size: 12px; margin: 0 6px 6px 0; }
-.clpo-chip.is-static button { background: none; border: 0; color: #9a3412; cursor: pointer; font-size: 11px; padding: 0; }
+.clpo-sp-subtitle { font-size: var(--clpo-fs-sm); text-transform: uppercase; letter-spacing: .03em; color: #787f87; margin: 2px 0 10px; }
+.clpo-chip.is-static { display: inline-flex; align-items: center; gap: 6px; background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 999px; padding: 2px 10px; font-size: var(--clpo-fs-sm); margin: 0 6px 6px 0; }
+.clpo-chip.is-static button { background: none; border: 0; color: #9a3412; cursor: pointer; font-size: var(--clpo-fs-xs); padding: 0; }
 
 /* Options panel rows */
 .clpo-optrow { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 6px; }
 .clpo-optrow .components-base-control { flex: 1; margin-bottom: 0 !important; }
 .clpo-optrow .clpo-optprice { flex: 0 0 84px; }
 .clpo-optrow .clpo-optprice .components-base-control { flex: none; }
-.clpo-opthelp { margin: 8px 0 0; font-size: 12px; color: #646970; }
+.clpo-opthelp { margin: 8px 0 0; font-size: var(--clpo-fs-sm); color: #646970; }
 .clpo-optcolor { width: 34px; height: 34px; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px; background: #fff; }
 .clpo-optimg img { width: 28px; height: 28px; object-fit: cover; border-radius: 4px; }
-.clpo-pillopt { display: inline-block; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px 10px; margin-right: 6px; font-size: 12px; }
+.clpo-pillopt { display: inline-block; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px 10px; margin-right: 6px; font-size: var(--clpo-fs-sm); }
 .clpo-swimg { width: 30px; height: 30px; object-fit: cover; border-radius: 6px; margin-right: 6px; }
 .clpo-swimg--empty { display: inline-flex; align-items: center; justify-content: center; background: #f0f0f1; }
 
 /* Templates grid + notices */
 .clpo-tplgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
 .clpo-tplcard { background: #fff; border: 1px solid #e2e4e7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-.clpo-tplcard h3 { margin: 0; font-size: 14px; }
-.clpo-tplcard p { margin: 0; font-size: 12.5px; color: #646970; flex: 1; }
+.clpo-tplcard h3 { margin: 0; font-size: var(--clpo-fs-lg); }
+.clpo-tplcard p { margin: 0; font-size: var(--clpo-fs-md); color: #646970; flex: 1; }
 .clpo-tplcard .clpo-btn-primary { align-self: flex-start; }
-.clpo-typechip { display: inline-block; font-size: 10.5px; background: #f0f0f1; border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; color: #50575e; }
-.clpo-notice { border-left: 4px solid #72aee6; background: #fff; padding: 8px 12px; box-shadow: 0 1px 1px rgba(0,0,0,.04); font-size: 13px; }
+.clpo-typechip { display: inline-block; font-size: var(--clpo-fs-xs); background: #f0f0f1; border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; color: #50575e; }
+.clpo-notice { border-left: 4px solid #72aee6; background: #fff; padding: 8px 12px; box-shadow: 0 1px 1px rgba(0,0,0,.04); font-size: var(--clpo-fs-md); }
 .clpo-notice.is-success { border-color: #00a32a; }
 .clpo-notice.is-warning { border-color: #dba617; }
 .clpo-notice.is-error { border-color: #d63638; }

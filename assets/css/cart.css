@@ -19,7 +19,7 @@
 }
 
 .wc-block-components-product-details__name {
-	font-weight: 600;
+	font-weight: var(--apo-fw-strong, 600);
 }
 
 .wc-block-components-product-details__value {
@@ -29,8 +29,8 @@
 /* Price chip on an option row — same language as the storefront pills. */
 .apo-cart-fee {
 	display: inline-block;
-	font-size: 0.82em;
-	font-weight: 600;
+	font-size: var(--apo-fs-sm, 0.85em);
+	font-weight: var(--apo-fw-strong, 600);
 	line-height: 1.6;
 	color: #15803d;
 	background: #f0fdf4;
