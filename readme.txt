@@ -5,7 +5,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 
 == Changelog ==
 
+= 2.4.1 =
+* Fix: on some themes the labels of dropdown, radio, button, colour and image fields — and the text inside the options themselves — rendered noticeably larger than the fields beside them. Those elements are `<legend>` and `<label>` tags, which WooCommerce themes style directly, and the plugin's own rule was weaker in CSS specificity, so the theme won. All option text now follows one scale whatever the theme does. Thanks to the user who reported it with a screenshot.
+
 = 2.4.0 =
 * NEW: A "Donate" button in the builder header. It opens a short note explaining that the plugin is free and stays free — no paid tier, no locked field types — and offers a coffee or a review for anyone who wants to support it. It replaces the cross-promo link that used to sit in the header.
 * Improve: every font size on the product page now scales with your theme. Help text, swatch captions, file names and error messages were fixed pixel sizes, so on a theme with a large base font (Twenty Twenty-Five uses 22px) a 12px description sat under a 22px label. Sizes are relative now, and text inputs, selects and file pickers match the surrounding text instead of the browser's ~13px default.
@@ -169,6 +172,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.4.1 =
+Fixes option and choice-field text rendering larger than the fields around it on themes that style legend and label elements directly.
 
 = 2.4.0 =
 Storefront text now scales with your theme instead of sitting at fixed pixel sizes, so option cards look right on themes with a large base font. The builder gets a proper full-screen layout, a header that stays on one row, and a Donate button explaining that this plugin stays free.
