@@ -335,6 +335,27 @@
 }
 .apo-qty__btn:hover { background: rgba(0, 0, 0, 0.08); }
 
+
+/* ── Typography, defended ─────────────────────────────────────────────
+   The pins above are single classes (0,1,0). Any theme rule like
+   `.woocommerce legend` or `.woocommerce label` is (0,1,1) and outranks them,
+   and that is precisely what WooCommerce themes ship — a reported bug: choice
+   labels and button/radio option text rendered far larger than the fields
+   around them. Re-declared here at (0,3,0) so the card's scale is ours.
+   Shoppers can still scale the whole block: `.apo-options { font-size: .9em }`
+   works because every size inside is relative. */
+.apo-options .apo-field .apo-field__label,
+.apo-options .apo-field legend.apo-field__label {
+	font-size: var(--apo-fs-md);
+}
+.apo-options .apo-field .apo-opt,
+.apo-options .apo-field .apo-swatch {
+	font-size: var(--apo-fs-md);
+}
+.apo-options .apo-field .apo-field__desc { font-size: var(--apo-fs-sm); }
+.apo-options .apo-field .apo-price-pill,
+.apo-options .apo-field .apo-swatch__label { font-size: var(--apo-fs-xs); }
+
 /* ── File field: dashed drop-style row ───────────────────────────────── */
 .apo-file { display: flex; flex-direction: column; gap: 5px; }
 .apo-file .apo-file-picker {
