@@ -30,6 +30,28 @@ function pickImage( onSelect ) {
 }
 
 /**
+ * Pick the full product image for a swatch (shown in the gallery when picked).
+ * Unlike the swatch thumbnail, this keeps the attachment id + a large URL so the
+ * storefront can serve a properly sized image.
+ */
+function pickProductImage( onSelect ) {
+	if ( ! window.wp || ! window.wp.media ) {
+		return;
+	}
+	const frame = window.wp.media( {
+		title: __( 'Choose the product image for this swatch', T ),
+		multiple: false,
+		library: { type: 'image' },
+	} );
+	frame.on( 'select', () => {
+		const att = frame.state().get( 'selection' ).first().toJSON();
+		const url = ( att.sizes && att.sizes.large && att.sizes.large.url ) || att.url;
+		onSelect( { productImage: url, productImageId: att.id } );
+	} );
+	frame.open();
+}
+
+/**
  * Shared options editor for every choice type: plain rows for
  * radio/select/buttons, label+colour rows for swatch, label+image rows for
  * image swatch.
@@ -96,7 +118,8 @@ export default function Options( { field } ) {
 	return (
 		<>
 			{ opts.map( ( o, i ) => (
-				<div key={ i } className="clpo-optrow">
+				<div key={ i } className="clpo-optwrap">
+				<div className="clpo-optrow">
 					<TextControl
 						label={ 0 === i ? __( 'Options', T ) : undefined }
 						value={ asObject( o ).label }
@@ -140,6 +163,30 @@ export default function Options( { field } ) {
 					>
 						✕
 					</Button>
+				</div>
+				{ ( field.type === 'swatch' || field.type === 'image_swatch' ) && (
+					<div className="clpo-optextra">
+						<span className="clpo-optextra-lbl">{ __( 'Product image', T ) }</span>
+						<Button
+							variant="tertiary"
+							className="clpo-optimg"
+							title={ __( 'Shown in the product gallery when this swatch is picked', T ) }
+							onClick={ () => pickProductImage( ( patch ) => row( i, patch ) ) }
+						>
+							{ asObject( o ).productImage ? <img src={ asObject( o ).productImage } alt="" /> : __( 'Choose…', T ) }
+						</Button>
+						{ asObject( o ).productImage && (
+							<Button
+								variant="tertiary"
+								isDestructive
+								aria-label={ __( 'Remove product image', T ) }
+								onClick={ () => row( i, { productImage: '', productImageId: 0 } ) }
+							>
+								✕
+							</Button>
+						) }
+					</div>
+				) }
 				</div>
 			) ) }
 			{ field.type === 'image_swatch' && (

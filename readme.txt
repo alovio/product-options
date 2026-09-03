@@ -3,9 +3,9 @@ Contributors: 74h1r
 Donate link: https://alovio.org/donate
 Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.4.1
+Stable tag: 2.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,10 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.5.0 =
+* NEW: **Swatch → product image**. Give a colour or image swatch its own product image, and when a shopper picks it the product gallery's main image switches to match — the classic "choose Red, see the red one" without needing variations. Set it per option in the swatch's Options tab. It drives the standard WooCommerce product gallery and quietly does nothing on themes that replace the gallery entirely, so it is safe to leave on.
+* Tested up to WordPress 7.1.
 
 = 2.4.1 =
 * Fix: on some themes the labels of dropdown, radio, button, colour and image fields — and the text inside the options themselves — rendered noticeably larger than the fields beside them. Those elements are `<legend>` and `<label>` tags, which WooCommerce themes style directly, and the plugin's own rule was weaker in CSS specificity, so the theme won. All option text now follows one scale whatever the theme does. Thanks to the user who reported it with a screenshot.

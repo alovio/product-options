@@ -6,6 +6,7 @@ import { wire } from './frontend/conditional-logic';
 import { wireBreakdown, createBaseTracker } from './frontend/price-update';
 import { wireUploads } from './frontend/uploader';
 import { wirePolish } from './frontend/polish';
+import { wireGallerySwap, createGallerySwap } from './frontend/gallery-swap';
 import '../assets/css/frontend.css';
 
 function init() {
@@ -49,9 +50,13 @@ function init() {
 		byForm.get( form ).groups.push( { fields } );
 	} );
 
+	// One shared gallery-swap controller for the page (a single product gallery).
+	const gallerySwap = createGallerySwap();
+
 	// One shared breakdown box per form, merging every group (spec §9).
 	byForm.forEach( ( { groups, base }, form ) => {
 		wirePolish( form, groups );
+		wireGallerySwap( form, gallerySwap );
 
 		const boxEl = form.querySelector( '.apo-breakdown' );
 		if ( ! boxEl ) {

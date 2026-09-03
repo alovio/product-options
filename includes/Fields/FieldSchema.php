@@ -232,12 +232,14 @@ final class FieldSchema {
 					'label' => $label,
 					'image' => is_array( $o ) ? esc_url_raw( (string) ( $o['image'] ?? '' ) ) : '',
 				);
+				self::add_gallery_image( $entry, $o );
 			} elseif ( 'swatch' === $type ) {
 				$color = is_array( $o ) ? sanitize_hex_color( (string) ( $o['color'] ?? '' ) ) : '';
 				$entry = array(
 					'label' => $label,
 					'color' => $color ? $color : '#cccccc',
 				);
+				self::add_gallery_image( $entry, $o );
 			} elseif ( $price > 0 ) {
 				$entry = array( 'label' => $label );
 			} else {
@@ -252,6 +254,29 @@ final class FieldSchema {
 		}
 
 		return $out;
+	}
+
+	/**
+	 * Optional per-swatch "product image" (shown in the product gallery when the
+	 * swatch is picked). Kept off the entry unless set, so unused swatches stay
+	 * lean. The id is authoritative — the renderer resolves a sized URL + srcset
+	 * from it; the URL is a builder-preview convenience and a fallback.
+	 *
+	 * @param array<string,mixed> $entry
+	 * @param mixed               $o
+	 */
+	private static function add_gallery_image( array &$entry, $o ): void {
+		if ( ! is_array( $o ) ) {
+			return;
+		}
+		$id  = isset( $o['productImageId'] ) ? max( 0, (int) $o['productImageId'] ) : 0;
+		$url = isset( $o['productImage'] ) ? esc_url_raw( (string) $o['productImage'] ) : '';
+		if ( $id > 0 ) {
+			$entry['productImageId'] = $id;
+		}
+		if ( '' !== $url ) {
+			$entry['productImage'] = $url;
+		}
 	}
 
 	private static function normalize_rule( array $rule, array $ids, string $self_id, array $ops ): ?array {

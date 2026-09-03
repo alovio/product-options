@@ -179,6 +179,42 @@ class FieldSchemaTest extends TestCase {
 		$this->assertSame( 12.5, $swatch['price'] );
 	}
 
+	public function test_swatch_options_keep_the_product_gallery_image(): void {
+		$out = FieldSchema::normalize(
+			array(
+				'fields' => array(
+					array(
+						'id'      => 'colour',
+						'type'    => 'swatch',
+						'options' => array(
+							array( 'label' => 'Red', 'color' => '#ff0000', 'productImage' => 'https://example.com/red.jpg', 'productImageId' => 42 ),
+							array( 'label' => 'Blue', 'color' => '#0000ff' ), // no product image
+						),
+					),
+					array(
+						'id'      => 'material',
+						'type'    => 'image_swatch',
+						'options' => array(
+							array( 'label' => 'Silk', 'image' => 'https://example.com/silk-thumb.jpg', 'productImageId' => 7 ),
+						),
+					),
+				),
+			)
+		);
+		$red  = $out['fields'][0]['options'][0];
+		$blue = $out['fields'][0]['options'][1];
+		$silk = $out['fields'][1]['options'][0];
+
+		$this->assertSame( 42, $red['productImageId'] );
+		$this->assertSame( 'https://example.com/red.jpg', $red['productImage'] );
+		// Unset ⇒ the keys never appear (options stay lean).
+		$this->assertArrayNotHasKey( 'productImageId', $blue );
+		$this->assertArrayNotHasKey( 'productImage', $blue );
+		// An id alone is enough; the URL is optional.
+		$this->assertSame( 7, $silk['productImageId'] );
+		$this->assertArrayNotHasKey( 'productImage', $silk );
+	}
+
 	public function test_negative_and_non_numeric_option_prices_are_dropped(): void {
 		$out = FieldSchema::normalize(
 			array(

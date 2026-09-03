@@ -80,6 +80,19 @@ final class ProductFormRendererTest extends TestCase {
 		}
 	}
 
+	public function test_gallery_image_attrs_emit_only_when_a_swatch_has_a_product_image(): void {
+		Monkey\Functions\when( 'esc_url' )->returnArg( 1 );
+		Monkey\Functions\when( 'esc_attr' )->returnArg( 1 );
+
+		// A stored URL (no attachment id) is emitted as a data attribute for the swap.
+		$with = (string) $this->call( 'gallery_image_attrs', array( 'label' => 'Red', 'productImage' => 'https://example.com/red.jpg' ) );
+		$this->assertStringContainsString( 'data-apo-gallery-image="https://example.com/red.jpg"', $with );
+
+		// No product image ⇒ nothing emitted (attribute absent).
+		$this->assertSame( '', (string) $this->call( 'gallery_image_attrs', array( 'label' => 'Blue', 'color' => '#0000ff' ) ) );
+		$this->assertSame( '', (string) $this->call( 'gallery_image_attrs', 'Plain string option' ) );
+	}
+
 	public function test_pill_spans_the_field_price_fallback(): void {
 		// The cheapest pick costs the field price, the dearest its own.
 		$this->assertSame( '+$25.00 – +$90.00', $this->pill( $this->mixed_field() ) );

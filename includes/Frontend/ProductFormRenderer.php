@@ -217,6 +217,38 @@ final class ProductFormRenderer {
 	 * @param array<string,mixed> $f
 	 * @param mixed               $option
 	 */
+	/**
+	 * Pre-escaped data attributes carrying a swatch's product image, or ''. The
+	 * frontend reads these off the checked radio to swap the WooCommerce product
+	 * gallery. Resolves a single-product-sized URL + srcset from the attachment id
+	 * (falls back to the stored URL).
+	 *
+	 * @param mixed $option
+	 */
+	private static function gallery_image_attrs( $option ): string {
+		if ( ! is_array( $option ) ) {
+			return '';
+		}
+		$id     = isset( $option['productImageId'] ) ? (int) $option['productImageId'] : 0;
+		$url    = '';
+		$srcset = '';
+		if ( $id > 0 ) {
+			$url    = (string) wp_get_attachment_image_url( $id, 'woocommerce_single' );
+			$srcset = (string) wp_get_attachment_image_srcset( $id, 'woocommerce_single' );
+		}
+		if ( '' === $url ) {
+			$url = isset( $option['productImage'] ) ? (string) $option['productImage'] : '';
+		}
+		if ( '' === $url ) {
+			return '';
+		}
+		$attrs = ' data-apo-gallery-image="' . esc_url( $url ) . '"';
+		if ( '' !== $srcset ) {
+			$attrs .= ' data-apo-gallery-srcset="' . esc_attr( $srcset ) . '"';
+		}
+		return $attrs;
+	}
+
 	private static function option_text( array $f, $option ): string {
 		$label = FieldOptions::label( $option );
 		if ( 'formula' === (string) ( $f['priceMode'] ?? 'fixed' ) || ! FieldOptions::has_priced_options( $f ) ) {
@@ -434,14 +466,15 @@ final class ProductFormRenderer {
 					$chk       = ( $opt_label === $default ) ? ' checked' : '';
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- label/name/color escaped via esc_attr; $rreq/$chk are internal constant attribute fragments.
 					printf(
-						'<label class="apo-swatch" title="%6$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%6$s" /><span class="apo-swatch__dot" style="background-color:%4$s"></span><span class="apo-swatch__label">%7$s</span></label>',
+						'<label class="apo-swatch" title="%6$s"><input type="radio" name="%2$s" value="%1$s"%8$s%3$s%5$s aria-label="%6$s" /><span class="apo-swatch__dot" style="background-color:%4$s"></span><span class="apo-swatch__label">%7$s</span></label>',
 						esc_attr( $opt_label ),
 						esc_attr( $name ),
 						$rreq,
 						esc_attr( $opt_color ),
 						$chk,
 						esc_attr( $opt_text ),
-						esc_html( $opt_text )
+						esc_html( $opt_text ),
+						self::gallery_image_attrs( $opt )
 					);
 					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
@@ -466,14 +499,15 @@ final class ProductFormRenderer {
 					$chk       = ( $opt_label === $default ) ? ' checked' : '';
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- all parts escaped below; $rreq/$chk internal fragments.
 					printf(
-						'<label class="apo-swatch apo-swatch--image" title="%6$s"><input type="radio" name="%2$s" value="%1$s"%3$s%5$s aria-label="%6$s" />%4$s<span class="apo-swatch__label">%7$s</span></label>',
+						'<label class="apo-swatch apo-swatch--image" title="%6$s"><input type="radio" name="%2$s" value="%1$s"%8$s%3$s%5$s aria-label="%6$s" />%4$s<span class="apo-swatch__label">%7$s</span></label>',
 						esc_attr( $opt_label ),
 						esc_attr( $name ),
 						$rreq,
 						'' !== $opt_image ? '<img class="apo-swatch__img" src="' . esc_url( $opt_image ) . '" alt="" />' : '<span class="apo-swatch__dot"></span>',
 						$chk,
 						esc_attr( $opt_text ),
-						esc_html( $opt_text )
+						esc_html( $opt_text ),
+						self::gallery_image_attrs( $opt )
 					);
 					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
