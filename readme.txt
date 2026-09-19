@@ -5,7 +5,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.5.1 =
+* Fix: a required field that conditional logic had hidden could block Add to cart. Radio, button-group and swatch fields render one control per choice, and only the first one had its "required" flag cleared when the field was hidden — so the browser went on refusing to submit a form whose invalid control it could not show the customer (Firefox reports "An invalid form control with name='apo[…]' is not focusable"), and Add to cart silently did nothing. Every control inside a hidden field is now cleared, and a field that starts out hidden no longer ships the flag at all. Visible required fields are still enforced exactly as before. Thanks to the shop owner who reported it with step-by-step reproductions.
 
 = 2.5.0 =
 * NEW: **Swatch → product image**. Give a colour or image swatch its own product image, and when a shopper picks it the product gallery's main image switches to match — the classic "choose Red, see the red one" without needing variations. Set it per option in the swatch's Options tab. It drives the standard WooCommerce product gallery and quietly does nothing on themes that replace the gallery entirely, so it is safe to leave on.

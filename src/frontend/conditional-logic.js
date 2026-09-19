@@ -184,10 +184,30 @@ export function wire( formEl, fields ) {
 			}
 			const active = map[ f.id ];
 			wrap.hidden = ! active;
-			const input = wrap.querySelector( 'input, select, textarea' );
-			if ( input ) {
-				input.required = active && !! f.required;
-			}
+			// EVERY control in the wrapper, not just the first: a required
+			// radio/button/swatch group renders one `required` input PER OPTION,
+			// so clearing only querySelector's first hit left the rest required
+			// while hidden. The browser then refuses to submit a form whose
+			// invalid control it cannot focus — Firefox says "An invalid form
+			// control with name='apo[…]' is not focusable" — and Add to Cart
+			// silently does nothing.
+			wrap.querySelectorAll( 'input, select, textarea' ).forEach( ( el ) => {
+				if ( ! active ) {
+					el.required = false; // nothing hidden may ever block submit
+					return;
+				}
+				if ( el.type === 'hidden' ) {
+					return; // a hidden value carrier must never be required
+				}
+				if ( el.classList.contains( 'apo-file-picker' ) ) {
+					// uploader.js owns the picker: it is required only until a
+					// file is staged (its FileList gets cleared after upload).
+					const token = wrap.querySelector( 'input[type="hidden"][name]' );
+					el.required = !! f.required && ! ( token && token.value );
+					return;
+				}
+				el.required = !! f.required;
+			} );
 		} );
 	};
 	formEl.addEventListener( 'change', apply );

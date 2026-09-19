@@ -374,12 +374,12 @@ final class ProductFormRenderer {
 			echo '<fieldset class="apo-fieldset"><legend class="apo-field__label"><span class="apo-field__label-text">'
 				. esc_html( $this->label_text( $f ) ) . $this->required_marker( $f ) . $this->tip_toggle( $f, $id ) . '</span>' . self::price_pill( $f ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput
 			echo $this->tip_panel( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
-			$this->render_input( $f );
+			$this->render_input( $f, $active );
 			echo '</fieldset>';
 		} elseif ( 'price' === $type ) {
 			echo '<span class="apo-field__label"><span class="apo-field__label-text">' . esc_html( $this->label_text( $f ) ) . $this->tip_toggle( $f, $id ) . '</span>' . self::price_pill( $f ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput
 			echo $this->tip_panel( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
-			$this->render_input( $f );
+			$this->render_input( $f, $active );
 		} else {
 			printf(
 				'<label class="apo-field__label" for="%s"><span class="apo-field__label-text">%s%s%s</span>%s</label>',
@@ -390,17 +390,20 @@ final class ProductFormRenderer {
 				self::price_pill( $f ) // phpcs:ignore WordPress.Security.EscapeOutput
 			);
 			echo $this->tip_panel( $f, $id ); // phpcs:ignore WordPress.Security.EscapeOutput
-			$this->render_input( $f );
+			$this->render_input( $f, $active );
 		}
 		echo '</div>';
 	}
 
-	private function render_input( array $f ): void {
+	private function render_input( array $f, bool $active = true ): void {
 		$id       = (string) $f['id'];
 		$name     = 'apo[' . $id . ']';
 		$fid      = 'clpo_' . $id;
 		$type     = (string) $f['type'];
-		$required = ! empty( $f['required'] );
+		// A field the rules start hidden must not carry `required` at all: the
+		// browser cannot focus a control it cannot see, so a stray required
+		// aborts the whole submit before our JS ever re-syncs it.
+		$required = ! empty( $f['required'] ) && $active;
 		$req      = $required ? ' required aria-required="true"' : '';
 		$rreq     = $required ? ' required' : '';
 		$default  = (string) ( $f['default'] ?? '' );
