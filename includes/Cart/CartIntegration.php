@@ -4,6 +4,7 @@ declare( strict_types=1 );
 namespace CoreLabs\ProductOptions\Cart;
 
 use CoreLabs\ProductOptions\Groups\GroupResolver;
+use CoreLabs\ProductOptions\Logic\ConditionalLogic;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -90,7 +91,7 @@ final class CartIntegration {
 			if ( empty( $group['fields'] ) ) {
 				continue;
 			}
-			$opts      = OptionSanitizer::sanitize( $group, $posted );
+			$opts      = self::visible_only( $group, OptionSanitizer::sanitize( $group, $posted ) );
 			$entries[] = array(
 				'group_id'    => (int) $group['id'],
 				'options'     => $opts,
@@ -104,6 +105,26 @@ final class CartIntegration {
 			self::each_file_token( $entries, array( FileUploads::class, 'mark_carted_token' ) );
 		}
 		return $cart_item_data;
+	}
+
+	/**
+	 * Drop the values the rules hide. A field the shopper can no longer see must
+	 * not reach the cart line: it shows up there as a phantom option and, on the
+	 * packing slip, describes something nobody chose ("Colour: Mushroom pattern"
+	 * on a Minky pouch). Prices were already filtered inside PriceCalculator, so
+	 * only the stored/displayed set was wrong.
+	 *
+	 * Safe to drop before pricing too: active_map forces a field inactive when
+	 * its controller is inactive, so removing a hidden value can never flip
+	 * another field back on.
+	 *
+	 * @param array<string,mixed> $group
+	 * @param array<string,mixed> $options field id => sanitized value
+	 * @return array<string,mixed>
+	 */
+	private static function visible_only( array $group, array $options ): array {
+		$active = ConditionalLogic::active_map( $group, $options );
+		return array_intersect_key( $options, array_filter( $active ) );
 	}
 
 	/**

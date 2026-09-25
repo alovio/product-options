@@ -5,7 +5,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.5.2 =
+* Fix: a value picked in a conditional field could still follow the product into the cart after the rules had hidden that field — choose Double gauze and a colour, switch the fabric to Minky, and the cart listed the double-gauze colour as well. The price was never affected (hidden fields were already excluded from the total), but the extra line was confusing in the cart and, on a packing slip, described something the customer never ordered. Values belonging to hidden fields are now dropped as the item is added, so the cart, the order and the e-mails show only what the shopper could actually see. Thanks for the clear step-by-step report on the support forum.
 
 = 2.5.1 =
 * Fix: a required field that conditional logic had hidden could block Add to cart. Radio, button-group and swatch fields render one control per choice, and only the first one had its "required" flag cleared when the field was hidden — so the browser went on refusing to submit a form whose invalid control it could not show the customer (Firefox reports "An invalid form control with name='apo[…]' is not focusable"), and Add to cart silently did nothing. Every control inside a hidden field is now cleared, and a field that starts out hidden no longer ships the flag at all. Visible required fields are still enforced exactly as before. Thanks to the shop owner who reported it with step-by-step reproductions.
