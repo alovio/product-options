@@ -5,7 +5,7 @@ Tags: product options, extra fields, add-ons, conditional logic, woocommerce
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.2
+Stable tag: 2.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,9 @@ Yes — export any group (or all of them) as JSON and import on another site. Im
 5. The live price breakdown — base price, each chosen option and the total, right above Add to cart.
 
 == Changelog ==
+
+= 2.6.0 =
+* Alovio Product Options is now distributed from alovio.org, and this version updates itself from there: new releases appear on the Plugins → Updates screen as usual, with no key and nothing to sign up for. Nothing else about the plugin changed.
 
 = 2.5.2 =
 * Fix: a value picked in a conditional field could still follow the product into the cart after the rules had hidden that field — choose Double gauze and a colour, switch the fabric to Minky, and the cart listed the double-gauze colour as well. The price was never affected (hidden fields were already excluded from the total), but the extra line was confusing in the cart and, on a packing slip, described something the customer never ordered. Values belonging to hidden fields are now dropped as the item is added, so the cart, the order and the e-mails show only what the shopper could actually see. Thanks for the clear step-by-step report on the support forum.
